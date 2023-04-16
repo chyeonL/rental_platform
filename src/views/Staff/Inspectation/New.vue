@@ -11,17 +11,20 @@
         <el-form-item  prop='Title'>
            <label>标题</label>
           <el-input v-model="form.Title"></el-input>
-        </el-form-item>        
-
-       <el-form-item prop='Owner'>
-           <label>屋主</label>
-          <el-input v-model="form.Owner" placeholder=""></el-input>
-        </el-form-item>  
+        </el-form-item>      
 
        <el-form-item prop='HouseNumber'>
            <label>门牌号</label>
-          <el-input v-model="form.HouseNumber" placeholder="请输入门牌号"></el-input>
-        </el-form-item>
+          <!-- <el-input v-model="form.HouseNumber" placeholder="请输入门牌号"></el-input> -->
+           <el-select v-model="form.HouseNumber" clearable placeholder="请选择">
+              <el-option v-for="(item, index) in landlords" :key="index" :label="item.HouseNumber" :value="item.HouseNumber"></el-option>
+            </el-select>
+        </el-form-item>  
+
+       <el-form-item prop='Owner'>
+           <label>屋主</label>
+          <el-input v-model="form.Owner" disabled></el-input>
+        </el-form-item>  
         
         <el-form-item prop='Area'>
            <label for="Area">区域</label>
@@ -187,7 +190,7 @@ export default {
         Overall: [{ required: true, message: "请选择", trigger: "change" }],
         FailReason: [{ required: true, message: "请选择", trigger: "change" }],
       },
-      options: [],
+      landlords: [],
     };
   },
   computed: {
@@ -197,10 +200,25 @@ export default {
       Area: (state) => state.Administrator.userInfo.Area,
     }),
   },
+  watch: {
+    form: {
+      deep: true,
+      handler(newValue) {
+        this.landlords.map((item) => {
+          if (item.HouseNumber == newValue.HouseNumber) {
+            this.form.Owner = item.OwnerName;
+          }
+        });
+      },
+    },
+  },
   mounted() {
     this.form.Area = this.Area; 
     this.form.StaffName = this.StaffName;
     this.form.Staff_ID = this.StaffID;
+    this.$store.dispatch('LandlordList').then((res)=>{
+      this.landlords = res
+    })
   },
   methods: {
     // 提交表单

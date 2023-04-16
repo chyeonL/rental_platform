@@ -1,17 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-
 Vue.use(VueRouter);
 // 路由模块化
 import routes from "./routes";
 // vuex 用于判断登陆状态
 import store from "@/store";
-// 弹窗提示
-import { Message } from "element-ui";
+import { Notification } from "element-ui";
 
 const router = new VueRouter({
   routes,
-  // mode:'history'  默认hash模式
 });
 
 // 登录拦截
@@ -23,9 +20,12 @@ router.beforeEach((to, from, next) => {
   // console.log(requireAuth);
   // 未登录
   if (!isLogin && requireAuth) {
-    Message({
-      message: "登录以继续",
+    Notification({
+      title: "登陆提醒",
+      offset: 60,
+      duration: 2000,
       type: "warning",
+      message: '登录以继续',
     });
     next({
       path: "/login",

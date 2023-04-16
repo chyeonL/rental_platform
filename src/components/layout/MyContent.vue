@@ -21,6 +21,18 @@
           <button>前台网站</button>
         </div>
 
+        <el-badge :value="$store.state.Administrator.opinion" class="opinion" v-if="$store.state.Administrator.role=='staff'">
+          <el-button size="small"  icon="el-icon-bell" @click="feedback"></el-button>
+        </el-badge>
+
+        <el-badge :value="$store.state.Administrator.rent" class="rent" v-if="$store.state.Administrator.role=='landlord'">
+          <el-button size="small"  icon="iconfont icon-wodejifenbao" @click="rentComplete"></el-button>
+        </el-badge>
+
+        <el-badge :value="$store.state.Administrator.tenant" class="tenant" v-if="$store.state.Administrator.role=='landlord'">
+          <el-button size="small"  icon="iconfont icon-13" @click="tenantComplete"></el-button>
+        </el-badge>
+
         <!-- 头像 移入显示dropdown -->
         <el-dropdown class="avatar">
           <span class="wrapper">
@@ -50,8 +62,27 @@ export default {
       circleUrl:
         this.$store.state.Administrator.userInfo.Avatar || "./NoAvatar.png",
       value: "",
-      push: '/'+this.$store.state.Administrator.role+'/my'
+      push: "/" + this.$store.state.Administrator.role + "/my",
     };
+  },
+  created() {
+    if (this.$store.state.Administrator.role == "staff") {
+      this.$store.dispatch(
+        "FeedbackNumber",
+        this.$store.state.Administrator.adminID + "_opinion"
+      );
+    }
+
+    if (this.$store.state.Administrator.role == "landlord") {
+      this.$store.dispatch(
+        "TenantNumber",
+        "tenant_" + this.$store.state.Administrator.adminID
+      );
+      this.$store.dispatch(
+        "RentNumber",
+        "rent_" + this.$store.state.Administrator.adminID
+      );
+    }
   },
   methods: {
     // 展开折叠
@@ -61,13 +92,58 @@ export default {
 
     // 退出登录
     logout() {
-      this.$store.dispatch("Logout");
-      this.$router.replace("/login");
+      this.$confirm("确定退出登录?", "确定", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        center: true,
+      })
+        .then(() => {
+          this.$store.dispatch("Logout", this.form).then((res) => {
+            this.$router.replace("/login");
+          });
+        })
+        .catch(() => {});
     },
 
     // 跳转前台
     goToWebsite() {
       this.$router.push("/");
+    },
+
+    // 等待反馈
+    feedback() {
+      this.$router.push("/staff/opinion/all");
+      this.$notify({
+        type: "warning",
+        duration: 4000,
+        title: "反馈提醒",
+        offset: 70,
+        message: `您有 ${this.$store.state.Administrator.opinion} 条群众意见正等待反馈......`,
+      });
+    },
+
+    //
+    rentComplete() {
+      this.$router.push("/landlord/rent/all");
+      this.$notify({
+        type: "warning",
+        duration: 4000,
+        title: "完善提醒",
+        offset: 70,
+        message: `您有 ${this.$store.state.Administrator.rent} 条月租记录待完善......`,
+      });
+    },
+
+    //
+    tenantComplete() {
+      this.$router.push("/landlord/tenant/all");
+      this.$notify({
+        type: "warning",
+        duration: 4000,
+        title: "完善提醒",
+        offset: 70,
+        message: `您有 ${this.$store.state.Administrator.tenant} 条租户信息待完善......`,
+      });
     },
   },
 };
@@ -122,20 +198,23 @@ main {
   justify-content: center;
   align-items: center;
   margin-right: 15px;
+  // background-color: #fff;
 
   .toWebsite {
-    margin: 0 20px;
-    padding: 9px;
+    // margin-right: 15px;
+    padding: 7px 13px;
     color: #ffd04b;
-    // background-color: #3292f8;
+    background-color: #24292e;
+    border: 1px dotted grey;
     border-radius: 8px;
     cursor: pointer;
 
     button {
-      font-size: 14px;
+      font-size: 13px;
       color: #ffd04b;
       border: none;
       background-color: transparent;
+      vertical-align: top;
       &:hover {
         cursor: pointer;
         // color: #8a8985;
@@ -144,8 +223,8 @@ main {
     }
 
     i {
-      font-size: 18px;
-      vertical-align: bottom;
+      font-size: 15px;
+      // vertical-align: bottom;
       margin-right: 4px;
     }
   }
@@ -181,6 +260,31 @@ main {
         background-position: 50%;
       }
     }
+  }
+  ::v-deep .el-button {
+    color: #ffd04b;
+    background-color: transparent;
+    border: none;
+    margin-left: 15px;
+    margin-right: 25px;
+    i {
+      font-size: 20px;
+    }
+  }
+  ::v-deep .el-badge__content.is-fixed {
+    top: 5px;
+    right: 38px;
+  }
+  ::v-deep .el-badge__content {
+    color: #fff;
+    font-size: 8px;
+    height: 15px;
+    line-height: 15px;
+    padding: 0 4px;
+    background-color: #ff5555;
+  }
+  .rent {
+    margin-right: -20px;
   }
 }
 </style>

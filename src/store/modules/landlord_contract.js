@@ -1,15 +1,15 @@
-import { allRoom, detailRoom, newRoom, typeList, contractList, modifyRoom, deleteRoom, searchRoom } from '@/api'
+import { allContracts, newContract, terminateContract, deleteContract, searchContract, detailContract, getRoomList } from '@/api'
 import { Notification } from "element-ui";
 export default {
     state: {
         total: 0,
-        pageSize: 5, // 获取后端设定的页面数据量大小，
+        pageSize: 5, 
         pageNo: 1,
         currentPage: 1,
-        all: [], // 所有出租屋 或 搜索结果
-        list: [], // 所有页面--分页展示的数据
-        search: [], // 搜索展示的数据
-        detail: {}, // xx出租屋的具体信息
+        all: [],    
+        list: [], 
+        search: [], 
+        detail: {}, 
     },
     mutations: {
         // 所有
@@ -37,14 +37,14 @@ export default {
     },
     actions: {
         // 所有
-        async GetAllRoom({ rootState, commit }, pageNo) {
-            let tableName = 'room_' + rootState.Administrator.adminID
-            let res = await allRoom(pageNo, tableName);
+        async GetAllContracts({ rootState, commit }, pageNo) {
+            let res = await allContracts(rootState.Administrator.adminID, pageNo);
+            // console.log(res);
             commit("all", res);
             if (res) {  // 成功
                 if (!res.success)
                     Notification({
-                        title: "失败提醒",
+                        title: "错误提醒",
                         offset: 60,
                         duration: 2000,
                         type: "error",
@@ -54,16 +54,16 @@ export default {
             }
         },
 
-
         // 搜索
-        async SearchRoom({ rootState, commit }, { keywords, pageNo }) {
-            let tableName = 'room_' + rootState.Administrator.adminID
-            let res = await searchRoom(keywords, pageNo, tableName);
+        async SearchContract({ rootState, commit }, { keywords, pageNo }) {
+            let tableName = 'contract_' + rootState.Administrator.adminID
+            let res = await searchContract(tableName, keywords, pageNo);
+            // console.log(res);
             commit("search", res);
             if (res) {  // 成功
                 if (!res.success)
                     Notification({
-                        title: "失败提醒",
+                        title: "错误提醒",
                         offset: 60,
                         duration: 2000,
                         type: "error",
@@ -82,10 +82,9 @@ export default {
         },
 
         // 删除
-        async DeleteRoom({ rootState }, { No, RoomType, RoomNumber }) {
-            let tableName_room = 'room_' + rootState.Administrator.adminID
-            let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
-            let res = await deleteRoom(tableName_room, tableName_roomtype, No, RoomType, RoomNumber);
+        async DeleteContract({ rootState }, No) {
+            let res = await deleteContract(rootState.Administrator.adminID, No);
+            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
@@ -98,7 +97,7 @@ export default {
                     });
                 else
                     Notification({
-                        title: "失败提醒",
+                        title: "错误提醒",
                         offset: 60,
                         duration: 2000,
                         type: "error",
@@ -109,21 +108,18 @@ export default {
         },
 
         // 获取详情
-        async DetailRoom({ rootState, commit }, No) {
-            let tableName = 'room_' + rootState.Administrator.adminID
-            let res = await detailRoom(No, tableName);
-            // console.log(res);
+        async DetailContract({ rootState, commit }, No) {
+            let tableName = 'contract_' + rootState.Administrator.adminID
+            let res = await detailContract(tableName, No);
             commit('detail', res.data[0])
             if (res) {  // 成功
                 return res.data[0];
             }
         },
 
-        // 编辑
-        async ModifyRoom({ rootState, commit }, form) {
-            let tableName_room = 'room_' + rootState.Administrator.adminID
-            let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
-            let res = await modifyRoom(form, tableName_room, tableName_roomtype);
+        // 编辑 -- 终止合同
+        async TerminateContract({ rootState, commit }, { No, Room, RoomType }) {
+            let res = await terminateContract(rootState.Administrator.adminID, No, Room, RoomType);
             if (res) {
                 // 成功
                 if (res.success)
@@ -132,59 +128,51 @@ export default {
                         offset: 60,
                         duration: 2000,
                         type: "success",
-                        message: "编辑成功！",
+                        message: "成功终止合同！",
                     });
                 else
                     Notification({
-                        title: "失败提醒",
+                        title: "错误提醒",
                         offset: 60,
                         duration: 2000,
                         type: "error",
-                        message: "编辑失败",
+                        message: "终止失败",
                     });
                 return res.success;
             }
         },
 
         // 添加
-        async AddRoom({ rootState, commit }, form) {
-            let tableName_room = 'room_' + rootState.Administrator.adminID
-            let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
-            let res = await newRoom(form, tableName_room, tableName_roomtype);
+        async AddContract({ rootState, commit }, form) {
+            let res = await newContract(rootState.Administrator.adminID, form);
+            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
                     Notification({
                         title: "成功",
                         offset: 60,
-                        duration: 2000,
+                        duration: 4000,
                         type: "success",
-                        message: "新增成功！",
+                        message: "新增合同成功！请前往'收入租金'和'流动人员'分别完善月租、租户信息!",
                     });
                 else
                     Notification({
-                        title: "失败提醒",
+                        title: "错误提醒",
                         offset: 60,
                         duration: 2000,
                         type: "error",
-                        message: "新增失败",
+                        message: "新增合同失败",
                     });
                 return res.success;
             }
         },
 
-        // 房型列表
-        async TypeList({ rootState }) {
-            let tableName = 'roomtype_' + rootState.Administrator.adminID
-            let res = await typeList(tableName)
+        // 房间列表
+        async RoomList({ rootState }) {
+            let tableName = 'room_' + rootState.Administrator.adminID
+            let res = await getRoomList(tableName)
             if (res) return res.data
         },
-
-        // 合同列表
-        async ContractList({ rootState }) {
-            let tableName = 'contract_' + rootState.Administrator.adminID
-            let res = await contractList(tableName)
-            if (res) return res.data
-        }
     }
 }

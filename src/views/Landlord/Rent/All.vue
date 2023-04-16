@@ -1,5 +1,5 @@
 <template>
-  <div id="#Migrant_all">
+  <div id="Rent_all">
     <!-- 头部 -->
     <div class="header">      
       <Breadcrumb  :routes='routes'/>
@@ -12,7 +12,7 @@
         </el-input>
         <el-button  icon="el-icon-search">搜索</el-button>
         <el-button  icon="el-icon-document-add" 
-            @click="$router.push({name:'newMigrant'})">
+            @click="$router.push({name:'Rent_New'})">
           新增
         </el-button>
       </header>
@@ -20,9 +20,10 @@
     <!-- 表格 -->
     <main>
       <el-table
-        :data="type==='all'?migrantList:searchList"
+        :data="type==='all'?list:search"
         border
         :header-cell-style="{background:'#24292e',color:'#ffd04b',borderColor:'#4c4c4c'}"
+        :row-class-name="rowsToBeComplete"
       >
        <el-table-column
         label="编号"
@@ -31,17 +32,16 @@
         align="center"
         >
         </el-table-column>
-        <el-table-column label="姓名" prop="Name" align="center"> </el-table-column>
-        <el-table-column label="身份证号" prop="ID" align="center"> </el-table-column>
-        <el-table-column label="性别" prop="Gender" align="center" width="50"> </el-table-column>
-        <el-table-column label="区域" prop="Area" align="center"> </el-table-column>
-        <el-table-column label="房东" prop="LandlordName" align="center"> </el-table-column>
-        <el-table-column label="联系方式" prop="Tel" align="center">
-        </el-table-column>
-        <el-table-column label="来往时间" prop="StartDate" align="center">
-        </el-table-column>
-        <el-table-column label="离开时间" prop="EndDate" align="center">
-        </el-table-column>
+        <el-table-column label="房间号" prop="RoomNumber" align="center"> </el-table-column>
+        <el-table-column label="月份" prop="Month" align="center"> </el-table-column>
+        <el-table-column label="租户" prop="Name" align="center" width="120"> </el-table-column>
+        <el-table-column label="收租日" prop="CollectionDate" align="center"></el-table-column>
+        <el-table-column label="合计应收" prop="ToalAmount" align="center" width="100"> </el-table-column>
+        <el-table-column label="收取状态" prop="Stage" align="center" width="100"></el-table-column>
+        <el-table-column label="实收" prop="ActualAmount" align="center"> </el-table-column>
+        <el-table-column label="合同编号" prop="ContractNo" align="center"> </el-table-column>
+        <el-table-column label="合同状态" prop="ContractStage" align="center" width="100"></el-table-column>
+        <el-table-column label="信息完整度" prop="Status" align="center" width="100"></el-table-column>
         <el-table-column label="数据操作" width="200" class="operation" fixed="right" align="center">
           <template slot-scope="scope">
             <el-button type="info" @click="handleEdit(scope.$index, scope.row)">具体/编辑</el-button>
@@ -69,19 +69,18 @@ import Breadcrumb from "@/components/common/Breadcrumb.vue";
 import Pagination from "@/components/common/Pagination.vue";
 import { mapState } from "vuex";
 export default {
-  name: "Migrant_all",
+  name: "rent_all",
   components: { Pagination, Breadcrumb },
   data() {
     return {
       keyword: "",
-      type: "all", // search 为搜索分页
+      type: "all",
       currentPage: 1,
       routes: {
-        // 面包屑导航 对象
-        nav: "信息管理",
-        parent: "流动人员",
+        nav: "收入租金",
+        parent: "月租",
         parentRoute: "all",
-        children: "所有数据",
+        children: "所有记录",
       },
     };
   },
@@ -89,27 +88,25 @@ export default {
     this.getData();
   },
   computed: {
-    // ...mapState(["total","pageSize","pageNo","searchList","allHouse","HouseList"])
     ...mapState({
-      total: (state) => state.Migrant.total,
-      pageNo: (state) => state.Migrant.pageNo,
-      allMigrants: (state) => state.Migrant.allMigrants,
-      migrantList: (state) => state.Migrant.migrantList,
-      pageSize: (state) => state.Migrant.pageSize,
-      searchList: (state) => state.Migrant.searchList,
+      total: (state) => state.RoomType.total,
+      pageNo: (state) => state.RoomType.pageNo,
+      all: (state) => state.RoomType.all,
+      list: (state) => state.RoomType.list,
+      pageSize: (state) => state.RoomType.pageSize,
+      search: (state) => state.RoomType.search,
     }),
   },
   methods: {
     // 获取数据
     async getData(pageNo = 1) {
       await this.$store
-        .dispatch("GetAllMigrants", pageNo)
-        .then((res) => (this.type = "all"));
+        .dispatch("GetAllRent", pageNo)
+        .then(() => (this.type = "all"));
     },
 
     // 改变页码，重发请求
     changePageNo(pageNo) {
-      // this.currentPage = pageNo;
       if (this.type == "all") {
         this.getData(pageNo);
       } else {
@@ -119,26 +116,22 @@ export default {
 
     // 搜索
     async goSearch(pageNo = 1) {
-      // 根据关键字发请求 搜索
       let keywords = this.keyword.trim();
       if (keywords) {
         await this.$store
-          .dispatch("SearchMigrant", { keywords, pageNo })
-          .then((res) => {
+          .dispatch("SearchRent", { keywords, pageNo })
+          .then(() => {
             this.type = "search";
-            // console.log(this.type);
           });
       } else {
         this.getData(1, this.pageSize); // 搜索之后，删掉关键词，再按回车，重新加载全部数据
-        // return;
       }
     },
 
-    // 编辑   
+    // 编辑
     handleEdit(index, row) {
-      // console.log(row.No);
       this.$router.push({
-        name: "DetailMigrant",
+        name: "Rent_Detail",
         query: {
           No: row.No,
         },
@@ -147,17 +140,35 @@ export default {
 
     // 删除
     handleDelete(index, row) {
-      this.$confirm("确认删除该流动人员记录?", "确认删除", {
+      this.$confirm("确认删除该月租记录?", "确认删除", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         center: true,
       })
         .then(async () => {
-          await this.$store
-            .dispatch("DeleteMigrant", row.No)
-            .then((res) => this.getData());
+          if (row.ContractStage === "租约中") {
+            this.$notify({
+              type:'warning',
+              title:'警告提醒',
+              message:'该月租记录对应的合同处于"租约中"，暂时无法删除！',
+              offset:60,
+              duration:3000
+            })
+          } else {
+            await this.$store
+              .dispatch("DeleteRent", row.No)
+              .then((res) => this.getData());
+          }
         })
         .catch(() => {});
+    },
+
+    // 待完善的行
+    rowsToBeComplete({ row }) {
+      if (row.Status === "待完善" && row.ContractStage === "租约中")
+        return "warning-row";
+      if (row.Stage === "已收" && row.ContractStage === "租约中")
+        return "warning2-row";
     },
   },
 };
@@ -173,15 +184,15 @@ header {
   display: flex;
   align-items: center;
   justify-content: start;
-  margin:0  100px;
+  margin: 0 100px;
 
   ::v-deep .el-input {
     width: 300px;
-    border:1px solid #24292e ;
+    border: 1px solid #24292e;
     outline: none;
   }
 
-  ::v-deep .el-input:focus{
+  ::v-deep .el-input:focus {
     border-color: none;
   }
 
@@ -207,5 +218,11 @@ main {
       padding: 8px;
     }
   }
+}
+::v-deep .el-table .warning-row {
+  background: rgb(250, 226, 212);
+}
+::v-deep .el-table .warning2-row {
+  background: #ebf9e3;
 }
 </style>

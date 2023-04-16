@@ -1,9 +1,9 @@
 <template>
-  <div id="Tenant_detail">
+  <div id="#Migrant_detail">
     <header>
       <Breadcrumb  :routes='routes'/>
-      <el-button icon="el-icon-edit" @click="EditHandler" v-show="IsEdit">编辑模式</el-button> 
-      <el-button icon="el-icon-tickets" @click="EditHandler" v-show="!IsEdit">查阅模式</el-button>     
+      <!-- <el-button icon="el-icon-edit" @click="EditHandler" v-show="IsEdit">编辑模式</el-button> 
+      <el-button icon="el-icon-tickets" @click="EditHandler" v-show="!IsEdit">查阅模式</el-button>      -->
     </header>    
 
     <div class="form">
@@ -11,10 +11,8 @@
         label-position="left" 
         ref="form" 
         :status-icon='true'
-        :rules='rules'
-        :disabled='IsEdit===true?true:false'
+        disabled
       >            
-
         <el-form-item  prop='ID'>
            <label>身份证号</label>
           <el-input v-model="form.ID" disabled style="width:180px"></el-input>
@@ -23,32 +21,17 @@
         <el-form-item prop='Name'>
            <label>姓名</label>
           <el-input v-model="form.Name" disabled style="width:180px"></el-input>
+        </el-form-item>     
+
+        <el-form-item prop='Tel'>
+           <label>联系电话</label>
+          <el-input v-model="form.Tel" disabled style="width:180px"></el-input>
         </el-form-item>      
 
-        <el-form-item prop='ContractNo'>
-           <label>合同编号</label>
-          <el-input v-model="form.ContractNo" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item prop='ContractStage'>
-           <label>合同状态</label>
-          <el-input v-model="form.ContractStage" disabled></el-input>
-        </el-form-item>          
-
-        <el-form-item prop='RoomNumber'>
-           <label>房间号</label>
-          <el-input v-model="form.RoomNumber" disabled></el-input>
+        <el-form-item prop='Area'>
+           <label>区域</label>
+          <el-input v-model="form.Area" disabled></el-input>
         </el-form-item> 
-
-        <el-form-item prop='StartDate'>
-           <label>租约开始</label>
-          <el-input v-model.number="form.StartDate" disabled></el-input>
-        </el-form-item>            
- 
-        <el-form-item prop='Term'>
-           <label>租期</label>
-          <el-input v-model.number="form.Term" disabled></el-input>
-        </el-form-item>    
 
        <el-form-item prop='Gender'>
            <label>性别</label>   
@@ -71,12 +54,27 @@
         <el-form-item prop='Origin'>
            <label>籍贯</label>
           <el-input v-model="form.Origin"></el-input>
+        </el-form-item>           
+
+        <el-form-item prop='LandlordName'>
+           <label>房东姓名</label>
+          <el-input v-model="form.LandlordName" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item prop='ContractStage'>
+           <label>合同状态</label>
+          <el-input v-model="form.ContractStage" disabled></el-input>
+        </el-form-item>          
+
+        <el-form-item prop='StartDate'>
+           <label>租约开始</label>
+          <el-input v-model.number="form.StartDate" disabled></el-input>
         </el-form-item>            
  
-        <el-form-item prop='ReportStatus'>
-           <label>报备状态</label>
-          <el-input v-model.number="form.ReportStatus" disabled></el-input>
-        </el-form-item>        
+        <el-form-item prop='Term'>
+           <label>租期</label>
+          <el-input v-model.number="form.Term" disabled></el-input>
+        </el-form-item>     
 
         <el-form-item prop='Note'>
            <label>备注</label>
@@ -84,7 +82,7 @@
         </el-form-item>
 
         <el-form-item class="btns">
-          <el-button type="success" @click="submitForm('form')" size="medium">提交</el-button>
+          <!-- <el-button type="success" @click="submitForm('form')" size="medium">提交</el-button> -->
         </el-form-item>
       </el-form> 
     </div>
@@ -93,39 +91,33 @@
 
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb.vue";
+import {mapState} from 'vuex'
 export default {
-  name: "Tenant_detail",
+  name: "Migrant_detail",
   components: { Breadcrumb },
   data() {
     return {
-      IsEdit: true,
+      IsEdit: true, // true为 查阅模式
       routes: {
+        // 面包屑导航 对象
         nav: "流动人员",
-        parent: "租户",
+        parent: "来往记录",
         parentRoute: "all",
         children: "具体信息",
       },
-      form: {
-        RoomNumber: "",
+     form: {
         Term: "",
-        ContractNo: "",
+        Area: "",
         ContractStage: "",
         ID: "",
         Name: "",
         Gender: "",
         Marriage: "",
         Origin: "",
-        Status: "",
-        ReportStatus: "",
+        LandlordName: "",
         StartDate: "",
+        Tel: "",
         Note: "",
-      },
-      rules: {
-        Origin: [
-          { required: true, message: "请输入籍贯", trigger: "change" },
-        ],
-        Gender: [{ required: true, message: "请选择", trigger: "change" }],
-        Marriage: [{ required: true, message: "请选择", trigger: "change" }],
       },
     };
   },
@@ -134,48 +126,57 @@ export default {
   },
   mounted() {
     this.$refs.form.clearValidate();
-    // this.$message.info('因为租户信息与合同')
+  },
+  computed:{
+    ...mapState({
+      StaffID:(state)=>state.Administrator.userInfo.Admin_ID
+    })
   },
   methods: {
     // 编辑/查阅
-    EditHandler() {
-      this.IsEdit = !this.IsEdit;
-      if (this.IsEdit) this.getDetail();
-    },
+    // EditHandler() {
+    //   this.IsEdit = !this.IsEdit;
+    //   if (this.options.length < 1) {
+    //     this.$store
+    //       .dispatch("LandlordNameList", this.form.AreaID)
+    //       .then((res) => {
+    //         this.options = res;
+    //         // console.log(this.options);
+    //       });
+    //   }
+    //   if(this.IsEdit) this.getDetail();
+    // },
 
     // 获取详情
     getDetail() {
-      this.$store.dispatch("DetailTenant", this.$route.query.No).then((res) => {
-        this.form = res;
-      });
+      this.$store
+        .dispatch("migrantDetail", this.$route.query.No)
+        .then((res) => {
+          // console.log(res);
+          this.form = res;
+        });
     },
 
-    // 修改
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (
-            typeof this.form.Note == "undefined" ||
-            this.form.Note == "undefined"||
-            this.form.Note === null
-          )
-            this.form.Note = "";
-          console.log(this.form);
-          this.$confirm("确认编辑租户记录?", "确认编辑", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            center: true,
-          })
-            .then(() => {
-              this.$store.dispatch("ModifyTenant", this.form).then((res) => {
-                this.$store.dispatch('TenantNumber','tenant_'+this.$store.state.Administrator.adminID)
-                this.EditHandler();
-              });
-            })
-            .catch(() => {});
-        }
-      });
-    },
+    // 提交表单
+    // submitForm(formName) {
+    //   this.$refs[formName].validate((valid) => {
+    //     // console.log(this.form);
+    //     if (valid) {
+    //       this.$confirm("确认提交该流动人员记录?", "确认编辑", {
+    //         confirmButtonText: "确定",
+    //         cancelButtonText: "取消",
+    //         center: true,
+    //       })
+    //         .then(() => {
+    //           this.$store.dispatch("ModifyMigrant", {form:this.form,staff:{StaffName:this.form.StaffName,StaffID:this.StaffID}}).then((res) => {
+    //             // console.log(res);
+    //             this.EditHandler();
+    //           });
+    //         })
+    //         .catch(() => {});
+    //     }
+    //   });
+    // },
   },
 };
 </script>

@@ -14,8 +14,13 @@
         </el-form-item>        
 
        <el-form-item prop='Amount'>
-           <label>房间数量</label>
-          <el-input v-model.number="form.Amount"></el-input>
+           <label>房间总数</label>  
+          <el-input v-model.number="form.Amount" disabled></el-input>
+        </el-form-item>    
+
+       <el-form-item prop='AvailableRoomsQuantity'>
+           <label>未出租的房间数量</label>  
+          <el-input v-model.number="form.AvailableRoomsQuantity" disabled></el-input>
         </el-form-item>  
 
        <el-form-item prop='Furnishment'>
@@ -24,8 +29,8 @@
         </el-form-item>
         
         <el-form-item prop='RoomNumber'>
-           <label>房间号</label>
-          <el-input v-model="form.RoomNumber"></el-input>
+           <label>房间列表</label>
+          <el-input v-model="form.RoomNumber" placeholder="通过新增/修改房间修改" disabled></el-input>
         </el-form-item>
 
         <el-form-item prop='Square'>
@@ -38,10 +43,10 @@
           <el-input v-model="form.Price"></el-input>
         </el-form-item>
 
-        <el-form-item prop='MortgageCash'>
+        <!-- <el-form-item prop='MortgageCash'>
            <label>押金</label>
           <el-input v-model="form.MortgageCash"></el-input>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item prop='MortgageMethod'>
            <label>按押方式</label>
@@ -127,7 +132,7 @@ export default {
       },
       form: {
         Type: "",
-        Amount: "",
+        Amount: 0,
         RoomNumber: "",
         Furnishment: "",
         Square: "",
@@ -135,15 +140,19 @@ export default {
         MortgageCash: "",
         MortgageMethod: "",
         Picture: "",
+        AvailableRoomsQuantity: 0,
       },
       rules: {
         Type: [{ required: true, message: "请输入房型", trigger: "change" }],
-        Amount: [
-          { required: true, message: "请输入房间数量", trigger: "change" },
-        ],
-        RoomNumber: [
-          { required: true, message: "请输入房间号", trigger: "change" },
-        ],
+        // Amount: [
+        //   { required: true, message: "请输入房间总数", trigger: "change" },
+        // ],
+        // AvailableRoomsQuantity: [
+        //   { required: true, message: "请输入未出租的房间数量", trigger: "change" },
+        // ],
+        // RoomNumber: [
+        //   { required: true, message: "请输入房间号", trigger: "change" },
+        // ],
         Furnishment: [
           { required: true, message: "请输入配置", trigger: "change" },
         ],
@@ -151,9 +160,9 @@ export default {
           { required: true, message: "请输入房间面积", trigger: "change" },
         ],
         Price: [{ required: true, message: "请输入房租", trigger: "change" }],
-        MortgageCash: [
-          { required: true, message: "请输入押金", trigger: "change" },
-        ],
+        // MortgageCash: [
+        //   { required: true, message: "请输入押金", trigger: "change" },
+        // ],
         MortgageMethod: [
           { required: true, message: "请输入按押方式", trigger: "change" },
         ],
@@ -161,16 +170,6 @@ export default {
       },
     };
   },
-//   computed: {
-//     ...mapState({
-//       StaffName: (state) => state.Administrator.userInfo.Name,
-//     }),
-//   },
-//   mounted() {
-//     this.form.Area = this.Area; 
-//     this.form.StaffName = this.StaffName;
-//     this.form.Staff_ID = this.StaffID;
-//   },
   methods: {
     // 新增
     submitForm(formName) {
@@ -199,7 +198,7 @@ export default {
     resetForm(formName) {
       (this.form= {
         Type: "",
-        Amount: "",
+        Amount: 0,
         RoomNumber: "",
         Furnishment: "",
         Square: "",
@@ -207,6 +206,7 @@ export default {
         MortgageCash: "",
         MortgageMethod: "",
         Picture: "",
+        AvailableRoomsQuantity:0,
       }),
         this.$refs["form"].validate((valid) => {});
     },

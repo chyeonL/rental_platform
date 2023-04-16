@@ -7,25 +7,25 @@
     </header>    
     
      <div class="form">
-      <el-form :model="form"
+       <el-form :model="form"
         label-position="left" 
         ref="form" 
-        :status-icon='true'
         :disabled='IsEdit?true:false'
+        :status-icon='true'
         :rules='rules'
       >
        <el-form-item prop='Title'>
            <label>标题</label>
-          <el-input v-model="form.Title" placeholder="请输入标题"></el-input>
+          <el-input v-model="form.Title" placeholder="请输入标题" disabled></el-input>
         </el-form-item>
 
         <el-form-item  prop='Category'>
            <label>类别</label>
-           <el-select v-model="form.Category" clearable placeholder="请选择">
-              <el-option label="出租屋" value="出租屋"></el-option>
-              <el-option label="服务站管理" value="服务站管理"></el-option>
-              <el-option label="活动" value="活动"></el-option>
-              <el-option label="检查" value="检查"></el-option>
+           <el-select v-model="form.Category" clearable placeholder="请选择" disabled>
+              <el-option label="出租屋事务" value="出租屋事务"></el-option>
+              <el-option label="相关管理" value="相关管理"></el-option>
+              <el-option label="巡查工作" value="巡查工作"></el-option>
+              <el-option label="流动人员" value="流动人员"></el-option>
               <el-option label="其他" value="其他"></el-option>
             </el-select>
         </el-form-item>
@@ -35,44 +35,45 @@
           <el-input v-model="form.Area" disabled class="small"></el-input>
         </el-form-item>
 
-        <el-form-item  prop='Status'>
-           <label>状态</label>
-           <el-select v-model="form.Status" clearable placeholder="请选择" class="small">
-              <el-option label="已上报" value="已上报"></el-option>
-              <el-option label="处理中" value="处理中"></el-option>
-              <el-option label="接纳" value="接纳"></el-option>
-              <el-option label="否决" value="否决"></el-option>
-            </el-select>
-        </el-form-item>  
+        <el-form-item prop='StaffName'>
+           <label for="StaffName">对接工作人员</label>
+          <el-input v-model="form.StaffName" disabled class="small"></el-input>
+        </el-form-item>   
+        
+        <el-form-item prop='LandlordName'>
+           <label for="LandlordName">反馈人</label>
+          <el-input v-model="form.LandlordName" disabled class="small"></el-input>
+        </el-form-item> 
 
-        <el-form-item prop='Time'>
-            <label for="Time">提交时间</label>
+        <el-form-item prop='SubmitTime'>
+            <label for="SubmitTime">反馈时间</label>
             <el-date-picker
               type="date"
               placeholder="选择日期"
               value-format='yyyy-MM-dd'
-              v-model="form.Time"              
+              v-model="form.SubmitTime"      
+              disabled        
             ></el-date-picker>
         </el-form-item>
         
-        <el-form-item prop='Name'>
-           <label for="Name">提交人(可以匿名)</label>
-          <el-input v-model="form.Name" class="small"></el-input>
-        </el-form-item> 
-
-        <el-form-item prop='StaffName'>
-           <label for="StaffName">对接工作人员</label>
-          <el-input v-model="form.StaffName" disabled class="small"></el-input>
-        </el-form-item> 
-        
         <el-form-item prop='Detail'>
-           <label for="Detail">详细</label>
-          <el-input type="textarea" v-model="form.Detail" class="note"></el-input>
+           <label for="Detail">详情</label>
+          <el-input type="textarea" v-model="form.Detail" class="note" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item  prop='Status'>
+           <label>处理阶段</label>
+           <el-select v-model="form.Status" clearable placeholder="请选择">
+              <el-option label="等待反馈" value="等待反馈"></el-option>
+              <el-option label="处理中" value="处理中"></el-option>
+              <el-option label="接纳意见" value="接纳意见"></el-option>
+              <el-option label="否决意见" value="否决意见"></el-option>
+            </el-select>
         </el-form-item>
         
-        <el-form-item prop='Note'>
-           <label for="Note">备注</label>
-          <el-input type="textarea" v-model="form.Note" class="note"></el-input>
+        <el-form-item prop='Response'  :rules='required'>
+           <label for="Response">回复</label>
+          <el-input type="textarea" v-model="form.Response" class="note"></el-input>
         </el-form-item>
 
         <el-form-item class="btns">
@@ -85,16 +86,15 @@
 
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb.vue";
-import { mapState } from "vuex";
 export default {
   name: "SOpinion_detail",
   components: { Breadcrumb },
   data() {
     return {
-      IsEdit: true, // true为 查阅模式
+      IsEdit: true, 
       routes: {
-        nav: "收集报告",
-        parent: "群众意见",
+        nav: "群众意见",
+        parent: "反馈回复",
         parentRoute: "all",
         children: "具体信息",
       },
@@ -102,11 +102,11 @@ export default {
         No: "",
         Title: "",
         Category: "",
-        Detail: "",
-        Name: "",
-        Time: "",
+        LandlordName: "",
+        Landlord_ID: "",
+        SubmitTime: "",
         Status: "",
-        Note: "",
+        Response: "",
         StaffName: "",
         Staff_ID: "",
         Area: "",
@@ -117,7 +117,7 @@ export default {
         Category: [{ required: true, message: "请选择", trigger: "change" }],
         Status: [{ required: true, message: "请选择", trigger: "change" }],
         Detail: [{ required: true, message: "请输入详情", trigger: "change" }],
-        Time: [
+        SubmitTime: [
           {
             required: true,
             message: "请选择时间",
@@ -134,53 +134,42 @@ export default {
     this.$refs.form.clearValidate();
   },
   computed: {
-    ...mapState({
-      StaffName: (state) => state.Administrator.userInfo.Name,
-      StaffID: (state) => state.Administrator.adminID,
-      Area: (state) => state.Administrator.userInfo.Area,
-      AreaID: (state) => state.Administrator.userInfo.AreaID,
-    }),
+    required() {
+      return this.form.Status != "等待反馈"
+        ? [{ message: "请回复", trigger: "change", required: true }]
+        : [];
+    },
   },
   methods: {
-    // 编辑/查阅
     EditHandler() {
       this.IsEdit = !this.IsEdit;
       if (this.IsEdit) this.getDetail();
     },
 
-    // 获取详情
     getDetail() {
       this.$store
         .dispatch("OpinionDetail", this.$route.query.No)
         .then((res) => {
           this.form = res;
-          // console.log(this.form);
         });
     },
 
-    // 提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        // console.log(this.form);
         if (valid) {
-          this.$confirm("确认编辑当前群众意见?", "确认编辑", {
+          this.$confirm("确认回复该意见?", "确认回复", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             center: true,
           })
             .then(() => {
-              this.$store
-                .dispatch("ModifyOpinion", {
-                  form: this.form,
-                  staff: {
-                    StaffName: this.form.StaffName,
-                    StaffID: this.StaffID,
-                  },
-                })
-                .then((res) => {
-                  // console.log(res);
-                  this.EditHandler();
-                });
+              this.$store.dispatch("ModifyOpinion", this.form).then((res) => {
+                this.$store.dispatch(
+                  "FeedbackNumber",
+                  this.$store.state.Administrator.adminID + "_opinion"
+                );
+                this.EditHandler();
+              });
             })
             .catch(() => {});
         }

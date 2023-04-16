@@ -21,12 +21,12 @@
 
        <el-form-item prop='Owner'>
            <label>屋主</label>
-          <el-input v-model="form.Owner" placeholder=""></el-input>
+          <el-input v-model="form.Owner" disabled></el-input>
         </el-form-item>  
 
        <el-form-item prop='HouseNumber'>
            <label>门牌号</label>
-          <el-input v-model="form.HouseNumber" placeholder="请输入门牌号"></el-input>
+          <el-input v-model="form.HouseNumber" disabled></el-input>
         </el-form-item>
         
         <el-form-item prop='Area'>

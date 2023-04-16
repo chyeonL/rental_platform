@@ -523,9 +523,10 @@ header {
   border-radius: 40px;
   ::v-deep .my-label {
     width: 90px;
-    // border: 1px solid black;
     text-align: center;
-    background-color: rgb(220, 220, 220);
+    color: rgb(241, 208, 75);
+    font-weight: 700;
+    background-color: rgb(36, 41, 46);
   }
 }
 

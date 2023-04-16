@@ -1,7 +1,6 @@
 <template>
   <div id="login">
     <el-button type="primary" @click='goWebsite' class="goWebsite">
-      <!-- <i class="'iconfont icon-guanfangwangzhan"></i> -->
       <&nbsp;&nbsp;前台网站
     </el-button>
     <h1 class="title">乡村数字化出租屋管理平台</h1>
@@ -78,14 +77,20 @@ export default {
         if (valid) {
           // 登陆验证
           this.$store.dispatch("Login", this.ruleForm).then((res) => {
-            console.log(res);
+            // console.log(res);
             // 登陆成功
             if (res.code == 200) {
-              this.$message.success(res.msg);
-              console.log(this.$store.state.Administrator.role);
+              this.$notify({
+                title: "成功",
+                offset: 60,
+                duration: 2000,
+                type: "success",
+                message: '登陆成功！',
+              });
+              // console.log(this.$store.state.Administrator.role);
               // 跳转到被拦截的页面
               if (this.$route.query.redirect) {
-                console.log(this.$route.query.redirect);
+                // console.log(this.$route.query.redirect);
                 this.$router.replace(`${this.$route.query.redirect}`);
               } else if (this.$store.state.Administrator.role) {
                 this.$router.replace(this.$store.state.Administrator.role);
@@ -96,16 +101,34 @@ export default {
               // this.$router.go(0);
             } else if (res.code == 203) {
               // 密码错误
-              this.$message.error(res.msg);
+              this.$notify({
+                title: "错误提醒",
+                offset: 60,
+                duration: 2000,
+                type: "error",
+                message: res.msg,
+              });
               this.resetForm();
             } else if (res.code == 205) {
               // 哪有这个账号
-              this.$message.error(res.msg);
+              this.$notify({
+                title: "错误提醒",
+                offset: 60,
+                duration: 2000,
+                type: "error",
+                message: res.msg,
+              });
               this.resetForm();
             }
           });
         } else {
-          this.$message.error("请完整输入");
+          this.$notify({
+            title: "错误提醒",
+            offset: 60,
+            duration: 2000,
+            type: "error",
+            message: "请完整输入",
+          });
           return false;
         }
       });
@@ -120,10 +143,10 @@ export default {
     },
 
     // 前台网站
-    goWebsite(){
-      this.$router.replace("/")
-      this.$router.go(0)
-    }
+    goWebsite() {
+      this.$router.replace("/");
+      this.$router.go(0);
+    },
   },
 };
 </script>

@@ -21,20 +21,24 @@
 
         <el-form-item  prop='RoomType'>
            <label>房间类型</label>
-          <el-select v-model="form.RoomType" clearable placeholder="请选择">
-              <el-option v-for="(item, index) in typeList" :key="index" :label="item.Type" :value="item.Type"></el-option>
-            </el-select>
+          <el-input v-model="form.RoomType" disabled></el-input>
         </el-form-item>   
 
         <el-form-item prop='Rent'>
            <label>房租</label>
-          <el-input v-model="form.Rent"></el-input>
+          <el-input v-model="form.Rent" :placeholder="minimunRent"></el-input>
         </el-form-item>
 
         <el-form-item prop='MortgageCash'>
            <label>押金</label>
           <el-input v-model="form.MortgageCash"></el-input>
         </el-form-item>
+
+        <el-form-item prop='MortgageMethod'>
+           <label>按押方式</label>
+          <el-input v-model="form.MortgageMethod" disabled></el-input>
+        </el-form-item>
+
 
         <el-form-item prop='Square'>
            <label>房间面积（平方米）</label>
@@ -56,7 +60,7 @@
 
        <el-form-item prop='RentStatus'>
            <label>出租状态</label>          
-          <el-select v-model="form.RentStatus" clearable placeholder="请选择">
+          <el-select v-model="form.RentStatus" clearable placeholder="请选择" disabled>
               <el-option label="已出租" value="已出租"></el-option>
               <el-option label="未出租" value="未出租"></el-option>
             </el-select>
@@ -64,9 +68,10 @@
 
         <el-form-item prop='ContractNo' v-if="form.RentStatus==='已出租'" :required="form.RentStatus==='已出租'">
            <label>合同编号</label>
-          <el-select v-model="form.ContractNo" clearable placeholder="请选择" ref="contract">
+          <el-input v-model="form.ContractNo" disabled></el-input>
+          <!-- <el-select v-model="form.ContractNo" clearable placeholder="请选择" ref="contract">
               <el-option v-for="(item,index) in contractList" :key="index" :label="item.No" @change="handleChange(item)" :value="item.No"></el-option>
-            </el-select>
+            </el-select> -->
         </el-form-item>
 
         <el-form-item prop='TenantName' v-if="form.RentStatus==='已出租'">
@@ -126,7 +131,6 @@ export default {
         RoomNumber: [
           { required: true, message: "请输入房间号", trigger: "change" },
         ],
-        RoomType: [{ required: true, message: "请选择", trigger: "change" }],
         Rent: [{ required: true, message: "请输入租金", trigger: "change" }],
         IsFurnished: [{ required: true, message: "请选择", trigger: "change" }],
         MortgageCash: [
@@ -140,7 +144,8 @@ export default {
         ContractNo: [{ required: true, message: "请选择", trigger: "change" }],
       },
       typeList: [], // 房型列表选择
-      contractList: [], // 合同列表选择
+      // contractList: [], // 合同列表选择
+      minimunRent: "",
     };
   },
   created() {
@@ -148,49 +153,52 @@ export default {
   },
   mounted() {
     this.$refs.form.clearValidate();
+    this.$notify({
+      type:'warning',
+      title:'限制',
+      message:'出租状态需要通过签署合同来自动修改',
+      duration:3000,
+      offset:80
+    })
   },
-  watch: {
-    form: {
-      // 监听 form的合同编号，自动赋值 租客姓名、身份证号
-      deep: true,
-      handler(newValue) {
-        this.contractList.map((item) => {
-          if ((item.ContractNo = newValue.ContractNo)) {
-            this.form.TenantIDCard = item.TenantID;
-            this.form.TenantName = item.TenantName;
-          }
-        });
-      },
-    },
-  },
+  // watch: {
+  //   form: {
+  //     // 监听 form的合同编号，自动赋值 租客姓名、身份证号
+  //     deep: true,
+  //     handler(newValue) {
+  //       this.contractList.map((item) => {
+  //         if (item.No == newValue.ContractNo) {
+  //           this.form.TenantIDCard = item.TenantID;
+  //           this.form.TenantName = item.TenantName;
+  //         }
+  //       });
+  //     },
+  //   },
+  // },
   methods: {
     // 编辑/查阅
     EditHandler() {
       this.IsEdit = !this.IsEdit;
       if (this.IsEdit) this.getDetail();
-      if ((this.typeList.length == 0)) {
-        this.$store.dispatch("TypeList").then((res) => {
-          this.typeList = res;
-        });
-        this.$store.dispatch("ContractList").then((res) => {
-          this.contractList = res;
-        });
-      }
+      // if (this.contractList.length == 0) {
+      //   this.$store.dispatch("ContractList").then((res) => {
+      //     this.contractList = res;
+      //   });
+      // }
     },
 
     // 获取详情
     getDetail() {
       this.$store.dispatch("DetailRoom", this.$route.query.No).then((res) => {
         this.form = res;
-        // console.log(this.form);
       });
     },
 
     // 修改
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(this.form);
         if (valid) {
+          // console.log(this.form);
           this.$confirm("确认编辑房间信息?", "确认编辑", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
@@ -198,7 +206,6 @@ export default {
           })
             .then(() => {
               this.$store.dispatch("ModifyRoom", this.form).then((res) => {
-                // console.log(res);
                 this.EditHandler();
               });
             })

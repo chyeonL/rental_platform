@@ -12,7 +12,7 @@
         </el-input>
         <el-button icon="el-icon-search">搜索</el-button>
         <el-button icon="el-icon-document-add" 
-            @click="$router.push({name:'newHouse'})">
+            @click="$router.push({name:'SHouse_New'})">
           新增
         </el-button>
       </header>
@@ -139,7 +139,7 @@ export default {
     handleEdit(index, row) {
       // console.log(row.No);
       this.$router.push({
-        name: "DetailHouse",
+        name: "SHouse_Detail",
         query: {
           No: row.No,
         },

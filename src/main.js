@@ -10,6 +10,8 @@ import * as api from '@/api'
 // 腾讯地图
 import { VueJsonp } from 'vue-jsonp'
 Vue.use(VueJsonp)
+// echarts图表
+import * as echarts from 'echarts';
 
 Vue.config.productionTip = false
 
@@ -18,7 +20,7 @@ new Vue({
   router,
   store,
   beforeCreate(){
-    Vue.prototype.$bus = this;  //全局事件总线
     Vue.prototype.$api = api
+    Vue.prototype.$echarts = echarts;
   }
 }).$mount('#app')

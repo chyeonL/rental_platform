@@ -12,7 +12,7 @@ import {
   searchMyOpinion,
   detailMyOpinion
 } from "@/api";
-import { Message } from "element-ui";
+import { Notification } from "element-ui";
 const state = {
   total: 0,
   pageSize: 5, // 获取后端设定的页面数据量大小，
@@ -53,31 +53,44 @@ const actions = {
   // staff
   // 所有
   async GetAllOpinion({ rootState, commit }, pageNo) {
-    let res = await getAllOpinions(pageNo, rootState.Administrator.adminID);
-    console.log(res);
+    let tableName = rootState.Administrator.adminID + '_opinion'
+    // console.log(tableName, pageNo);
+    let res = await getAllOpinions(tableName, pageNo);
+    // console.log(res);
     commit("all", res);
     if (res) {  // 成功
       if (!res.success)
-        Message({
+        Notification({
           type: "error",
           message: "信息获取失败！",
-        });
+          title: '失败提醒',
+          offset: 60,
+          duration: 2000
+        })
       return res.success;
     }
   },
   // 搜索
   async SearchOpinion({ rootState, commit }, { keywords, pageNo }) {
-    let res = await goSearchOpinions({ keywords, pageNo, ID: rootState.Administrator.adminID });  // params包括 keywords和pageNo
-    console.log(res);
+    let tableName = rootState.Administrator.adminID + '_opinion'
+    // console.log(tableName, pageNo);
+    let res = await goSearchOpinions(tableName, keywords, pageNo);  // params包括 keywords和pageNo
+    // console.log(res);
     commit("SearchList", res);
     if (res) {  // 成功
       if (!res.success)
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "搜索失败！没有找到相关记录。",
         });
       else
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "搜索成功！",
         });
@@ -85,18 +98,26 @@ const actions = {
     }
   },
   // 删除
-  async DeleteOpinion(context, No) {
-    let res = await goDeletehOpinion({ No });
-    console.log(res);
+  async DeleteOpinion({ rootState, commit }, No) {
+    let tableName = rootState.Administrator.adminID + '_opinion'
+    // console.log(tableName, No);
+    let res = await goDeletehOpinion(tableName, No);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "成功删除！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "删除失败",
         });
@@ -104,49 +125,39 @@ const actions = {
     }
   },
   // 获取详情
-  async OpinionDetail({ commit }, No) {
-    let res = await getOpinionDetail(No);
-    console.log(res);
+  async OpinionDetail({ rootState, commit }, No) {
+    let tableName = rootState.Administrator.adminID + '_opinion'
+    // console.log(tableName, No);
+    let res = await getOpinionDetail(tableName, No);
+    // console.log(res);
     commit('detail', res.data[0])
     if (res) {  // 成功
       return res.data[0];
     }
   },
   // 编辑
-  async ModifyOpinion({ commit }, data) {
-    //   console.log(data);
-    let res = await goModifyOpinion(data);
-    console.log(res);
+  async ModifyOpinion({ rootState, commit }, form) {
+    let tableName = rootState.Administrator.adminID + '_opinion'
+    // console.log(tableName, form);
+    let res = await goModifyOpinion(tableName, form);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
-          message: "编辑成功！",
+          message: "成功回复！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
-          message: "编辑失败",
-        });
-      return res.success;
-    }
-  },
-  // 添加
-  async AddOpinion({ commit }, data) {
-    let res = await goAddOpinion(data);
-    console.log(res);
-    if (res) {
-      // 成功
-      if (res.success)
-        Message({
-          type: "success",
-          message: "新增成功！",
-        });
-      else
-        Message({
-          type: "error",
-          message: "新增失败",
+          message: "回复失败",
         });
       return res.success;
     }
@@ -159,14 +170,17 @@ const actions = {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
     // console.log(pageNo, tableName, rootState.Administrator.adminID);
     let res = await getMyOpinion(pageNo, tableName, rootState.Administrator.adminID);
-    console.log(res);
+    // console.log(res);
     commit("all", res);
     if (res) {  // 成功
       if (!res.success)
-        Message({
+        Notification({
           type: "error",
           message: "信息获取失败！",
-        });
+          title: '失败提醒',
+          offset: 60,
+          duration: 2000
+        })
       return res.success;
     }
   },
@@ -175,16 +189,22 @@ const actions = {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
     // console.log(tableName, keywords, pageNo);
     let res = await searchMyOpinion(tableName, keywords, pageNo);
-    console.log(res);
+    // console.log(res);
     commit("SearchList", res);
     if (res) {  // 成功
       if (!res.success)
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "搜索失败！没有找到相关记录。",
         });
       else
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "搜索成功！",
         });
@@ -196,16 +216,22 @@ const actions = {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
     // console.log(tableName, No);
     let res = await deleteMyOpinion(tableName, No);
-    console.log(res);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "成功删除！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "删除失败",
         });
@@ -215,9 +241,9 @@ const actions = {
   // 获取详情
   async DetailMyOpinion({ commit, rootState }, No) {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
-    console.log(tableName, No);
+    // console.log(tableName, No);
     let res = await detailMyOpinion(tableName, No);
-    console.log(res);
+    // console.log(res);
     commit('detail', res.data[0])
     if (res) {  // 成功
       return res.data[0];
@@ -226,18 +252,24 @@ const actions = {
   // 编辑
   async ModifyMyOpinion({ rootState }, data) {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
-    console.log(tableName, data);
+    // console.log(tableName, data);
     let res = await modifyMyOpinion(tableName, data);
-    console.log(res);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "编辑成功！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "编辑失败",
         });
@@ -249,16 +281,22 @@ const actions = {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
     // console.log(tableName, data);
     let res = await newMyOpinion(tableName, data);
-    console.log(res);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "新增成功！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "新增失败",
         });

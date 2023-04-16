@@ -1,12 +1,16 @@
-import { login, changePassword, changeInfo, Avatar } from "@/api";
-import { Message } from "element-ui";
+import { login, changePassword, changeInfo, Avatar, getFeedbackNumber, getIncompleteTenant, getIncompleteRent, toBeReport, variousOpinions, rentedOut, roomtypeBarChart } from "@/api";
 export default {
   state: {
     userInfo: JSON.parse(localStorage.getItem("isLogin")) || {},
     isLogin: JSON.parse(localStorage.getItem("isLogin")),
     role: localStorage.getItem("role") || '',
     adminID: JSON.parse(localStorage.getItem("adminID")) || '',
-    // token: "",
+    rent: 0,
+    tenant: 0,
+    opinion: 0,
+    toBeReport: 0,
+    rentedOut: 0,
+    all: 0
   },
   mutations: {
     // 本地存储用户信息
@@ -52,6 +56,28 @@ export default {
       }
       return state.isLogin;
     },
+
+    // 顶部的消息通知
+    Rent(state, payload) {
+      state.rent = payload
+    },
+
+    Tenant(state, payload) {
+      state.tenant = payload
+    },
+
+    Opinion(state, payload) {
+      state.opinion = payload
+    },
+
+    ToBeReport(state, payload) {
+      state.toBeReport = payload
+    },
+
+    RentedOut(state, payload) {
+      state.rentedOut = payload.data
+      state.all = payload.all
+    },
   },
   actions: {
     // 登录
@@ -63,30 +89,60 @@ export default {
     // 退出登录
     async Logout({ commit }) {
       commit("clearUserInfo");
-      Message({
-        type: "success",
-        message: "已退出登录",
-      });
     },
     // 修改密码
     async modifyPwd({ commit }, { No, newPwd, oldpwd }) {
       let res = await changePassword(No, newPwd, oldpwd)
-      console.log(res);
       return res
     },
     // 修改账号信息   
     async modifyInfo({ commit }, { Name, UserName, Tel, Gender, No, Note }) {
       let res = await changeInfo(Name, UserName, Tel, Gender, No, Note)
-      console.log(res);
       return res
     },
     // 上传头像
     async uploadAvatar({ rootState }, { url, No }) {
-      // console.log(url, No);
       let res = await Avatar(url, No)
-      console.log(res);
       return res
-    }
+    },
+    // 待完善租金记录
+    async RentNumber({ commit }, tableName) {
+      let res = await getIncompleteRent(tableName)
+      if (res.success) commit('Rent', res.data)
+    },
+    // 
+    async TenantNumber({ commit }, tableName) {
+      let res = await getIncompleteTenant(tableName)
+      if (res.success) commit('Tenant', res.data)
+    },
+    // 
+    async FeedbackNumber({ commit }, tableName) {
+      let res = await getFeedbackNumber(tableName)
+      if (res.success) commit('Opinion', res.data)
+    },
+    // 可上报 
+    async ToBeReport({ commit }, tableName) {
+      let res = await toBeReport(tableName)
+      if (res.success) commit('ToBeReport', res.data)
+    },
+    // 意见反馈的饼图
+    async VariousOpinions({ rootState, commit }) {
+      let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
+      let res = await variousOpinions(tableName, rootState.Administrator.adminID)
+      return res
+    },
+    // rentedOut
+    async RentedOutRooms({ rootState, commit }) {
+      let tableName = 'room_' + rootState.Administrator.adminID
+      let res = await rentedOut(tableName)
+      // console.log(res);
+      if (res.success) commit('RentedOut', res)
+    },
+    // 
+    async RoomtypeBarChart({ rootState, commit }) {
+      let tableName = 'roomtype_' + rootState.Administrator.adminID
+      let res = await roomtypeBarChart(tableName)
+      return res
+    },
   },
-  getters: {},
 };

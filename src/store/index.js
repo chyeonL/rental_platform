@@ -6,11 +6,13 @@ import Administrator from './modules/administrator'
 import House from './modules/house'
 import Migrant from './modules/migrant'
 import Opinion from './modules/staff_opinion'
-import Problem from './modules/problem'
 import Website from './modules/website'
 import staff_Inspectation from './modules/staff_Inspectation'
 import RoomType from './modules/landlord_roomtype'      
-import Room from './modules/landlord_room' 
+import Room from './modules/landlord_room'        
+import Contract from './modules/landlord_contract' 
+import Tenant from './modules/landlord_tenant' 
+import Rent from './modules/landlord_rent' 
 
 export default new Vuex.Store({
     modules:{
@@ -19,9 +21,11 @@ export default new Vuex.Store({
         Migrant,
         staff_Inspectation,
         Opinion,
-        Problem,
         Website,
         RoomType,
-        Room
+        Room,
+        Contract,
+        Tenant,
+        Rent
     },
 })

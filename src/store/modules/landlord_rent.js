@@ -1,15 +1,15 @@
-import { allRoom, detailRoom, newRoom, typeList, contractList, modifyRoom, deleteRoom, searchRoom } from '@/api'
+import { allRents, detailRent, newRent, getMonthsList, modifyRent, deleteRent, searchRent } from '@/api'
 import { Notification } from "element-ui";
 export default {
     state: {
         total: 0,
-        pageSize: 5, // 获取后端设定的页面数据量大小，
+        pageSize: 5, 
         pageNo: 1,
         currentPage: 1,
-        all: [], // 所有出租屋 或 搜索结果
-        list: [], // 所有页面--分页展示的数据
-        search: [], // 搜索展示的数据
-        detail: {}, // xx出租屋的具体信息
+        all: [], 
+        list: [], 
+        search: [], 
+        detail: {}, 
     },
     mutations: {
         // 所有
@@ -37,28 +37,29 @@ export default {
     },
     actions: {
         // 所有
-        async GetAllRoom({ rootState, commit }, pageNo) {
-            let tableName = 'room_' + rootState.Administrator.adminID
-            let res = await allRoom(pageNo, tableName);
+        async GetAllRent({ rootState, commit }, pageNo) {
+            let res = await allRents(rootState.Administrator.adminID, pageNo);
+            // console.log(res);
             commit("all", res);
             if (res) {  // 成功
                 if (!res.success)
                     Notification({
-                        title: "失败提醒",
-                        offset: 60,
-                        duration: 2000,
                         type: "error",
                         message: "信息获取失败！",
-                    });
+                        title: '失败提醒',
+                        offset: 60,
+                        duration: 2000
+                    })
                 return res.success;
             }
         },
 
 
         // 搜索
-        async SearchRoom({ rootState, commit }, { keywords, pageNo }) {
-            let tableName = 'room_' + rootState.Administrator.adminID
-            let res = await searchRoom(keywords, pageNo, tableName);
+        async SearchRent({ rootState, commit }, { keywords, pageNo }) {
+            let tableName = 'rent_' + rootState.Administrator.adminID
+            let res = await searchRent(tableName, keywords, pageNo);
+            // console.log(res);
             commit("search", res);
             if (res) {  // 成功
                 if (!res.success)
@@ -82,10 +83,9 @@ export default {
         },
 
         // 删除
-        async DeleteRoom({ rootState }, { No, RoomType, RoomNumber }) {
-            let tableName_room = 'room_' + rootState.Administrator.adminID
-            let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
-            let res = await deleteRoom(tableName_room, tableName_roomtype, No, RoomType, RoomNumber);
+        async DeleteRent({ rootState }, No) {
+            let res = await deleteRent(rootState.Administrator.adminID, No);
+            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
@@ -109,9 +109,9 @@ export default {
         },
 
         // 获取详情
-        async DetailRoom({ rootState, commit }, No) {
-            let tableName = 'room_' + rootState.Administrator.adminID
-            let res = await detailRoom(No, tableName);
+        async DetailRent({ rootState, commit }, No) {
+            let tableName = 'rent_' + rootState.Administrator.adminID
+            let res = await detailRent(tableName, No);
             // console.log(res);
             commit('detail', res.data[0])
             if (res) {  // 成功
@@ -120,10 +120,9 @@ export default {
         },
 
         // 编辑
-        async ModifyRoom({ rootState, commit }, form) {
-            let tableName_room = 'room_' + rootState.Administrator.adminID
-            let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
-            let res = await modifyRoom(form, tableName_room, tableName_roomtype);
+        async ModifyRent({ rootState, commit }, form) {
+            let res = await modifyRent(rootState.Administrator.adminID, form);
+            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
@@ -147,10 +146,10 @@ export default {
         },
 
         // 添加
-        async AddRoom({ rootState, commit }, form) {
-            let tableName_room = 'room_' + rootState.Administrator.adminID
-            let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
-            let res = await newRoom(form, tableName_room, tableName_roomtype);
+        async AddRent({ rootState, commit }, form) {
+            let tableName_room = 'rent_' + rootState.Administrator.adminID
+            let res = await newRent(tableName_room, form);
+            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
@@ -173,17 +172,10 @@ export default {
             }
         },
 
-        // 房型列表
-        async TypeList({ rootState }) {
-            let tableName = 'roomtype_' + rootState.Administrator.adminID
-            let res = await typeList(tableName)
-            if (res) return res.data
-        },
-
-        // 合同列表
-        async ContractList({ rootState }) {
-            let tableName = 'contract_' + rootState.Administrator.adminID
-            let res = await contractList(tableName)
+        // 月份列表
+        async MonthsList({ rootState }, ContractNo) {
+            let res = await getMonthsList(rootState.Administrator.adminID, ContractNo)
+            // console.log(res);
             if (res) return res.data
         }
     }

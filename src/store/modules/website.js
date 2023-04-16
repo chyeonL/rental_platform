@@ -35,7 +35,7 @@ const actions = {
     async GetVillageInfoByID({ commit }, Staff_ID) {
         // console.log(Staff_ID);
         let res = await getVillageInfoByID(Staff_ID)
-        console.log(res);
+        // console.log(res);
         if (res) {
             commit('VillageInfo', res.data[0])
             return res
@@ -45,13 +45,13 @@ const actions = {
     async ChangeVillage(context, AreaID) {                    // 切换村庄
         // console.log(AreaID);
         let res = await changeVillage(AreaID)
-        console.log(res);
+        // console.log(res);
         if (res) return res
     },
 
     async GetCurrentVillage({ commit }) {                  // 当前村庄
         let res = await getCurrentVillage()
-        console.log(res);
+        // console.log(res);
         if (res) {
             commit('VillageInfo', res.data[0])
             return res
@@ -61,13 +61,13 @@ const actions = {
     async ModifyVillageInfo({ commit }, Info) {           // 修改
         // console.log(Info);
         let res = await ModifyVillageInfo(Info)
-        console.log(res);
+        // console.log(res);
         if (res) return res
     },
 
     async GetVillageList({ commit }) {                  // 获取村庄list
         let res = await getVillageList()
-        console.log(res);
+        // console.log(res);
         return res.data
     },
 
@@ -77,14 +77,14 @@ const actions = {
     async ChangeHouse(context, { AreaID, Landlord_ID }) {       // 切换
         // console.log(AreaID, Landlord_ID);
         let res = await changeHouse(AreaID, Landlord_ID)
-        console.log(res);
+        // console.log(res);
         if (res) return res
     },
 
     async GetCurrentHouse({ commit }, AreaID) {      // 当前出租屋
         // console.log(AreaID);
         let res = await getCurrentHouse(AreaID)
-        console.log(res);
+        // console.log(res);
         if (res) {
             commit('HouseInfo', res.data[0])
             return res
@@ -94,14 +94,14 @@ const actions = {
     async GetHouseList({ commit }, AreaID) {    // 出租屋list
         // console.log(AreaID);
         let res = await getHouseList(AreaID)
-        console.log(res);
+        // console.log(res);
         return res.data
     },
 
     async GetHouseInfoByID({ commit }, ID) {        // 获取 出租资讯 Landlord_ID
         // console.log(ID);
         let res = await getHouseInfoByID(ID)
-        console.log(res);
+        // console.log(res);
         if (res) {
             commit('HouseInfo', res.data[0])
             return res
@@ -109,23 +109,23 @@ const actions = {
     },
 
     async ModifyHouseInfo({ commit }, Info) {        // 修改
-        console.log(Info);
+        // console.log(Info);
         let res = await modifyHouseInfo(Info)
-        console.log(res);
+        // console.log(res);
         if (res) return res
     },
 
     async UploadCover({ commit }, { url, ID, coverSeq }) {        // 上传图片
-        console.log(url, ID, coverSeq);
+        // console.log(url, ID, coverSeq);
         let res = await uploadCover(url, ID, coverSeq)
-        console.log(res);
+        // console.log(res);
         if (res) return res
     },
 
     async getRoomtypeList({ rootState }, Landlord_ID) {
         let tableName = 'roomtype_' + Landlord_ID
         let res = await roomtypeList(tableName)
-        console.log(res);
+        // console.log(res);
         if (res) return res.data
     }
 

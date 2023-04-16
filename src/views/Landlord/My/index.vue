@@ -27,7 +27,6 @@
         <el-descriptions-item label="名字"  content-class-name="my-content" :span='3'>{{userInfo.Name}}</el-descriptions-item>
         <el-descriptions-item label="角色" :span='1' >{{userInfo.Role === 'staff'?'工作人员':'房东'}}</el-descriptions-item>
         <el-descriptions-item label="管理员ID" :span='4'>{{userInfo.Admin_ID}}</el-descriptions-item>
-        <!-- <el-descriptions-item label="账户状态" :span='2' >{{userInfo.AccountStatus}}</el-descriptions-item> -->
         <el-descriptions-item label="账号" :span='4'>{{userInfo.UserName}}</el-descriptions-item>
         <el-descriptions-item label="密码" :span='4' >***</el-descriptions-item>
         <el-descriptions-item label="区域" :span='3'>{{userInfo.Area}}</el-descriptions-item>
@@ -220,7 +219,7 @@ export default {
   },
   methods: {
     upload(res) {
-      console.log("上传的文件是", res.file);
+      // console.log("上传的文件是", res.file);
       if (!res.file) {
         return;
       }
@@ -235,18 +234,18 @@ export default {
           StorageClass: "STANDARD", // 上传模式, 标准模式
           Body: res.file, // 上传文件对象
           onProgress: (progressData) => {
-            console.log("上传的进度", JSON.stringify(progressData));
+            // console.log("上传的进度", JSON.stringify(progressData));
             this.percentage = progressData.percent * 100;
           },
         },
         (err, data) => {
-          console.log(err);
+          // console.log(err);
           console.log(data);
           this.showProgress = false;
           // 上传成功之后
           if (data.statusCode === 200) {
             this.imgUrl = `https:${data.Location}`;
-            // console.log(this.imgUrl);
+            console.log(this.imgUrl);
             this.$store
               .dispatch("uploadAvatar", {
                 url: this.imgUrl,
@@ -313,16 +312,29 @@ export default {
 
     // 提交 修改
     submitMyInfo() {
-      // console.log(this.myInfo);
       if (
         !this.myInfo.Name ||
         !this.myInfo.UserName ||
         !this.myInfo.Tel ||
         !this.myInfo.Gender
       )
-        return this.$message.error("请完整输入");
-      else {
-        this.$confirm("确认修改我的信息", "确认修改", {
+        return this.$notify({
+          title: "错误提醒",
+          offset: 60,
+          duration: 2000,
+          type: "error",
+          message: "请完整输入",
+        });
+      else if (this.myInfo.Tel.length != 11) {
+        return this.$notify({
+          title: "错误提醒",
+          offset: 60,
+          duration: 2000,
+          type: "error",
+          message: "请输入11位手机号",
+        });
+      } else {
+        this.$confirm("确认修改账号信息？", "确认修改", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           center: true,
@@ -339,23 +351,27 @@ export default {
               })
               .then((res) => {
                 if (res.success) {
-                  this.$store.dispatch("Login", {
-                    account: this.userInfo.UserName,
-                    password: this.userInfo.UserPassword,
-                  });
-                  // this.$message({
-                  //   type: "success",
-                  //   message: res.msg + ",需要重新登录",
-                  // });
-                  // this.MyPwdVisible = false;
-                  // this.$store.dispatch("Logout");
-                  // setTimeout(() => {
-                  //   this.$router.go(0);
-                  // }, 2000);
+                  this.$store
+                    .dispatch("Login", {
+                      account: this.userInfo.UserName,
+                      password: this.userInfo.UserPassword,
+                    })
+                    .then(() => {
+                      this.$notify({
+                        title: "成功",
+                        offset: 60,
+                        duration: 2000,
+                        type: "success",
+                        message: "修改账户信息成功",
+                      });
+                    });
                 } else {
-                  this.$message({
+                  this.$notify({
+                    title: "错误提醒",
+                    offset: 60,
+                    duration: 2000,
                     type: "error",
-                    message: res.msg,
+                    message: "请输入11位手机号",
                   });
                 }
                 this.MyInfoVisible = false;
@@ -381,17 +397,20 @@ export default {
 
     // 修改密码
     submitForm() {
-      // console.log(this.ruleForm);
       if (
         !this.ruleForm.checkPass ||
         !this.ruleForm.newpwd ||
         !this.ruleForm.oldpwd
       )
-        return this.$message.error("请完整输入");
+        return this.$notify({
+          title: "错误提醒",
+          offset: 60,
+          duration: 2000,
+          type: "error",
+          message: "请完整输入",
+        });
       else {
         if (this.ruleForm.checkPass == this.ruleForm.newpwd) {
-          // 发请求
-          // console.log(this.ruleForm);
           let No = this.userInfo.No;
           let oldpwd = this.ruleForm.oldpwd;
           let newPwd = this.ruleForm.newpwd;
@@ -410,13 +429,19 @@ export default {
                       this.$store.dispatch("Logout").then(() => {
                         this.$router.go(0);
                       });
-                      this.$message({
+                       this.$notify({
+                        title: "成功",
+                        offset: 60,
+                        duration: 2000,
                         type: "success",
-                        message: res.msg + ",需要重新登录",
+                        message: "成功注销，需要重新登陆...",
                       });
-                    }, 1000);
+                    }, 2000);
                   } else {
-                    this.$message({
+                    this.$notify({
+                      title: "错误提醒",
+                      offset: 60,
+                      duration: 2000,
                       type: "error",
                       message: res.msg,
                     });
@@ -425,7 +450,13 @@ export default {
             })
             .catch(() => {});
         } else {
-          return this.$message.error("两次输入的新密码不相同");
+          return this.$notify({
+            title: "错误提醒",
+            offset: 60,
+            duration: 2000,
+            type: "error",
+            message: "两次输入的新密码不相同",
+          });
         }
       }
     },
@@ -523,9 +554,10 @@ header {
   border-radius: 40px;
   ::v-deep .my-label {
     width: 90px;
-    // border: 1px solid black;
     text-align: center;
-    background-color: rgb(220, 220, 220);
+    color: rgb(241, 208, 75);
+    font-weight: 700;
+    background-color: rgb(36, 41, 46);
   }
 }
 

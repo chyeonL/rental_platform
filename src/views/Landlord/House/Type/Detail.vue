@@ -17,11 +17,16 @@
         <el-form-item  prop='Type'>
            <label>房间类型</label>
           <el-input v-model="form.Type"></el-input>
-        </el-form-item>        
+        </el-form-item>      
 
        <el-form-item prop='Amount'>
-           <label>房间数量</label>
-          <el-input v-model.number="form.Amount"></el-input>
+           <label>房间总数</label>  
+          <el-input v-model.number="form.Amount" disabled></el-input>
+        </el-form-item>    
+
+       <el-form-item prop='AvailableRoomsQuantity'>
+           <label>未出租的房间数量</label>  
+          <el-input v-model.number="form.AvailableRoomsQuantity" disabled></el-input>
         </el-form-item>  
 
        <el-form-item prop='Furnishment'>
@@ -30,8 +35,8 @@
         </el-form-item>
         
         <el-form-item prop='RoomNumber'>
-           <label>房间号</label>
-          <el-input v-model="form.RoomNumber"></el-input>
+           <label>房间列表</label>
+          <el-input v-model="form.RoomNumber" placeholder="通过新增/修改房间修改" disabled></el-input>
         </el-form-item>
 
         <el-form-item prop='Square'>
@@ -42,11 +47,6 @@
         <el-form-item prop='Price'>
            <label>房租</label>
           <el-input v-model="form.Price"></el-input>
-        </el-form-item>
-
-        <el-form-item prop='MortgageCash'>
-           <label>押金</label>
-          <el-input v-model="form.MortgageCash"></el-input>
         </el-form-item>
 
         <el-form-item prop='MortgageMethod'>
@@ -132,7 +132,7 @@ export default {
       },
       form: {
         Type: "",
-        Amount: "",
+        Amount: 0,
         RoomNumber: "",
         Furnishment: "",
         Square: "",
@@ -140,15 +140,19 @@ export default {
         MortgageCash: "",
         MortgageMethod: "",
         Picture: "",
+        AvailableRoomsQuantity: 0,
       },
       rules: {
         Type: [{ required: true, message: "请输入房型", trigger: "change" }],
-        Amount: [
-          { required: true, message: "请输入房间数量", trigger: "change" },
-        ],
-        RoomNumber: [
-          { required: true, message: "请输入房间号", trigger: "change" },
-        ],
+        // Amount: [
+        //   { required: true, message: "请输入房间总数", trigger: "change" },
+        // ],
+        // AvailableRoomsQuantity: [
+        //   { required: true, message: "请输入未出租的房间数量", trigger: "change" },
+        // ],
+        // RoomNumber: [
+        //   { required: true, message: "请输入房间号", trigger: "change" },
+        // ],
         Furnishment: [
           { required: true, message: "请输入配置", trigger: "change" },
         ],
@@ -156,13 +160,10 @@ export default {
           { required: true, message: "请输入房间面积", trigger: "change" },
         ],
         Price: [{ required: true, message: "请输入房租", trigger: "change" }],
-        MortgageCash: [
-          { required: true, message: "请输入押金", trigger: "change" },
-        ],
         MortgageMethod: [
           { required: true, message: "请输入按押方式", trigger: "change" },
         ],
-        Picture: [{ required: true, message: "请上传图片", trigger: "change" }],
+        Picture: [{ required: true, message: "请上传图片", trigger: "blur" }],
       },
     };
   },
@@ -171,29 +172,30 @@ export default {
   },
   mounted() {
     this.$refs.form.clearValidate();
+    this.$notify({
+      title: "限制",
+      offset: 60,
+      duration: 4000,
+      type: "warning",
+      message: "无法直接修改与房间号相关的信息",
+    });
   },
   methods: {
-    // 编辑/查阅
     EditHandler() {
       this.IsEdit = !this.IsEdit;
       if (this.IsEdit) this.getDetail();
     },
 
-    // 获取详情
     getDetail() {
       this.$store
         .dispatch("RoomTypeDetail", this.$route.query.No)
         .then((res) => {
-          // console.log(res);
           this.form = res;
-          // console.log(this.form);
         });
     },
 
-    // 修改
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(this.form);
         if (valid) {
           this.$confirm("确认编辑房间类型?", "确认编辑", {
             confirmButtonText: "确定",
@@ -201,12 +203,9 @@ export default {
             center: true,
           })
             .then(() => {
-              this.$store
-                .dispatch("ModifyRoomtype", this.form)
-                .then((res) => {
-                  // console.log(res);
-                  this.EditHandler();
-                });
+              this.$store.dispatch("ModifyRoomtype", this.form).then(() => {
+                this.EditHandler();
+              });
             })
             .catch(() => {});
         }
@@ -215,7 +214,7 @@ export default {
 
     // 上传图片
     upload(res) {
-      console.log("上传的文件是", res.file);
+      // console.log("上传的文件是", res.file);
       if (!res.file) {
         return;
       }
@@ -230,24 +229,24 @@ export default {
           StorageClass: "STANDARD", // 上传模式, 标准模式
           Body: res.file, // 上传文件对象
           onProgress: (progressData) => {
-            console.log("上传的进度", JSON.stringify(progressData));
+            // console.log("上传的进度", JSON.stringify(progressData));
             this.percentage = progressData.percent * 100;
           },
         },
         (err, data) => {
-          console.log(err);
-          console.log(data);
+          // console.log(err);
+          // console.log(data);
           this.showProgress = false;
           // 上传成功之后
           if (data.statusCode === 200) {
             this.form.Picture = `https:${data.Location}`;
-            console.log(this.form.Picture);
+            // console.log(this.form.Picture);
             this.$store
               .dispatch("TypePicture", {
                 url: this.form.Picture,
                 No: this.form.No,
               })
-              .then((res) => {
+              .then(() => {
                 this.uploadVisible = false;
               });
           }
@@ -255,11 +254,12 @@ export default {
         }
       );
     },
+
     // 触发 上传
     submitUpload() {
       this.$refs.upload.submit();
     },
-    // 上传前检查
+
     beforeAvatarUpload(file) {
       let isJPG;
       if (

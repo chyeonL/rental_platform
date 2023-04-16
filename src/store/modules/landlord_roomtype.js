@@ -1,5 +1,5 @@
-import { allRoomType, DetailRoomType, newRoomType, roomTypePictur, modifyRoomtype, deleteRoomtype, searchRoomtype } from '@/api'
-import { Message } from "element-ui";
+import { allRoomType, DetailRoomType, newRoomType, roomTypePicture, modifyRoomtype, deleteRoomtype, searchRoomtype } from '@/api'
+import { Notification } from "element-ui";
 export default {
     state: {
         total: 0,
@@ -45,7 +45,10 @@ export default {
             commit("all", res);
             if (res) {  // 成功
                 if (!res.success)
-                    Message({
+                    Notification({
+                        title: "失败提醒",
+                        offset: 60,
+                        duration: 2000,
                         type: "error",
                         message: "信息获取失败！",
                     });
@@ -54,29 +57,31 @@ export default {
         },
 
         // 上传照片
-        async TypePicture({ rootState, commit }, { url, No }) {
+        async TypePicture({ rootState }, { url, No }) {
             let tableName = 'roomtype_' + rootState.Administrator.adminID
-            // console.log(url, No, tableName);
-            let res = await roomTypePictur(url, No, tableName)
-            console.log(res);
+            let res = await roomTypePicture(url, No, tableName)
         },
 
 
         // 搜索
         async SearchRoomtype({ rootState, commit }, { keywords, pageNo }) {
             let tableName = 'roomtype_' + rootState.Administrator.adminID
-            // console.log(keywords, pageNo, tableName);
             let res = await searchRoomtype(keywords, pageNo, tableName);
-            console.log(res);
             commit("search", res);
             if (res) {  // 成功
                 if (!res.success)
-                    Message({
+                    Notification({
+                        title: "失败提醒",
+                        offset: 60,
+                        duration: 2000,
                         type: "error",
                         message: "搜索失败！没有找到相关记录。",
                     });
                 else
-                    Message({
+                    Notification({
+                        title: "成功",
+                        offset: 60,
+                        duration: 2000,
                         type: "success",
                         message: "搜索成功！",
                     });
@@ -87,18 +92,22 @@ export default {
         // 删除
         async DeleteRoomtype({ rootState }, No) {
             let tableName = 'roomtype_' + rootState.Administrator.adminID
-            // console.log(No, tableName);
             let res = await deleteRoomtype(No, tableName);
-            console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
-                    Message({
+                    Notification({
+                        title: "成功",
+                        offset: 60,
+                        duration: 2000,
                         type: "success",
                         message: "成功删除！",
                     });
                 else
-                    Message({
+                    Notification({
+                        title: "失败提醒",
+                        offset: 60,
+                        duration: 2000,
                         type: "error",
                         message: "删除失败",
                     });
@@ -109,9 +118,7 @@ export default {
         // 获取详情
         async RoomTypeDetail({ rootState, commit }, No) {
             let tableName = 'roomtype_' + rootState.Administrator.adminID
-            // console.log(No, tableName);
             let res = await DetailRoomType(No, tableName);
-            console.log(res);
             commit('detail', res.data[0])
             if (res) {  // 成功
                 return res.data[0];
@@ -121,17 +128,23 @@ export default {
         // 编辑
         async ModifyRoomtype({ rootState, commit }, form) {
             let tableName = 'roomtype_' + rootState.Administrator.adminID
-            let res = await modifyRoomtype(form, tableName );
-            console.log(res);
+            let res = await modifyRoomtype(form, tableName);
+            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
-                    Message({
+                    Notification({
+                        title: "成功",
+                        offset: 60,
+                        duration: 2000,
                         type: "success",
                         message: "编辑成功！",
                     });
                 else
-                    Message({
+                    Notification({
+                        title: "失败提醒",
+                        offset: 60,
+                        duration: 2000,
                         type: "error",
                         message: "编辑失败",
                     });
@@ -144,21 +157,27 @@ export default {
             let tableName = 'roomtype_' + rootState.Administrator.adminID
             // console.log(form, tableName);
             let res = await newRoomType(form, tableName);
-            console.log(res);
+            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
-                    Message({
+                    Notification({
+                        title: "成功",
+                        offset: 60,
+                        duration: 2000,
                         type: "success",
                         message: "新增成功！",
                     });
                 else
-                    Message({
+                    Notification({
+                        title: "失败提醒",
+                        offset: 60,
+                        duration: 2000,
                         type: "error",
                         message: "新增失败",
                     });
                 return res.success;
             }
-        },
+        }
     }
 }

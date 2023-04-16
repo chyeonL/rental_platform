@@ -7,7 +7,7 @@ import {
   goAddHouse,
   getLandlordIdList
 } from "@/api";
-import { Message } from "element-ui";
+import { Notification } from "element-ui";
 const state = {
   total: 0,
   pageSize: 5, // 获取后端设定的页面数据量大小，
@@ -49,31 +49,40 @@ const actions = {
   async GetAllHouse({ rootState, commit }, pageNo) {
     // console.log(rootState.Administrator.adminID);
     let res = await getAllHouse(pageNo, rootState.Administrator.adminID);
-    console.log(res);
+    // console.log(res);
     commit("AllHouse", res);
     if (res) {  // 成功
       if (!res.success)
-        Message({
+        Notification({
           type: "error",
           message: "信息获取失败！",
-        });
+          title: '失败提醒',
+          offset: 60,
+          duration: 2000
+        })
       return res.success;
     }
   },
 
   // 搜索
-  async SearchHouse({ rootState, commit }, {keywords, pageNo}) {
+  async SearchHouse({ rootState, commit }, { keywords, pageNo }) {
     let res = await goSearchHouse({ keywords, pageNo, ID: rootState.Administrator.adminID });  // params包括 keywords和pageNo
-    console.log(res);
+    // console.log(res);
     commit("SearchList", res);
     if (res) {  // 成功
       if (!res.success)
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "搜索失败！没有找到相关记录。",
         });
       else
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "搜索成功！",
         });
@@ -85,16 +94,22 @@ const actions = {
   async DeleteHouse(context, No) {
     // params包括 keywords和pageNo
     let res = await goDeletehHouse({ No });
-    console.log(res);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "成功删除！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "删除失败",
         });
@@ -105,7 +120,7 @@ const actions = {
   // 获取详情
   async HouseDetail({ commit }, No) {
     let res = await getHouseDetail(No);
-    console.log(res);
+    // console.log(res);
     commit('HouseDetail', res.data[0])
     if (res) {  // 成功
       return res.data[0];
@@ -116,16 +131,22 @@ const actions = {
   async ModifyHouse({ commit }, data) {
     console.log(data);
     let res = await goModifyHouse(data);
-    console.log(res);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
           message: "编辑成功！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
           message: "编辑失败",
         });
@@ -136,18 +157,24 @@ const actions = {
   // 添加
   async AddHouse({ commit }, data) {
     let res = await goAddHouse(data);
-    console.log(res);
+    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
-        Message({
+        Notification({
+          title: "成功",
+          offset: 60,
+          duration: 2000,
           type: "success",
-          message: "新增成功！",
+          message: "编辑成功！",
         });
       else
-        Message({
+        Notification({
+          title: "失败提醒",
+          offset: 60,
+          duration: 2000,
           type: "error",
-          message: "新增失败",
+          message: "编辑失败",
         });
       return res.success;
     }
@@ -157,7 +184,7 @@ const actions = {
   async LandlordIdList(context, data) {
     let res = await getLandlordIdList(data)
     if (res) {
-      console.log(res);
+      // console.log(res);
       return res.data
     }
   }

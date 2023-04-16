@@ -53,7 +53,7 @@
             ></el-date-picker>
         </el-form-item>
 
-        <el-form-item prop='EndDate'>
+        <!-- <el-form-item prop='EndDate'>
            <label for="EndDate">离开时间</label>
           <el-date-picker
               type="date"
@@ -61,7 +61,7 @@
               value-format='yyyy-MM-dd'
               v-model="form.EndDate"              
             ></el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item prop='Marriage'>
            <label for="Marriage">婚育情况</label>
@@ -78,7 +78,7 @@
           <el-input v-model="form.Tel"></el-input>
         </el-form-item>
 
-        <el-form-item prop='Birth'>
+        <!-- <el-form-item prop='Birth'>
            <label for="Birth">出生日期</label>
           <el-date-picker
               type="date"
@@ -86,7 +86,7 @@
               value-format='yyyy-MM-dd'
               v-model="form.Birth"              
             ></el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item prop='Origin'>
            <label for="Origin">籍贯</label>
@@ -125,8 +125,8 @@ export default {
       form: {
         Area: "",
         AreaID: "",
-        Birth: "",
-        EndDate: "",
+        // Birth: "",
+        // EndDate: "",
         StartDate: "",
         Note: "",
         Tel: "",
@@ -162,8 +162,8 @@ export default {
             trigger: "change",
           },
         ],
-        EndDate: [{ required: true, message: "请选择时间", trigger: "change" }],
-        Birth: [{ required: true, message: "请选择时间", trigger: "change" }],
+        // EndDate: [{ required: true, message: "请选择时间", trigger: "change" }],
+        // Birth: [{ required: true, message: "请选择时间", trigger: "change" }],
         Origin: [{ required: true, message: "请输入籍贯", trigger: "change" }],
         Marriage: [{ required: true, message: "请选择", trigger: "change" }],
         Gender: [{ required: true, message: "请选择", trigger: "change" }],
@@ -223,8 +223,8 @@ export default {
     // 重置
     resetForm(formName) {
       this.form = {
-        Birth: "",
-        EndDate: "",
+        // Birth: "",
+        // EndDate: "",
         StartDate: "",
         Note: "",
         Tel: "",

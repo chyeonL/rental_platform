@@ -2,7 +2,7 @@
   <div id="Contract_detail">
     <header>
       <Breadcrumb  :routes='routes'/>
-      <el-button icon="el-icon-edit" @click="EditHandler" v-show="IsEdit">编辑模式</el-button> 
+      <el-button icon="el-icon-edit" @click="EditHandler" v-show="IsEdit &&!IsEnd">编辑模式</el-button> 
       <el-button icon="el-icon-tickets" @click="EditHandler" v-show="!IsEdit">查阅模式</el-button>     
     </header>    
 
@@ -14,114 +14,107 @@
         :rules='rules'
         :disabled='IsEdit===true?true:false'
       >            
-        <el-form-item  prop='Title'>
-           <label>标题</label>
-          <el-input v-model="form.Title"></el-input>
+        <el-form-item  prop='Room'>
+           <label>房间号</label>
+           <el-input v-model="form.Room" disabled></el-input>
         </el-form-item>        
-
-       <el-form-item prop='Owner'>
-           <label>屋主</label>
-          <el-input v-model="form.Owner" placeholder=""></el-input>
-        </el-form-item>  
-
-       <el-form-item prop='HouseNumber'>
-           <label>门牌号</label>
-          <el-input v-model="form.HouseNumber" placeholder="请输入门牌号"></el-input>
+        
+        <el-form-item prop='Stage'>
+           <label for="Stage">合同状态</label>
+           <el-select v-model="form.Stage" clearable placeholder="请选择" class="small" :disabled='IsEnd'>
+              <el-option label="租约中" value="租约中"></el-option>
+              <el-option label="租约结束" value="租约结束"></el-option>
+            </el-select>
         </el-form-item>
         
-        <el-form-item prop='Area'>
-           <label for="Area">区域</label>
-          <el-input v-model="form.Area" disabled class="small"></el-input>
+        <el-form-item prop='RoomType'>
+           <label for="RoomType">房型</label>
+           <el-input v-model="form.RoomType" disabled></el-input>
         </el-form-item>
 
-        <el-form-item prop='StaffName'>
-           <label for="StaffName">工作人员</label>
-          <el-input v-model="form.StaffName" disabled class="small"></el-input>
+       <el-form-item prop='TenantID'>
+           <label>租客身份证号</label>
+          <el-input v-model="form.TenantID" placeholder="请输入身份证号" disabled></el-input>
         </el-form-item>  
 
-        <el-form-item prop='Time'>
-            <label for="Time">巡查时间</label>
+       <el-form-item prop='TenantName'>
+           <label>租客姓名</label>
+          <el-input v-model="form.TenantName" placeholder="请输入身份证上的姓名" disabled></el-input>
+        </el-form-item>
+        
+        <el-form-item prop='Tel'>
+           <label for="Tel">租客联系电话</label>   
+          <el-input v-model="form.Tel" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item prop='StartDate'>
+            <label for="StartDate">起租日</label>
             <el-date-picker
               type="date"
               placeholder="选择日期"
               value-format='yyyy-MM-dd'
-              v-model="form.Time"              
+              v-model="form.StartDate"   
+               disabled           
             ></el-date-picker>
         </el-form-item>
 
-        <el-form-item  prop='Overall'>
-           <label>总体巡查情况</label>
-           <el-select v-model="form.Overall" clearable placeholder="请选择">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="需整改" value="需整改"></el-option>
-            </el-select>
+        <el-form-item prop='Term'>
+           <label for="Term">租期</label>
+          <el-input v-model="form.Term" class="small"   disabled></el-input>
         </el-form-item>  
 
-        <el-form-item prop='FailReason' v-if="form.Overall === '需整改'">
-           <label for="FailReason">不合格原因</label>
-          <el-input v-model="form.FailReason"></el-input>
+        <el-form-item prop='Rent'>
+           <label for="Rent">月租</label>
+          <el-input v-model="form.Rent" disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='EntranceGuard'>
-           <label for="EntranceGuard">门禁</label>
-          <el-select v-model="form.EntranceGuard" clearable placeholder="请选择" class="small">
-              <el-option label="未安装" value="未安装"></el-option>
-              <el-option label="已安装" value="已安装"></el-option>
-            </el-select>
+        <el-form-item prop='MortgageMethod'>
+           <label for="MortgageMethod">按押方式</label>
+           <el-input v-model="form.MortgageMethod" disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='ServeillanceSystem'>
-           <label for="ServeillanceSystem">监控</label>
-          <el-select v-model="form.ServeillanceSystem" clearable placeholder="请选择" class="small">
-              <el-option label="未安装" value="未安装"></el-option>
-              <el-option label="已安装" value="已安装"></el-option>
-            </el-select>
+        <el-form-item prop='MortgageCash'>
+           <label for="MortgageCash">押金</label>
+           <el-input v-model="form.MortgageCash" disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='FireSafety'>
-           <label for="FireSafety">消防安全</label>
-          <el-select v-model="form.FireSafety" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='CollectionDate'>
+           <label for="CollectionDate">收租日</label>
+           <el-input v-model="form.CollectionDate" placeholder="每月 xx 号"  disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='Sanitry'>
-           <label for="Sanitry">卫生状况</label>
-          <el-select v-model="form.Sanitry" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='Population'>
+           <label for="Population">实际租住人数</label>
+          <el-input v-model="form.Population" class="small"  disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='Structural'>
-           <label for="Structural">房屋整体结构</label>
-          <el-select v-model="form.Structural" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='UnitWaterFee'>
+           <label for="UnitWaterFee">单位水费(元/吨)</label>   
+            <el-input v-model="form.UnitWaterFee"  disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='Circuit'>
-           <label for="Circuit">电路安全</label>
-          <el-select v-model="form.Circuit" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='UnitElectricityCharge'>
+           <label for="UnitElectricityCharge">单位电费(元/度)</label>
+          <el-input v-model="form.UnitElectricityCharge"  disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='Other'>
-           <label for="Other">其他</label>
-          <el-input v-model="form.Other"></el-input>
+        <el-form-item prop='NetworkFee'>
+           <label for="NetworkFee">网费</label>   
+          <el-input v-model="form.NetworkFee"  disabled></el-input>
+        </el-form-item>
+        
+        <el-form-item prop='PublicCleanFee'>
+           <label for="PublicCleanFee">卫生费</label>
+          <el-input v-model="form.PublicCleanFee"  disabled></el-input>
         </el-form-item>
 
         <el-form-item prop='Note'>
            <label for="Note">备注</label>
-          <el-input type="textarea" v-model="form.Note" class="note"></el-input>
+          <el-input type="textarea" v-model="form.Note" class="note"  disabled></el-input>
         </el-form-item>
 
         <el-form-item class="btns">
-          <el-button type="success" @click="submitForm('form')" size="medium">提交</el-button>
+          <el-button type="success" @click="submitForm('form')" size="medium" v-if='!IsEnd'>提交</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -130,70 +123,42 @@
 
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb.vue";
-import { mapState } from "vuex";
 export default {
   name: "Contract_detail",
   components: { Breadcrumb },
   data() {
     return {
-      IsEdit: true, // true为 查阅模式
+      IsEdit: true,
       routes: {
-        // 面包屑导航 对象
-        nav: "安全检查",
-        parent: "巡视记录",
+        nav: "签署合同",
+        parent: "合同管理",
         parentRoute: "all",
-        children: "具体信息",
+        children: "合同详细",
       },
       form: {
-        Area: "",
-        HouseNumber: "",
-        ServeillanceSystem: "",
-        EntranceGuard: "",
+        Room: "",
+        RoomType: "",
+        TenantID: "",
+        TenantName: "",
+        Population: "",
+        StartDate: "",
+        Term: "",
+        Rent: "",
+        MortgageMethod: "",
+        MortgageCash: "",
+        CollectionDate: "",
+        PublicCleanFee: "",
+        NetworkFee: "",
+        UnitWaterFee: "",
+        UnitElectricityCharge: "",
+        Stage: "",
+        Tel: "",
         Note: "",
-        FireSafety: "",
-        Time: "",
-        StaffName: "",
-        Owner: "",
-        Staff_ID: "",
-        Sanitry: "",
-        Other: "",
-        Structural: "",
-        Circuit: "",
-        FailReason: "",
-        Overall: "",
-        Title: "",
       },
       rules: {
-        Title: [{ required: true, message: "请输入标题", trigger: "change" }],
-        Owner: [
-          {
-            required: true,
-            message: "请输入身份证上的姓名",
-            trigger: "change",
-          },
-        ],
-        HouseNumber: [
-          { required: true, message: "请输入门牌号", trigger: "change" },
-        ],
-        FireSafety: [{ required: true, message: "请选择", trigger: "change" }],
-        ServeillanceSystem: [
-          { required: true, message: "请选择", trigger: "change" },
-        ],
-        EntranceGuard: [
-          {
-            required: true,
-            message: "请选择",
-            trigger: "change",
-          },
-        ],
-        Time: [{ required: true, message: "请选择时间", trigger: "change" }],
-        Structural: [{ required: true, message: "请选择", trigger: "change" }],
-        Circuit: [{ required: true, message: "请选择", trigger: "change" }],
-        Sanitry: [{ required: true, message: "请选择", trigger: "change" }],
-        Overall: [{ required: true, message: "请选择", trigger: "change" }],
-        FailReason: [{ required: true, message: "请选择", trigger: "change" }],
+        Stage: [{ required: true, message: "请选择", trigger: "change" }],
       },
-      options: [],
+      IsEnd: false,
     };
   },
   created() {
@@ -201,48 +166,69 @@ export default {
   },
   mounted() {
     this.$refs.form.clearValidate();
-  },
-  computed: {
-    ...mapState({
-      StaffID: (state) => state.Administrator.userInfo.Admin_ID,
-    }),
+    this.$notify({
+      title: "限制",
+      offset: 60,
+      duration: 4000,
+      type: "warning",
+      message: "合同签署后，不可更改所有具体信息，只能更改合同状态",
+    });
   },
   methods: {
-    // 编辑/查阅
     EditHandler() {
       this.IsEdit = !this.IsEdit;
       if (this.IsEdit) this.getDetail();
     },
 
-    // 获取详情
     getDetail() {
       this.$store
-        .dispatch("InspectationDetail", this.$route.query.No)
+        .dispatch("DetailContract", this.$route.query.No)
         .then((res) => {
           this.form = res;
-          // console.log(this.form);
+          if (this.form.Stage === "租约结束") {
+            this.IsEnd = true;
+            this.$notify({
+              title: "提醒",
+              offset: 80,
+              duration: 4000,
+              type: "info",
+              message: "合同处于租约结束状态，不可编辑",
+            });
+          }
         });
     },
 
-    // 提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(this.form);
         if (valid) {
-          this.$confirm("确认编辑巡视记录?", "确认编辑", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            center: true,
-          })
-            .then(() => {
-              this.$store
-                .dispatch("ModifyInspectation", this.form)
-                .then((res) => {
-                  // console.log(res);
-                  this.EditHandler();
-                });
+          if (this.form.Stage === "租约结束")
+            this.$confirm("确定结束租约?", "确认结束", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              center: true,
             })
-            .catch(() => {});
+              .then(() => {
+                this.$store
+                  .dispatch("TerminateContract", {
+                    No: this.form.No,
+                    Room: this.form.Room,
+                    RoomType: this.form.RoomType,
+                  })
+                  .then(() => {
+                    this.EditHandler();
+                    this.$router.go(0);
+                  });
+              })
+              .catch(() => {});
+          else {
+            this.$notify({
+              title: "限制",
+              offset: 60,
+              duration: 4000,
+              type: "warning",
+              message: "合同状态无变更",
+            });
+          }
         }
       });
     },

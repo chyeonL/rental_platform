@@ -23,6 +23,7 @@
         :data="type==='all'?list:search"
         border
         :header-cell-style="{background:'#24292e',color:'#ffd04b',borderColor:'#4c4c4c'}"
+        :row-class-name="rowsToBeComplete"
       >
        <el-table-column
         label="编号"
@@ -143,11 +144,26 @@ export default {
         center: true,
       })
         .then(async () => {
+          if(row.RentStatus === '已出租'){
+            this.$notify({
+              title:'警告提醒',
+              offset:80,
+              duration:3000,
+              message:'该房间已出租，暂时无法删除',
+              type:'warning'
+            })
+          }
+          else
           await this.$store
-            .dispatch("DeleteRoom", row.No)
+            .dispatch("DeleteRoom", {No:row.No, RoomType:row.RoomType, RoomNumber:row.RoomNumber})
             .then((res) => this.getData());
         })
         .catch(() => {});
+    },
+
+    // 租约中的行
+    rowsToBeComplete({ row }) {
+      if (row.RentStatus === "已出租") return "warning2-row";
     },
   },
 };
@@ -181,7 +197,6 @@ header {
     font-size: 14px;
     color: #ffd04b;
     background-color: #24292e;
-    // border-radius: 15px;
   }
 }
 
@@ -197,5 +212,8 @@ main {
       padding: 8px;
     }
   }
+}
+::v-deep .el-table .warning2-row {
+  background: rgb(235, 249, 227);
 }
 </style>

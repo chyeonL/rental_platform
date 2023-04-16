@@ -5,20 +5,20 @@ const Staff = ()=>import('@/views/Staff')
 // const SHome = ()=>import('@/views/Staff/Home')
 const SMy = ()=>import('@/views/Staff/My')
 const SWebsite = ()=>import('@/views/Staff/Website/index.vue')
-const Info = ()=>import('@/views/Staff/Information')
-const Info_House_All = ()=>import('@/views/Staff/Information/House/All.vue')    // 信息采集
-const Info_House_New = ()=>import('@/views/Staff/Information/House/New.vue')
-const Info_House_Detail = ()=>import('@/views/Staff/Information/House/Detail.vue')
-const Info_Migrant_All = ()=>import('@/views/Staff/Information/Migrant/All.vue')
-const Info_Migrant_New = ()=>import('@/views/Staff/Information/Migrant/New.vue')
-const Info_Migrant_Detail = ()=>import('@/views/Staff/Information/Migrant/Detail.vue')
+const SHouse = ()=>import('@/views/Staff/House')     // 出租屋
+const SHouse_All = ()=>import('@/views/Staff/House/All.vue')
+const SHouse_New = ()=>import('@/views/Staff/House/New.vue')
+const SHouse_Detail = ()=>import('@/views/Staff/House/Detail.vue')
+const Migrant = ()=>import('@/views/Staff/Migrant') // 流动人员
+const Migrant_All = ()=>import('@/views/Staff/Migrant/All.vue')
+const Migrant_New = ()=>import('@/views/Staff/Migrant/New.vue')
+const Migrant_Detail = ()=>import('@/views/Staff/Migrant/Detail.vue')
 const Inspectation = ()=>import('@/views/Staff/Inspectation')       // 安全检查
 const Inspectation_All = ()=>import('@/views/Staff/Inspectation/All.vue') 
 const Inspectation_New = ()=>import('@/views/Staff/Inspectation/New.vue')
 const Inspectation_Detail = ()=>import('@/views/Staff/Inspectation/Detail.vue')
 const SOpinion = ()=>import('@/views/Staff/Opinion/index.vue')                 // 意见反馈
 const SOpinion_All = ()=>import('@/views/Staff/Opinion/All.vue')
-const SOpinion_New = ()=>import('@/views/Staff/Opinion/New.vue')
 const SOpinion_Detail = ()=>import('@/views/Staff/Opinion/Detail.vue')
 
 
@@ -37,12 +37,12 @@ const House_Room_Detail = ()=>import('@/views/Landlord/House/Room/Detail.vue')
 const House_Type_All = ()=>import('@/views/Landlord/House/Type/All.vue')    // 房型
 const House_Type_New = ()=>import('@/views/Landlord/House/Type/New.vue')
 const House_Type_Detail = ()=>import('@/views/Landlord/House/Type/Detail.vue')
-const Migrant = ()=>import('@/views/Landlord/Migrant')
-const Migrant_All = ()=>import('@/views/Landlord/Migrant/All.vue')    // 流动人员
-const Migrant_New = ()=>import('@/views/Landlord/Migrant/New.vue')
-const Migrant_Detail = ()=>import('@/views/Landlord/Migrant/Detail.vue')
+const Rent = ()=>import('@/views/Landlord/Rent')
+const Rent_All = ()=>import('@/views/Landlord/Rent/All.vue')    // 月租
+const Rent_New = ()=>import('@/views/Landlord/Rent/New.vue')
+const Rent_Detail = ()=>import('@/views/Landlord/Rent/Detail.vue')
 const Tenant = ()=>import('@/views/Landlord/Tenant')
-const Tenant_All = ()=>import('@/views/Landlord/Tenant/All.vue')    // 收入
+const Tenant_All = ()=>import('@/views/Landlord/Tenant/All.vue')    // 租户
 const Tenant_New = ()=>import('@/views/Landlord/Tenant/New.vue')
 const Tenant_Detail = ()=>import('@/views/Landlord/Tenant/Detail.vue')
 const LOpinion = ()=>import('@/views/Landlord/Opinion')
@@ -67,53 +67,50 @@ export default [
         path:'/staff',
         name:'Staff',
         component:Staff,
-        redirect:'/staff/information/house/all',
+        redirect:'/staff/house/all',
         meta:{
             requireAuth:true
         },
         children:[
-            // {
-            //     path:'home',
-            //     name:'SHome',
-            //     component:SHome
-            // },
-            {   // 信息采集
-                path:'information',
-                name:'Information',
-                component:Info,
+            {   // 出租屋
+                path:'house',
+                name:'SHouse',
+                component:SHouse,
                 children:[
                     {
-                        path:'house/all',
-                        name:'allHouses',
-                        component:Info_House_All
+                        path:'all',
+                        name:'SHouse_All',
+                        component:SHouse_All
                     },
                     {
-                        path:'house/new',
-                        name:'newHouse',
-                        component:Info_House_New
+                        path:'new',
+                        name:'SHouse_New',
+                        component:SHouse_New
                     },
                     {
-                        path:'house/detail',
-                        name:'DetailHouse',
-                        component:Info_House_Detail
+                        path:'detail',
+                        name:'SHouse_Detail',
+                        component:SHouse_Detail
                     },
-                    {
-                        path:'migrant/all',
-                        name:'allMigrants',
-                        component:Info_Migrant_All
-                    },
-                    {
-                        path:'migrant/new',
-                        name:'newMigrant',
-                        component:Info_Migrant_New
-                    },
-                    {
-                        path:'migrant/detail',
-                        name:'DetailMigrant',
-                        component:Info_Migrant_Detail
-                    }
                 ]
             },
+            {   // 流动人员
+                path:'migrant',
+                name:'Migrant',
+                component:Migrant,
+                children:[
+                    {
+                        path:'all',
+                        name:'Migrant_All',
+                        component:Migrant_All
+                    },
+                    {
+                        path:'detail',
+                        name:'Migrant_Detail',
+                        component:Migrant_Detail
+                    },
+                ]
+            }, 
             {   // 安全检查
                 path:'inspectation',
                 name:'Inspectation',
@@ -145,11 +142,6 @@ export default [
                         path:'all',
                         name:'SOpinion_All',
                         component:SOpinion_All
-                    },
-                    {
-                        path:'new',
-                        name:'SOpinion_New',
-                        component:SOpinion_New
                     },
                     {
                         path:'detail',
@@ -244,7 +236,7 @@ export default [
                     }
                 ]
             },
-            {   // 租金
+            {   // 租客
                 path:'tenant',
                 name:'Tenant',
                 component:Tenant,
@@ -266,25 +258,25 @@ export default [
                     }
                 ]
             },
-            {   // 租客
-                path:'migrant',
-                name:'Migrant',
-                component:Migrant,
+            {   // 月租
+                path:'rent',
+                name:'Rent',
+                component:Rent,
                 children:[
                     {
                         path:'all',
-                        name:'Migrant_All',
-                        component:Migrant_All
+                        name:'Rent_All',
+                        component:Rent_All
                     },
                     {
                         path:'new',
-                        name:'Migrant_New',
-                        component:Migrant_New
+                        name:'Rent_New',
+                        component:Rent_New
                     },
                     {
                         path:'detail',
-                        name:'Migrant_Detail',
-                        component:Migrant_Detail
+                        name:'Rent_Detail',
+                        component:Rent_Detail
                     }
                 ]
             },

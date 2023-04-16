@@ -22,12 +22,17 @@
 
         <el-form-item prop='Rent'>
            <label>房租</label>
-          <el-input v-model="form.Rent"></el-input>
+          <el-input v-model="form.Rent" :placeholder="minimunRent"></el-input>
         </el-form-item>
 
         <el-form-item prop='MortgageCash'>
            <label>押金</label>
           <el-input v-model="form.MortgageCash"></el-input>
+        </el-form-item>
+
+        <el-form-item prop='MortgageMethod'>
+           <label>按押方式</label>
+          <el-input v-model="form.MortgageMethod" disabled></el-input>
         </el-form-item>
 
         <el-form-item prop='Square'>
@@ -49,28 +54,8 @@
         </el-form-item>
 
        <el-form-item prop='RentStatus'>
-           <label>出租状态</label>          
-          <el-select v-model="form.RentStatus" clearable placeholder="请选择">
-              <el-option label="已出租" value="已出租"></el-option>
-              <el-option label="未出租" value="未出租"></el-option>
-            </el-select>
-        </el-form-item>
-
-        <el-form-item prop='ContractNo' v-if="form.RentStatus==='已出租'" :required="form.RentStatus==='已出租'">
-           <label>合同编号</label>
-          <el-select v-model="form.ContractNo" clearable placeholder="请选择" ref="contract">
-              <el-option v-for="(item,index) in contractList" :key="index" :label="item.No" @change="handleChange(item)" :value="item.No"></el-option>
-            </el-select>
-        </el-form-item>
-
-        <el-form-item prop='TenantName' v-if="form.RentStatus==='已出租'">
-           <label>租客姓名</label>
-          <el-input v-model="form.TenantName" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item prop='TenantIDCard' v-if="form.RentStatus==='已出租'">
-           <label>租客身份证号</label>
-          <el-input v-model="form.TenantIDCard" disabled></el-input>
+           <label>出租状态</label>     
+          <el-input v-model="form.RentStatus" disabled></el-input> 
         </el-form-item>
 
         <el-form-item prop='Note'>
@@ -110,10 +95,10 @@ export default {
         MortgageMethod: "",
         Square: "",
         MinimunPeriod: "",
-        RentStatus: "",
-        ContractNo: "",
-        TenantName: "",
-        TenantIDCard: "",
+        RentStatus: "未出租",   // 新增时，默认未出租
+        // ContractNo: "",
+        // TenantName: "",
+        // TenantIDCard: "",
         Note: "",
       },
       rules: {
@@ -131,28 +116,43 @@ export default {
         MinimunPeriod: [
           { required: true, message: "请输入时长", trigger: "change" },
         ],
-        ContractNo: [{ required: true, message: "请选择", trigger: "change" }],
+        // ContractNo: [{ required: true, message: "请选择", trigger: "change" }],
       },
       typeList: [], // 房型列表选择
       contractList: [], // 合同列表选择
+      minimunRent:''
     };
   },
   mounted() {
     this.$store.dispatch("TypeList").then((res) => {
       this.typeList = res;
     });
-    this.$store.dispatch("ContractList").then((res) => {
-      this.contractList = res;
-    });
+    this.$notify({
+      title:'限制',
+      type:'warning',
+      message:'新房间的出租状态默认为 未出租 ',
+      offset:60,
+      duration:3000
+    })
+    // this.$store.dispatch("ContractList").then((res) => {
+    //   this.contractList = res;
+    // });
   },
   watch: {
-    form: {   // 监听 form的合同编号，自动赋值 租客姓名、身份证号
+    form: {
+      // 监听 form的合同编号，自动赋值 租客姓名、身份证号
       deep: true,
       handler(newValue) {
-        this.contractList.map((item) => {
-          if ((item.ContractNo = newValue.ContractNo)) {
-            this.form.TenantIDCard = item.TenantID;
-            this.form.TenantName = item.TenantName;
+        // this.contractList.map((item) => {
+        //   if (item.ContractNo == newValue.ContractNo) {
+        //     this.form.TenantIDCard = item.TenantID;
+        //     this.form.TenantName = item.TenantName;
+        //   }
+        // });
+        this.typeList.map((item) => {
+          if (item.Type == newValue.RoomType) {
+            this.form.MortgageMethod = item.MortgageMethod;
+            this.minimunRent = item.Price
           }
         });
       },
@@ -161,10 +161,10 @@ export default {
   methods: {
     // 新增
     submitForm(formName) {
-      console.log(this.form);
+      // console.log(this.form);
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.form);
+          // console.log(this.form);
           this.$confirm("确认新增房间?", "确认新增", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
@@ -193,21 +193,14 @@ export default {
         MortgageMethod: "",
         Square: "",
         MinimunPeriod: "",
-        RentStatus: "",
+        RentStatus: "未出租",
         ContractNo: "",
         TenantName: "",
         TenantIDCard: "",
         Note: "",
       }),
         this.$refs["form"].validate((valid) => {});
-    },
-
-    //
-    handleChange(item) {
-      console.log(item);
-      this.form.TenantName = item.TenantName;
-      this.form.TenantID = item.TenantID;
-    },
+    }
   },
 };
 </script>

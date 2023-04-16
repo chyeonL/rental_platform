@@ -2,111 +2,102 @@
   <div id="Contract_new">
     <Breadcrumb  :routes='routes'/>
     <div class="form">
-      <el-form :model="form"
+       <el-form :model="form"
         label-position="left" 
         ref="form" 
         :status-icon='true'
         :rules='rules'
       >            
-        <el-form-item  prop='Title'>
-           <label>标题</label>
-          <el-input v-model="form.Title"></el-input>
+        <el-form-item  prop='Room'>
+           <label>房间号</label>
+          <el-select v-model="form.Room" clearable placeholder="请选择" class="small">
+              <el-option v-for="(item, index) in roomList" :key="index" :label="item.RoomNumber" :value="item.RoomNumber"></el-option>
+            </el-select>
         </el-form-item>        
-
-       <el-form-item prop='Owner'>
-           <label>屋主</label>
-          <el-input v-model="form.Owner" placeholder=""></el-input>
-        </el-form-item>  
-
-       <el-form-item prop='HouseNumber'>
-           <label>门牌号</label>
-          <el-input v-model="form.HouseNumber" placeholder="请输入门牌号"></el-input>
+              
+        <el-form-item prop='Stage'>
+           <label for="Stage">合同状态</label>
+           <el-input v-model="form.Stage" disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='Area'>
-           <label for="Area">区域</label>
-          <el-input v-model="form.Area" disabled class="small"></el-input>
+        <el-form-item prop='RoomType'>
+           <label for="RoomType">房型</label>
+           <el-input v-model="form.RoomType" disabled></el-input>
         </el-form-item>
 
-        <el-form-item prop='StaffName'>
-           <label for="StaffName">工作人员</label>
-          <el-input v-model="form.StaffName" disabled class="small"></el-input>
+       <el-form-item prop='TenantID'>
+           <label>租客身份证号</label>
+          <el-input v-model="form.TenantID" placeholder="请输入身份证号"></el-input>
         </el-form-item>  
 
-        <el-form-item prop='Time'>
-            <label for="Time">巡查时间</label>
+       <el-form-item prop='TenantName'>
+           <label>租客姓名</label>
+          <el-input v-model="form.TenantName" placeholder="请输入身份证上的姓名"></el-input>
+        </el-form-item>
+        
+        <el-form-item prop='Tel'>
+           <label for="Tel">租客联系电话</label>   
+          <el-input v-model="form.Tel"></el-input>
+        </el-form-item>
+
+        <el-form-item prop='StartDate'>
+            <label for="StartDate">起租日</label>
             <el-date-picker
               type="date"
               placeholder="选择日期"
               value-format='yyyy-MM-dd'
-              v-model="form.Time"              
+              v-model="form.StartDate"              
             ></el-date-picker>
         </el-form-item>
 
-        <el-form-item  prop='Overall'>
-           <label>总体巡查情况</label>
-           <el-select v-model="form.Overall" clearable placeholder="请选择">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="需整改" value="需整改"></el-option>
-            </el-select>
+        <el-form-item prop='Term'>
+           <label for="Term">租期</label>
+          <el-input v-model="form.Term" class="small"></el-input>
         </el-form-item>  
 
-        <el-form-item prop='FailReason' v-if="form.Overall === '需整改'">
-           <label for="FailReason">不合格原因</label>
-          <el-input v-model="form.FailReason"></el-input>
+        <el-form-item prop='Rent'>
+           <label for="Rent">月租</label>
+          <el-input v-model="form.Rent" disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='EntranceGuard'>
-           <label for="EntranceGuard">门禁</label>
-          <el-select v-model="form.EntranceGuard" clearable placeholder="请选择" class="small">
-              <el-option label="未安装" value="未安装"></el-option>
-              <el-option label="已安装" value="已安装"></el-option>
-            </el-select>
+        <el-form-item prop='MortgageMethod'>
+           <label for="MortgageMethod">按押方式</label>
+           <el-input v-model="form.MortgageMethod" disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='ServeillanceSystem'>
-           <label for="ServeillanceSystem">监控</label>
-          <el-select v-model="form.ServeillanceSystem" clearable placeholder="请选择" class="small">
-              <el-option label="未安装" value="未安装"></el-option>
-              <el-option label="已安装" value="已安装"></el-option>
-            </el-select>
+        <el-form-item prop='MortgageCash'>
+           <label for="MortgageCash">押金</label>
+           <el-input v-model="form.MortgageCash" disabled></el-input>
         </el-form-item>
         
-        <el-form-item prop='FireSafety'>
-           <label for="FireSafety">消防安全</label>
-          <el-select v-model="form.FireSafety" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='CollectionDate'>
+           <label for="CollectionDate">收租日</label>
+           <el-input v-model="form.CollectionDate" placeholder="每月 xx 号"></el-input>
         </el-form-item>
         
-        <el-form-item prop='Sanitry'>
-           <label for="Sanitry">卫生状况</label>
-          <el-select v-model="form.Sanitry" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='Population'>
+           <label for="Population">实际租住人数</label>
+          <el-input v-model="form.Population" class="small"></el-input>
         </el-form-item>
         
-        <el-form-item prop='Structural'>
-           <label for="Structural">房屋整体结构</label>
-          <el-select v-model="form.Structural" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='UnitWaterFee'>
+           <label for="UnitWaterFee">单位水费(元/吨)</label>   
+            <el-input v-model="form.UnitWaterFee"></el-input>
         </el-form-item>
         
-        <el-form-item prop='Circuit'>
-           <label for="Circuit">电路安全</label>
-          <el-select v-model="form.Circuit" clearable placeholder="请选择" class="small">
-              <el-option label="合格" value="合格"></el-option>
-              <el-option label="存在隐患" value="存在隐患"></el-option>
-            </el-select>
+        <el-form-item prop='UnitElectricityCharge'>
+           <label for="UnitElectricityCharge">单位电费(元/度)</label>
+          <el-input v-model="form.UnitElectricityCharge"></el-input>
         </el-form-item>
         
-        <el-form-item prop='Other'>
-           <label for="Other">其他</label>
-          <el-input v-model="form.Other"></el-input>
+        <el-form-item prop='NetworkFee'>
+           <label for="NetworkFee">网费</label>   
+          <el-input v-model="form.NetworkFee"></el-input>
+        </el-form-item>
+        
+        <el-form-item prop='PublicCleanFee'>
+           <label for="PublicCleanFee">卫生费</label>
+          <el-input v-model="form.PublicCleanFee"></el-input>
         </el-form-item>
 
         <el-form-item prop='Note'>
@@ -116,7 +107,7 @@
 
         <el-form-item class="btns">
           <el-button type="success" @click="submitForm('form')" size="medium">提交</el-button>
-          <el-button type="danger" @click="resetForm('houseForm')">重置</el-button>
+          <el-button type="danger" @click="resetForm()" size="medium">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -125,128 +116,173 @@
 
 <script>
 import Breadcrumb from "@/components/common/Breadcrumb.vue";
-import { mapState } from "vuex";
 export default {
   name: "Contract_new",
   components: { Breadcrumb },
   data() {
     return {
       routes: {
-        // 面包屑导航 对象
-        nav: "安全检查",
-        parent: "巡视记录",
+        nav: "签署合同",
+        parent: "合同管理",
         parentRoute: "all",
-        children: "新增记录",
+        children: "新增合同",
       },
       form: {
-        Area: "",
-        HouseNumber: "",
-        ServeillanceSystem: "",
-        EntranceGuard: "",
+        Room: "",
+        RoomType: "",
+        TenantID: "",
+        TenantName: "",
+        Population: "",
+        StartDate: "",
+        Term: "",
+        Rent: "",
+        MortgageMethod: "",
+        MortgageCash: "",
+        CollectionDate: "",
+        PublicCleanFee: "",
+        NetworkFee: "",
+        UnitWaterFee: "",
+        UnitElectricityCharge: "",
+        Stage: "租约中",
+        Tel: "",
         Note: "",
-        FireSafety: "",
-        Time: "",
-        StaffName: "",
-        Owner: "",
-        Staff_ID: "",
-        Sanitry: "",
-        Other: "",
-        Structural: "",
-        Circuit: "",
-        FailReason: "",
-        Overall: "",
-        Title: "",
       },
       rules: {
-        Title: [{ required: true, message: "请输入标题", trigger: "change" }],
-        Owner: [
+        TenantID: [
+          {
+            required: true,
+            message: "请输入18位身份证号",
+            trigger: "blur",
+            max: 18,
+            min: 18,
+          },
+        ],
+        TenantName: [
           {
             required: true,
             message: "请输入身份证上的姓名",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
-        HouseNumber: [
-          { required: true, message: "请输入门牌号", trigger: "change" },
+        NetworkFee: [
+          { required: true, message: "请输入网费", trigger: "blur" },
         ],
-        FireSafety: [{ required: true, message: "请选择", trigger: "change" }],
-        ServeillanceSystem: [
-          { required: true, message: "请选择", trigger: "change" },
+        CollectionDate: [
+          { required: true, message: "请输入每月收租日", trigger: "blur" },
         ],
-        EntranceGuard: [
+        PublicCleanFee: [
+          { required: true, message: "请输入卫生费", trigger: "blur" },
+        ],
+        Tel: [
           {
             required: true,
-            message: "请选择",
-            trigger: "change",
+            message: "请输入联系电话",
+            trigger: "blur",
+            max: 11,
+            min: 11,
           },
         ],
-        Time: [{ required: true, message: "请选择时间", trigger: "change" }],
-        Structural: [{ required: true, message: "请选择", trigger: "change" }],
-        Circuit: [{ required: true, message: "请选择", trigger: "change" }],
-        Sanitry: [{ required: true, message: "请选择", trigger: "change" }],
-        Overall: [{ required: true, message: "请选择", trigger: "change" }],
-        FailReason: [{ required: true, message: "请选择", trigger: "change" }],
+        Population: [
+          { required: true, message: "请输入实际居住人数", trigger: "blur" },
+        ],
+        Term: [{ required: true, message: "请输入租期", trigger: "blur" }],
+        StartDate: [{ required: true, message: "请选择时间", trigger: "blur" }],
+        UnitWaterFee: [
+          { required: true, message: "请输入单位水费", trigger: "blur" },
+        ],
+        UnitElectricityCharge: [
+          { required: true, message: "请输入单位电费", trigger: "blur" },
+        ],
+        Room: [{ required: true, message: "请选择", trigger: "change" }],
+        Stage: [{ required: true, message: "请选择", trigger: "change" }],
       },
-      options: [],
+      roomList: [],
+      rent: 0,
+      tenant: 0,
     };
   },
-  computed: {
-    ...mapState({
-      StaffName: (state) => state.Administrator.userInfo.Name,
-      StaffID: (state) => state.Administrator.adminID,
-      Area: (state) => state.Administrator.userInfo.Area,
-    }),
+  watch: {
+    form: {
+      deep: true,
+      handler(newValue) {
+        this.roomList.map((item) => {
+          if (item.RoomNumber == newValue.Room) {
+            this.form.MortgageCash = item.MortgageCash;
+            this.form.Rent = item.Rent;
+            this.form.MortgageMethod = item.MortgageMethod;
+            this.form.RoomType = item.RoomType;
+          }
+        });
+      },
+    },
   },
   mounted() {
-    this.form.Area = this.Area; 
-    this.form.StaffName = this.StaffName;
-    this.form.Staff_ID = this.StaffID;
+    this.$store.dispatch("RoomList").then((res) => {
+      this.roomList = res;
+    });
   },
   methods: {
-    // 提交表单
     submitForm(formName) {
-      console.log(this.form);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // console.log(this.form);
-          this.$confirm("确认新增巡视记录?", "确认新增", {
+          this.$confirm("确认新增合同?", "确认新增", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             center: true,
           })
             .then(() => {
-              this.$store.dispatch("AddInspectation", this.form).then((res) => {
-                this.$router.push("all");
+              this.$store.dispatch("AddContract", this.form).then(() => {
+                this.$store
+                  .dispatch(
+                    "TenantNumber",
+                    "tenant_" + this.$store.state.Administrator.adminID
+                  )
+                  .then(() => {
+                    this.$store
+                      .dispatch(
+                        "RentNumber",
+                        "rent_" + this.$store.state.Administrator.adminID
+                      )
+                      .then(() => {
+                        this.$router.push("all");
+                      });
+                  });
               });
             })
             .catch(() => {});
         } else {
-          this.$message.error("请完整输入！");
+          this.$notify({
+            title: "错误提醒",
+            offset: 60,
+            duration: 2000,
+            type: "error",
+            message: "请完整输入！",
+          });
         }
       });
     },
 
-    // 重置
-    resetForm(formName) {
+    resetForm() {
       (this.form = {
-        Area: this.Area,
-        No: "",
-        HouseNumber: "",
-        ServeillanceSystem: "",
-        EntranceGuard: "",
+        Room: "",
+        RoomType: "",
+        TenantID: "",
+        TenantName: "",
+        Population: "",
+        StartDate: "",
+        Term: "",
+        Rent: "",
+        MortgageMethod: "",
+        MortgageCash: "",
+        CollectionDate: "",
+        PublicCleanFee: "",
+        NetworkFee: "",
+        UnitWaterFee: "",
+        UnitElectricityCharge: "",
+        Stage: "租约中",
+        Tel: "",
         Note: "",
-        FireSafety: "",
-        Time: "",
-        StaffName: this.StaffName,
-        Owner: "",
-        Staff_ID: this.StaffID,
-        Sanitry: "",
-        Other: "",
-        Structural: "",
-        Circuit: "",
-        FailReason: "",
-        Overall: "",
-        Title: "",
       }),
         this.$refs["form"].validate((valid) => {});
     },

@@ -23,6 +23,7 @@
         :data="type==='all'?list:searchList"
         border
         :header-cell-style="{background:'#24292e',color:'#ffd04b',borderColor:'#4c4c4c'}"
+        :row-class-name="rowsToBeComplete"
       >
        <el-table-column
         label="编号"
@@ -31,16 +32,13 @@
         align="center"
         >
         </el-table-column>
-        <el-table-column label="标题" prop="Title" align="center"> </el-table-column>
+        <el-table-column label="标题" prop="Title" align="center" width="100"> </el-table-column>
         <el-table-column label="类别" prop="Category" align="center"> </el-table-column>
         <el-table-column label="区域" prop="Area" align="center"> </el-table-column>
-        <el-table-column label="提交时间" prop="SubmitTime" align="center"> </el-table-column>
-        <!-- <el-table-column label="提交人" prop="LandlordName" align="center">
-        </el-table-column> -->
+        <el-table-column label="提交时间" prop="SubmitTime" align="center" width="120"> </el-table-column>
         <el-table-column label="状态" prop="Status" align="center"></el-table-column>
-        <el-table-column label="具体" prop="Detail" align="center" width="120"> </el-table-column>
-        <!-- <el-table-column label="回复" prop="Response" align="center"> </el-table-column> -->
-        <el-table-column label="数据操作" width="200" class="operation" fixed="right" align="center">
+        <el-table-column label="具体" prop="Detail" align="center" width="180"> </el-table-column>
+        <el-table-column label="数据操作" width="180" class="operation" fixed="right" align="center">
           <template slot-scope="scope">
             <el-button type="info" @click="handleEdit(scope.$index, scope.row)">具体/编辑</el-button>
             <el-button
@@ -154,6 +152,16 @@ export default {
         })
         .catch(() => {});
     },
+
+    // 待完善的行
+    rowsToBeComplete({ row }) {
+      if (row.Status  === "等待反馈")
+        return "warning2-row";
+      if (row.Status  === "否决意见")
+        return "warning3-row";
+      if (row.Status  === "接纳意见")
+        return "warning4-row";
+    },
   },
 };
 </script>
@@ -204,5 +212,14 @@ main {
       padding: 8px;
     }
   }
+}
+::v-deep .el-table .warning2-row {
+  background: #fae2d4;
+}
+::v-deep .el-table .warning3-row {
+  background: #fad1cb;
+}
+::v-deep .el-table .warning4-row {
+  background: rgb(235, 249, 227);
 }
 </style>

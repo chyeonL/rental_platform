@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
 
-var indexRouter = require('./routes/index');
 
 // 创建服务器
 var app = express();
@@ -23,11 +22,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 静态资源托管
-app.use('/upload/',express.static('./upload/'))
 
 // 路由模块化   --  前缀 /rent
-app.use('/rent', indexRouter);
+var administrator = require('./routes/administrator');
+app.use('/rent', administrator);
+
+var staff = require('./routes/staff');
+app.use('/rent', staff);
+
+var landlord = require('./routes/landlord');
+app.use('/rent', landlord);
+
+var website = require('./routes/website');
+app.use('/rent', website);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -23,6 +23,7 @@
         :data="type==='all'?list:search"
         border
         :header-cell-style="{background:'#24292e',color:'#ffd04b',borderColor:'#4c4c4c'}"
+        :row-class-name="rowsToBeComplete"
       >
        <el-table-column
         label="编号"
@@ -157,6 +158,12 @@ export default {
         })
         .catch(() => {});
     },
+
+    // 待完善的行
+    rowsToBeComplete({ row }) {
+      if (row.Overall  === "合格")
+        return "warning4-row";
+    },
   },
 };
 </script>
@@ -205,5 +212,8 @@ main {
       padding: 8px;
     }
   }
+}
+::v-deep .el-table .warning4-row {
+  background: rgb(235, 249, 227);
 }
 </style>

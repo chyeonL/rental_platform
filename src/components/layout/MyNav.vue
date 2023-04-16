@@ -27,33 +27,35 @@
           <span slot="title">首页</span>
         </el-menu-item> -->
 
-        <!-- 二级菜单  信息管理 -->
-        <el-submenu index="/staff/information">
+        <!-- 二级菜单  出租屋 -->
+        <el-submenu index="/staff/house">
           <template slot="title">
             <i class="iconfont icon-guigeguanli"></i>
-            <span slot="title">信息管理</span>
+            <span slot="title">出租屋</span>
           </template>
           <!-- 三级 出租屋-->
-          <el-submenu index="/staff/information/house">
+          <el-submenu index="/staff/house/all">
             <template slot="title">
               <i class="iconfont icon-loufangfangzi"></i>
-              <span slot="title">出租屋</span>
+              <span slot="title">信息管理</span>
             </template>
-              <el-menu-item index="/staff/information/house/all">- 所有</el-menu-item>
-              <el-menu-item index="/staff/information/house/new">- 新增</el-menu-item>    
-            <!-- <el-menu-item index="/staff/information/detail">- 具体/编辑</el-menu-item> -->
+              <el-menu-item index="/staff/house/all">- 所有</el-menu-item>
+              <el-menu-item index="/staff/house/new">- 新增</el-menu-item>    
           </el-submenu>
-          <!-- 三级 流动人员-->
-          <el-submenu index="/staff/information/migrant">
+        </el-submenu>
+
+        <!-- 流动人员 -->
+        <el-submenu index="/staff/migrant">
+          <template slot="title">
+            <i class="iconfont icon-liudongrenyuan"></i>
+            <span slot="title">流动人员</span>
+          </template>
+          <el-menu-item index='/staff/migrant/all'>
             <template slot="title">
-              <i class="iconfont icon-liudongrenyuan"></i>
-              <span slot="title">流动人员</span>
+              <i class="iconfont icon-13"></i>
+              <span slot="title">来往记录</span>
             </template>
-              <el-menu-item index="/staff/information/migrant/all">
-                <span slot="title">- 所有</span>
-              </el-menu-item>
-              <el-menu-item index="/staff/information/migrant/new">- 新增</el-menu-item>
-          </el-submenu>
+            </el-menu-item>
         </el-submenu>
 
         <!-- 安全检查 -->
@@ -102,15 +104,13 @@
           <template slot="title">
             <i class="iconfont icon-zixun"></i>
             <span slot="title">群众意见</span>
-          </template>
-          <el-submenu index='/staff/opinion/all'>
+          </template>             
+          <el-menu-item index="/staff/opinion/all">          
             <template slot="title">
               <i class="iconfont icon-wenti"></i>
               <span slot="title">反馈回复</span>
-            </template>
-            <el-menu-item index="/staff/opinion/all">- 所有</el-menu-item>
-            <el-menu-item index="/staff/opinion/new">- 新增</el-menu-item>
-          </el-submenu>
+            </template> 
+          </el-menu-item>
         </el-submenu>
 
         <!-- 二级菜单 网站管理 -->
@@ -196,7 +196,7 @@
             <el-submenu index="/landlord/house/type">
               <template slot="title">
                 <i class="iconfont icon-house"></i>
-                <span slot="title">房间类型</span>
+                <span slot="title">房型管理</span>
               </template>
                 <el-menu-item index="/landlord/house/type/all">- 所有</el-menu-item>
                 <el-menu-item index="/landlord/house/type/new">- 新增</el-menu-item> 
@@ -213,39 +213,42 @@
           </el-submenu>      
           
           <!-- 二级菜单  收入租金 -->
-          <el-submenu index="/landlord/tenant">
+          <el-submenu index="/landlord/rent">
             <template slot="title">
               <i class="iconfont icon-a-12chuanbozujinjiesuan"></i>
               <span slot="title">收入租金</span>
             </template>
             <!-- 三级 -->
-            <el-submenu index="/landlord/tenant/all">
+            <el-submenu index="/landlord/rent/all">
               <template slot="title">
                 <i class="iconfont icon-wodejifenbao"></i>
                 <span slot="title">月租</span>
               </template>
-                <el-menu-item index="/landlord/tenant/all">- 所有</el-menu-item>
-                <el-menu-item index="/landlord/tenant/new">- 新增</el-menu-item>
-                <!-- <el-menu-item index="/staff/report/problem/detail">- 具体/编辑</el-menu-item>           -->
+                <el-menu-item index="/landlord/rent/all">- 所有</el-menu-item>
+                <el-menu-item index="/landlord/rent/new">- 新增</el-menu-item>
             </el-submenu>
           </el-submenu>  
 
           <!-- 二级菜单  流动人员 -->
-          <el-submenu index="/landlord/migrant">
+          <el-submenu index="/landlord/tenant">
             <template slot="title">
               <i class="iconfont icon-liudongrenyuan"></i>
               <span slot="title">流动人员</span>
             </template>
-            <!-- 三级 -->
-            <el-submenu index="/landlord/migrant/all">
+                <el-menu-item index="/landlord/tenant/all">
+                  <template slot="title">
+                    <i class="iconfont icon-13"></i>
+                    <span slot="title">租户</span>
+                  </template>
+                </el-menu-item>
+            <!-- <el-submenu index="/landlord/tenant/all">
               <template slot="title">
                 <i class="iconfont icon-13"></i>
-                <span slot="title">租住用户</span>
+                <span slot="title">租户</span>
               </template>
-                <el-menu-item index="/landlord/migrant/all">- 所有</el-menu-item>
-                <el-menu-item index="/landlord/migrant/new">- 新增</el-menu-item>
-                <!-- <el-menu-item index="/staff/report/problem/detail">- 具体/编辑</el-menu-item>           -->
-            </el-submenu>
+                <el-menu-item index="/landlord/tenant/all">- 所有</el-menu-item>
+                <el-menu-item index="/landlord/tenant/new">- 新增</el-menu-item>
+            </el-submenu> -->
           </el-submenu>    
 
           <!-- 二级菜单  意见反馈 -->
@@ -295,7 +298,7 @@ export default {
   },
   computed: {
     ...mapState({
-      role: (state) => state.Administrator.role
+      role: (state) => state.Administrator.role,
     }),
   },
 };

@@ -32,11 +32,12 @@
         >
         </el-table-column>
         <el-table-column label="房型" prop="Type" align="center"> </el-table-column>
-        <el-table-column label="房间数量" prop="Amount" align="center" width="80"> </el-table-column>
+        <el-table-column label="房间总数" prop="Amount" align="center" width="80"> </el-table-column>
+        <el-table-column label="可出租" prop="AvailableRoomsQuantity" align="center" width="80"> </el-table-column>
         <el-table-column label="配置" prop="Furnishment" align="center"> </el-table-column>
         <el-table-column label="房间号" prop="RoomNumber" align="center"> </el-table-column>
         <el-table-column label="房租" prop="Price" align="center"></el-table-column>
-        <el-table-column label="押金" prop="MortgageCash" align="center" width="80"></el-table-column>
+        <el-table-column label="按押方式" prop="MortgageMethod" align="center" width="80"></el-table-column>
         <el-table-column label="数据操作" width="200" class="operation" fixed="right" align="center">
           <template slot-scope="scope">
             <el-button type="info" @click="handleEdit(scope.$index, scope.row)">具体/编辑</el-button>
@@ -69,10 +70,9 @@ export default {
   data() {
     return {
       keyword: "",
-      type: "all", // search 为搜索分页
+      type: "all",
       currentPage: 1,
       routes: {
-        // 面包屑导航 对象
         nav: "出租房",
         parent: "房间类型",
         parentRoute: "all",
@@ -94,14 +94,12 @@ export default {
     }),
   },
   methods: {
-    // 获取数据
     async getData(pageNo = 1) {
       await this.$store
         .dispatch("GetAllRoomType", pageNo)
-        .then((res) => (this.type = "all"));
+        .then(() => (this.type = "all"));
     },
 
-    // 改变页码，重发请求
     changePageNo(pageNo) {
       if (this.type == "all") {
         this.getData(pageNo);
@@ -110,7 +108,6 @@ export default {
       }
     },
 
-    // 搜索
     async goSearch(pageNo = 1) {
       let keywords = this.keyword.trim();
       if (keywords) {
@@ -121,11 +118,9 @@ export default {
           });
       } else {
         this.getData(1, this.pageSize); // 搜索之后，删掉关键词，再按回车，重新加载全部数据
-        // return;
       }
     },
 
-    // 编辑
     handleEdit(index, row) {
       this.$router.push({
         name: "DetailType",
@@ -135,17 +130,27 @@ export default {
       });
     },
 
-    // 删除
     handleDelete(index, row) {
+      console.log(row);
       this.$confirm("确认删除该房型?", "确认删除", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         center: true,
       })
         .then(async () => {
-          await this.$store
-            .dispatch("DeleteRoomtype", row.No)
-            .then((res) => this.getData());
+          if (row.Amount > 0) {
+            this.$notify({
+              title: "错误提醒",
+              offset: 60,
+              duration: 3000,
+              type: "error",
+              message: `该房型有${row.Amount}个房间,无法直接删除...`,
+            });
+          } else {
+            await this.$store
+              .dispatch("DeleteRoomtype", row.No)
+              .then(() => this.getData());
+          }
         })
         .catch(() => {});
     },
@@ -181,7 +186,6 @@ header {
     font-size: 14px;
     color: #ffd04b;
     background-color: #24292e;
-    // border-radius: 15px;
   }
 }
 
