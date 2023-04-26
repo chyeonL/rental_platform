@@ -227,7 +227,7 @@ export default {
     // 提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(this.form);
+        // console.log(this.form);
         if (valid) {
           this.$confirm("确认编辑巡视记录?", "确认编辑", {
             confirmButtonText: "确定",
@@ -237,8 +237,7 @@ export default {
             .then(() => {
               this.$store
                 .dispatch("ModifyInspectation", this.form)
-                .then((res) => {
-                  // console.log(res);
+                .then(() => {
                   this.EditHandler();
                 });
             })

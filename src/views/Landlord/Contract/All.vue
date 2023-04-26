@@ -4,6 +4,17 @@
     <div class="header">      
       <Breadcrumb  :routes='routes'/>
       <header>
+        <!-- 筛选 -->
+        <el-select v-model="filterKey" placeholder="筛选:合同状态" @change='filterContractStatus'>
+          <el-option
+            v-for="(item,index) in status"
+            :key="index"
+            :label="item"
+            :value="item"
+            >
+          </el-option>
+        </el-select>
+        <!-- 搜索 -->
         <el-input
           v-model="keyword"
           placeholder="输入关键字进行搜索……"
@@ -80,6 +91,8 @@ export default {
         parentRoute: "all",
         children: "所有合同",
       },
+      status: ["所有合同", "租约中", "租约结束"],
+      filterKey: "",
     };
   },
   created() {
@@ -112,15 +125,15 @@ export default {
 
     async goSearch(pageNo = 1) {
       let keywords = this.keyword.trim();
-      if (keywords) {
         await this.$store
-          .dispatch("SearchContract", { keywords, pageNo })
+          .dispatch("SearchContract", {
+            keywords,
+            pageNo,
+            Stage: this.filterKey === "所有合同" ? "" : this.filterKey,
+          })
           .then(() => {
             this.type = "search";
           });
-      } else {
-        this.getData(1, this.pageSize); // 搜索之后，删掉关键词，再按回车，重新加载全部数据
-      }
     },
 
     handleEdit(index, row) {
@@ -156,9 +169,14 @@ export default {
         .catch(() => {});
     },
 
-    // 租约中的行
     rowsToBeComplete({ row }) {
       if (row.Stage === "租约中") return "warning2-row";
+    },
+
+    filterContractStatus(status) {
+      this.filterKey = status;
+      this.keyword = "";
+      this.goSearch();
     },
   },
 };
@@ -174,7 +192,6 @@ header {
   display: flex;
   align-items: center;
   justify-content: start;
-  margin: 0 100px;
 
   ::v-deep .el-input {
     width: 300px;
@@ -182,8 +199,9 @@ header {
     outline: none;
   }
 
-  ::v-deep .el-input:focus {
-    border-color: none;
+  ::v-deep .el-input__inner:focus {
+    border-color: #24292e;
+    outline: 0;
   }
 
   ::v-deep .el-button {
@@ -193,8 +211,23 @@ header {
     color: #ffd04b;
     background-color: #24292e;
   }
-}
 
+  ::v-deep .el-select {
+    width: 140px;
+    margin-left: 50px;
+    margin-right: 50px;
+    .el-input {
+      width: 100%;
+      border: none;
+    }
+    .el-input__inner {
+      border: none;
+      font-weight: 700;
+      color: #ffd04b;
+      background-color: #24292e;
+    }
+  }
+}
 main {
   margin: 30px 25px;
   ::v-deep .el-button--mini {

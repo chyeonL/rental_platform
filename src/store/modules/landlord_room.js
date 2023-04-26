@@ -56,27 +56,11 @@ export default {
 
 
         // 搜索
-        async SearchRoom({ rootState, commit }, { keywords, pageNo }) {
+        async SearchRoom({ rootState, commit }, { keywords, pageNo, RentStatus }) {
             let tableName = 'room_' + rootState.Administrator.adminID
-            let res = await searchRoom(keywords, pageNo, tableName);
+            let res = await searchRoom(keywords, pageNo, tableName, RentStatus);
             commit("search", res);
-            if (res) {  // 成功
-                if (!res.success)
-                    Notification({
-                        title: "失败提醒",
-                        offset: 60,
-                        duration: 2000,
-                        type: "error",
-                        message: "搜索失败！没有找到相关记录。",
-                    });
-                else
-                    Notification({
-                        title: "成功",
-                        offset: 60,
-                        duration: 2000,
-                        type: "success",
-                        message: "搜索成功！",
-                    });
+            if (res) {  
                 return res.success;
             }
         },
@@ -112,7 +96,6 @@ export default {
         async DetailRoom({ rootState, commit }, No) {
             let tableName = 'room_' + rootState.Administrator.adminID
             let res = await detailRoom(No, tableName);
-            // console.log(res);
             commit('detail', res.data[0])
             if (res) {  // 成功
                 return res.data[0];
@@ -120,7 +103,7 @@ export default {
         },
 
         // 编辑
-        async ModifyRoom({ rootState, commit }, form) {
+        async ModifyRoom({ rootState }, form) {
             let tableName_room = 'room_' + rootState.Administrator.adminID
             let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
             let res = await modifyRoom(form, tableName_room, tableName_roomtype);
@@ -147,7 +130,7 @@ export default {
         },
 
         // 添加
-        async AddRoom({ rootState, commit }, form) {
+        async AddRoom({ rootState }, form) {
             let tableName_room = 'room_' + rootState.Administrator.adminID
             let tableName_roomtype = 'roomtype_' + rootState.Administrator.adminID
             let res = await newRoom(form, tableName_room, tableName_roomtype);

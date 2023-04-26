@@ -2,8 +2,6 @@
   <div id="#Migrant_detail">
     <header>
       <Breadcrumb  :routes='routes'/>
-      <!-- <el-button icon="el-icon-edit" @click="EditHandler" v-show="IsEdit">编辑模式</el-button> 
-      <el-button icon="el-icon-tickets" @click="EditHandler" v-show="!IsEdit">查阅模式</el-button>      -->
     </header>    
 
     <div class="form">
@@ -80,10 +78,6 @@
            <label>备注</label>
           <el-input type="textarea" v-model="form.Note" class="note"></el-input>
         </el-form-item>
-
-        <el-form-item class="btns">
-          <!-- <el-button type="success" @click="submitForm('form')" size="medium">提交</el-button> -->
-        </el-form-item>
       </el-form> 
     </div>
   </div>
@@ -97,9 +91,8 @@ export default {
   components: { Breadcrumb },
   data() {
     return {
-      IsEdit: true, // true为 查阅模式
+      IsEdit: true,
       routes: {
-        // 面包屑导航 对象
         nav: "流动人员",
         parent: "来往记录",
         parentRoute: "all",
@@ -133,50 +126,13 @@ export default {
     })
   },
   methods: {
-    // 编辑/查阅
-    // EditHandler() {
-    //   this.IsEdit = !this.IsEdit;
-    //   if (this.options.length < 1) {
-    //     this.$store
-    //       .dispatch("LandlordNameList", this.form.AreaID)
-    //       .then((res) => {
-    //         this.options = res;
-    //         // console.log(this.options);
-    //       });
-    //   }
-    //   if(this.IsEdit) this.getDetail();
-    // },
-
-    // 获取详情
     getDetail() {
       this.$store
         .dispatch("migrantDetail", this.$route.query.No)
         .then((res) => {
-          // console.log(res);
           this.form = res;
         });
     },
-
-    // 提交表单
-    // submitForm(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     // console.log(this.form);
-    //     if (valid) {
-    //       this.$confirm("确认提交该流动人员记录?", "确认编辑", {
-    //         confirmButtonText: "确定",
-    //         cancelButtonText: "取消",
-    //         center: true,
-    //       })
-    //         .then(() => {
-    //           this.$store.dispatch("ModifyMigrant", {form:this.form,staff:{StaffName:this.form.StaffName,StaffID:this.StaffID}}).then((res) => {
-    //             // console.log(res);
-    //             this.EditHandler();
-    //           });
-    //         })
-    //         .catch(() => {});
-    //     }
-    //   });
-    // },
   },
 };
 </script>

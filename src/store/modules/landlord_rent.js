@@ -3,13 +3,13 @@ import { Notification } from "element-ui";
 export default {
     state: {
         total: 0,
-        pageSize: 5, 
+        pageSize: 5,
         pageNo: 1,
         currentPage: 1,
-        all: [], 
-        list: [], 
-        search: [], 
-        detail: {}, 
+        all: [],
+        list: [],
+        search: [],
+        detail: {},
     },
     mutations: {
         // 所有
@@ -39,7 +39,6 @@ export default {
         // 所有
         async GetAllRent({ rootState, commit }, pageNo) {
             let res = await allRents(rootState.Administrator.adminID, pageNo);
-            // console.log(res);
             commit("all", res);
             if (res) {  // 成功
                 if (!res.success)
@@ -56,28 +55,12 @@ export default {
 
 
         // 搜索
-        async SearchRent({ rootState, commit }, { keywords, pageNo }) {
+        async SearchRent({ rootState, commit }, { keywords, pageNo, Status }) {
             let tableName = 'rent_' + rootState.Administrator.adminID
-            let res = await searchRent(tableName, keywords, pageNo);
-            // console.log(res);
+            let res = await searchRent(tableName, keywords, pageNo, Status);
+            console.log(res);
             commit("search", res);
-            if (res) {  // 成功
-                if (!res.success)
-                    Notification({
-                        title: "失败提醒",
-                        offset: 60,
-                        duration: 2000,
-                        type: "error",
-                        message: "搜索失败！没有找到相关记录。",
-                    });
-                else
-                    Notification({
-                        title: "成功",
-                        offset: 60,
-                        duration: 2000,
-                        type: "success",
-                        message: "搜索成功！",
-                    });
+            if (res) {
                 return res.success;
             }
         },

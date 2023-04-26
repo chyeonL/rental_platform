@@ -213,10 +213,8 @@ router.post('/Cover', (req, res) => {
   })
 })
 router.get('/roomtypeList', (req, res) => {          // 房型列表
-  // console.log(req.query);
   let { tableName } = req.query
   connection.query('select * from `' + tableName + '`', (e, r) => {
-    // console.log(e, r);
     if (r.length > 0) {
       res.send({
         code: 200,
@@ -234,6 +232,239 @@ router.get('/roomtypeList', (req, res) => {          // 房型列表
     }
   })
 })
+
+// 预约
+router.post('/newBooking', (req, res) => {
+  let { Staff_ID, Area, Landlord_ID, Landlord_Name, BookingStatus, Name, Contact, Gender, Time, Roomtype, Requirement, Note } = req.body
+  connection.query(`insert into booking(Staff_ID, Area, Landlord_ID, Landlord_Name, BookingStatus, Name, Contact, Gender, Time, Roomtype, Requirement) values('${Staff_ID}', '${Area}', '${Landlord_ID}', '${Landlord_Name}', '${BookingStatus}', '${Name}', '${Contact}', '${Gender}', '${Time}', '${Roomtype}', '${Requirement}')`, (e, r) => {
+    if (r.affectedRows > 0) {
+      res.send({
+        code: 200,
+        success: true,
+        msg: `${Name}成功预约`,
+        data: r.insertId
+      })
+    } else {
+      res.send({
+        code: 205,
+        success: false,
+        msg: `${Name}预约失败`
+      })
+    }
+  })
+})
+router.get('/allBooking', (req, res) => {
+  let { pageNo, Landlord_ID } = req.query
+  let pageSize = 5;
+  connection.query('select * from booking where Landlord_ID="' + Landlord_ID + '"', (e, r) => {
+    let n = (pageNo - 1) * pageSize;
+    if (r.length > 0) {
+      connection.query(
+        'select * from booking where Landlord_ID="' + Landlord_ID + '" order by No limit ' + n + ', ' + pageSize,
+        (e, r1) => {
+          res.send({
+            code: 200,
+            success: true,
+            msg: `获取所有访客预约`,
+            data: r1,
+            total: r.length,
+            allData: r,
+            pageSize,
+            pageNo,
+          });
+        }
+      );
+    } else {
+      res.send({
+        code: 203,
+        success: true,
+        msg: `没有预约`,
+        total: 0,
+        pageSize,
+        pageNo,
+      });
+    }
+  })
+})
+router.get('/deleteBooking', (req, res) => {       // 删除
+  let { No } = req.query
+  connection.query('delete from booking where No = "' + No + '"', (e, r) => {
+    if (r.affectedRows > 0) {
+      res.send({
+        code: 200,
+        success: true,
+        msg: `成功删除${No} 预约记录 `,
+      });
+    } else {
+      res.send({
+        code: 205,
+        success: false,
+        msg: "删除失败",
+      });
+    }
+  })
+})
+router.get("/searchBooking", (req, res) => {           // 搜索
+  console.log(req.query);
+  let { Landlord_ID, keywords, pageNo, BookingStatus } = req.query
+  let pageSize = 5;
+  let n = (pageNo - 1) * pageSize;
+  let sql1 = ''
+  let sql2 = ''
+  if (BookingStatus === '') {
+    sql1 =
+      "select * from booking where Landlord_ID='" + Landlord_ID + "' and concat(`BookingStatus`,`No`,`Roomtype`,`Name`,`Requirement`,`Gender`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from booking where Landlord_ID='" + Landlord_ID + "' and concat(`BookingStatus`,`No`,`Roomtype`,`Name`,`Requirement`,`Gender`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  } else {
+    sql1 =
+      "select * from booking where Landlord_ID='" + Landlord_ID + "' and BookingStatus='" + BookingStatus + "' and concat(`BookingStatus`,`No`,`Roomtype`,`Name`,`Requirement`,`Gender`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from booking where Landlord_ID='" + Landlord_ID + "' and BookingStatus='" + BookingStatus + "' and concat(`BookingStatus`,`No`,`Roomtype`,`Name`,`Requirement`,`Gender`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  }
+  connection.query(sql1, (e0, r0) => {
+    if (r0.length > 0) {
+      connection.query(sql2, (e1, r1) => {
+        res.send({
+          code: 200,
+          msg: `模糊搜索访客预约`,
+          success: true,
+          data: r1,
+          allData: r0,
+          total: r0.length,
+          pageNo,
+          pageSize,
+        });
+      });
+    } else {
+      res.send({
+        code: 205,
+        msg: `暂无访客预约`,
+        success: false,
+        data: [],
+        allData: [],
+        pageNo: 1,
+        pageSize: 5,
+        total: 0,
+      });
+    }
+  });
+});
+router.get('/detailBooking', (req, res) => {       // 获取详情
+  let { No } = req.query
+  connection.query('select * from booking where No = "' + No + '"', (e, r) => {
+    res.send({
+      code: 200,
+      success: true,
+      msg: `获取${No} 预约记录`,
+      data: r
+    })
+  })
+})
+router.post('/updateBookingStatus', (req, res) => {
+  let { No, BookingStatus } = req.body
+  connection.query(`update booking set BookingStatus='${BookingStatus}' where No = ${No}`, (e, r) => {
+    if (r.affectedRows > 0) {
+      res.send({
+        code: 200,
+        success: true,
+        msg: `成功修改${No}预约状态`
+      })
+    } else {
+      res.send({
+        code: 205,
+        success: false,
+        msg: `修改${No}预约状态失败`
+      })
+    }
+  })
+})
+router.get('/toBeConfirm', (req, res) => {
+  let { Landlord_ID } = req.query
+  connection.query('select * from booking where Landlord_ID="' + Landlord_ID + '" and BookingStatus="提交预约"', (e, r) => {
+    if (r.length > 0) {
+      res.send({
+        code: 200,
+        success: true,
+        msg: '查询待确认的预约访客数目',
+        data: r.length
+      })
+    } else {
+      res.send({
+        code: 200,
+        success: true,
+        msg: '没有待确认的预约访客数目',
+        data: 0
+      })
+    }
+  })
+})
+router.get('/viewHistory', (req, res) => {
+  let { pageNo, Name, Contact } = req.query
+  let pageSize = 5;
+  connection.query('select * from booking where Contact="' + Contact + '" and Name="' + Name + '"', (e, r) => {
+    let n = (pageNo - 1) * pageSize;
+    if (r.length > 0) {
+      connection.query(
+        'select * from booking where Contact="' + Contact + '" and Name="' + Name + '" order by No limit ' + n + ', ' + pageSize,
+        (e, r1) => {
+          res.send({
+            code: 200,
+            success: true,
+            msg: `获取预约历史`,
+            data: r1,
+            total: r.length,
+            allData: r,
+            pageSize,
+            pageNo,
+          });
+        }
+      );
+    } else {
+      res.send({
+        code: 203,
+        success: true,
+        msg: `没有预约记录`,
+        total: 0,
+        pageSize,
+        pageNo,
+      });
+    }
+  })
+})
+router.post('/rescheduleBooking', (req, res) => {
+  let { No, Time } = req.body
+  connection.query(`update booking set Time='${Time}' where No = ${No}`, (e, r) => {
+    if (r.affectedRows > 0) {
+      res.send({
+        code: 200,
+        success: true,
+        msg: `${No}成功修改预约时间`
+      })
+    } else {
+      res.send({
+        code: 205,
+        success: false,
+        msg: `修改时间失败`
+      })
+    }
+  })
+})
+
 
 
 

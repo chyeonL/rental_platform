@@ -71,36 +71,17 @@ const actions = {
     }
   },
   // 搜索
-  async SearchOpinion({ rootState, commit }, { keywords, pageNo }) {
+  async SearchOpinion({ rootState, commit }, { keywords, pageNo,Status }) {
     let tableName = rootState.Administrator.adminID + '_opinion'
-    // console.log(tableName, pageNo);
-    let res = await goSearchOpinions(tableName, keywords, pageNo);  // params包括 keywords和pageNo
-    // console.log(res);
+    let res = await goSearchOpinions(tableName, keywords, pageNo,Status);  // params包括 keywords和pageNo
     commit("SearchList", res);
-    if (res) {  // 成功
-      if (!res.success)
-        Notification({
-          title: "失败提醒",
-          offset: 60,
-          duration: 2000,
-          type: "error",
-          message: "搜索失败！没有找到相关记录。",
-        });
-      else
-        Notification({
-          title: "成功",
-          offset: 60,
-          duration: 2000,
-          type: "success",
-          message: "搜索成功！",
-        });
+    if (res) {  
       return res.success;
     }
   },
   // 删除
-  async DeleteOpinion({ rootState, commit }, No) {
+  async DeleteOpinion({ rootState }, No) {
     let tableName = rootState.Administrator.adminID + '_opinion'
-    // console.log(tableName, No);
     let res = await goDeletehOpinion(tableName, No);
     // console.log(res);
     if (res) {
@@ -127,16 +108,14 @@ const actions = {
   // 获取详情
   async OpinionDetail({ rootState, commit }, No) {
     let tableName = rootState.Administrator.adminID + '_opinion'
-    // console.log(tableName, No);
     let res = await getOpinionDetail(tableName, No);
-    // console.log(res);
     commit('detail', res.data[0])
     if (res) {  // 成功
       return res.data[0];
     }
   },
   // 编辑
-  async ModifyOpinion({ rootState, commit }, form) {
+  async ModifyOpinion({ rootState }, form) {
     let tableName = rootState.Administrator.adminID + '_opinion'
     // console.log(tableName, form);
     let res = await goModifyOpinion(tableName, form);
@@ -168,9 +147,7 @@ const actions = {
   // 所有
   async GetMyOpinion({ rootState, commit }, pageNo) {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
-    // console.log(pageNo, tableName, rootState.Administrator.adminID);
     let res = await getMyOpinion(pageNo, tableName, rootState.Administrator.adminID);
-    // console.log(res);
     commit("all", res);
     if (res) {  // 成功
       if (!res.success)
@@ -185,38 +162,18 @@ const actions = {
     }
   },
   // 搜索
-  async SearchMyOpinion({ rootState, commit }, { keywords, pageNo }) {
+  async SearchMyOpinion({ rootState, commit }, { keywords, pageNo, Status }) {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
-    // console.log(tableName, keywords, pageNo);
-    let res = await searchMyOpinion(tableName, keywords, pageNo);
-    // console.log(res);
+    let res = await searchMyOpinion(tableName, keywords, pageNo, Status);
     commit("SearchList", res);
-    if (res) {  // 成功
-      if (!res.success)
-        Notification({
-          title: "失败提醒",
-          offset: 60,
-          duration: 2000,
-          type: "error",
-          message: "搜索失败！没有找到相关记录。",
-        });
-      else
-        Notification({
-          title: "成功",
-          offset: 60,
-          duration: 2000,
-          type: "success",
-          message: "搜索成功！",
-        });
+    if (res) { 
       return res.success;
     }
   },
   // 删除
   async DeleteMyOpinion({ rootState }, No) {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
-    // console.log(tableName, No);
     let res = await deleteMyOpinion(tableName, No);
-    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
@@ -241,9 +198,7 @@ const actions = {
   // 获取详情
   async DetailMyOpinion({ commit, rootState }, No) {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
-    // console.log(tableName, No);
     let res = await detailMyOpinion(tableName, No);
-    // console.log(res);
     commit('detail', res.data[0])
     if (res) {  // 成功
       return res.data[0];
@@ -252,9 +207,7 @@ const actions = {
   // 编辑
   async ModifyMyOpinion({ rootState }, data) {
     let tableName = rootState.Administrator.userInfo.InChargeStaffID + '_opinion'
-    // console.log(tableName, data);
     let res = await modifyMyOpinion(tableName, data);
-    // console.log(res);
     if (res) {
       // 成功
       if (res.success)

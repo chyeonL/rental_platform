@@ -160,7 +160,7 @@ export default {
             this.form.Note === null
           )
             this.form.Note = "";
-          console.log(this.form);
+          // console.log(this.form);
           this.$confirm("确认编辑租户记录?", "确认编辑", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",

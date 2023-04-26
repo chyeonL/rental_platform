@@ -4,6 +4,16 @@
     <div class="header">      
       <Breadcrumb  :routes='routes'/>
       <header>
+        <!-- 筛选 -->
+        <el-select v-model="filterKey" placeholder="筛选:出租状态" @change='filterStatus'>
+          <el-option
+            v-for="(item,index) in status"
+            :key="index"
+            :label="item"
+            :value="item"
+            >
+          </el-option>
+        </el-select>
         <el-input
           v-model="keyword"
           placeholder="输入关键字进行搜索……"
@@ -71,7 +81,7 @@ export default {
   data() {
     return {
       keyword: "",
-      type: "all", // search 为搜索分页
+      type: "all", 
       currentPage: 1,
       routes: {
         nav: "出租房",
@@ -79,6 +89,8 @@ export default {
         parentRoute: "all",
         children: "所有记录",
       },
+      status: ["所有房间", "未出租", "已出租"],
+      filterKey: "",
     };
   },
   created() {
@@ -95,14 +107,12 @@ export default {
     }),
   },
   methods: {
-    // 获取数据
     async getData(pageNo = 1) {
       await this.$store
         .dispatch("GetAllRoom", pageNo)
-        .then((res) => (this.type = "all"));
+        .then(() => (this.type = "all"));
     },
 
-    // 改变页码，重发请求
     changePageNo(pageNo) {
       if (this.type == "all") {
         this.getData(pageNo);
@@ -111,22 +121,19 @@ export default {
       }
     },
 
-    // 搜索
     async goSearch(pageNo = 1) {
       let keywords = this.keyword.trim();
-      if (keywords) {
-        await this.$store
-          .dispatch("SearchRoom", { keywords, pageNo })
-          .then((res) => {
-            this.type = "search";
-          });
-      } else {
-        this.getData(1, this.pageSize); // 搜索之后，删掉关键词，再按回车，重新加载全部数据
-        // return;
-      }
+      await this.$store
+        .dispatch("SearchRoom", {
+          keywords,
+          pageNo,
+          RentStatus: this.filterKey === "所有房间" ? "" : this.filterKey,
+        })
+        .then(() => {
+          this.type = "search";
+        });
     },
 
-    // 编辑
     handleEdit(index, row) {
       this.$router.push({
         name: "DetailRoom",
@@ -136,7 +143,6 @@ export default {
       });
     },
 
-    // 删除
     handleDelete(index, row) {
       this.$confirm("确认删除该房间?", "确认删除", {
         confirmButtonText: "确定",
@@ -144,26 +150,34 @@ export default {
         center: true,
       })
         .then(async () => {
-          if(row.RentStatus === '已出租'){
+          if (row.RentStatus === "已出租") {
             this.$notify({
-              title:'警告提醒',
-              offset:80,
-              duration:3000,
-              message:'该房间已出租，暂时无法删除',
-              type:'warning'
-            })
-          }
-          else
-          await this.$store
-            .dispatch("DeleteRoom", {No:row.No, RoomType:row.RoomType, RoomNumber:row.RoomNumber})
-            .then((res) => this.getData());
+              title: "警告提醒",
+              offset: 80,
+              duration: 3000,
+              message: "该房间已出租，暂时无法删除",
+              type: "warning",
+            });
+          } else
+            await this.$store
+              .dispatch("DeleteRoom", {
+                No: row.No,
+                RoomType: row.RoomType,
+                RoomNumber: row.RoomNumber,
+              })
+              .then((res) => this.getData());
         })
         .catch(() => {});
     },
 
-    // 租约中的行
     rowsToBeComplete({ row }) {
       if (row.RentStatus === "已出租") return "warning2-row";
+    },
+
+    filterStatus(status) {
+      this.filterKey = status;
+      this.keyword = "";
+      this.goSearch();
     },
   },
 };
@@ -179,7 +193,6 @@ header {
   display: flex;
   align-items: center;
   justify-content: start;
-  margin: 0 100px;
 
   ::v-deep .el-input {
     width: 300px;
@@ -187,8 +200,9 @@ header {
     outline: none;
   }
 
-  ::v-deep .el-input:focus {
-    border-color: none;
+  ::v-deep .el-input__inner:focus {
+    border-color: #24292e;
+    outline: 0;
   }
 
   ::v-deep .el-button {
@@ -197,6 +211,21 @@ header {
     font-size: 14px;
     color: #ffd04b;
     background-color: #24292e;
+  }
+  ::v-deep .el-select {
+    width: 140px;
+    margin-left: 50px;
+    margin-right: 50px;
+    .el-input {
+      width: 100%;
+      border: none;
+    }
+    .el-input__inner {
+      border: none;
+      font-weight: 700;
+      color: #ffd04b;
+      background-color: #24292e;
+    }
   }
 }
 

@@ -11,13 +11,13 @@ import { Notification } from "element-ui";
 
 const state = {
     total: 0,
-    pageSize: 5, 
+    pageSize: 5,
     pageNo: 1,
     currentPage: 1,
-    all: [], 
-    list: [], 
-    search: [], 
-    detail: {}, 
+    all: [],
+    list: [],
+    search: [],
+    detail: {},
 };
 
 const mutations = {
@@ -67,28 +67,12 @@ const actions = {
     },
 
     // 搜索
-    async SearchInspectation({ rootState, commit }, { keywords, pageNo }) {
+    async SearchInspectation({ rootState, commit }, { keywords, pageNo, Overall }) {
         let tableName = rootState.Administrator.adminID + '_inspectation'
-        let res = await goSearchInspectation({ keywords, pageNo, tableName });
+        let res = await goSearchInspectation({ keywords, pageNo, tableName, Overall });
         // console.log(res);
         commit("search", res);
-        if (res) {  // 成功
-            if (!res.success)
-                Notification({
-                    title: "失败提醒",
-                    offset: 60,
-                    duration: 2000,
-                    type: "error",
-                    message: "搜索失败！没有找到相关记录。",
-                });
-            else
-                Notification({
-                    title: "成功",
-                    offset: 60,
-                    duration: 2000,
-                    type: "success",
-                    message: "搜索成功！",
-                });
+        if (res) {
             return res.success;
         }
     },
@@ -185,8 +169,8 @@ const actions = {
         }
     },
 
-    async LandlordList({rootState}){
-        let {AreaID} = rootState.Administrator.userInfo
+    async LandlordList({ rootState }) {
+        let { AreaID } = rootState.Administrator.userInfo
         let res = await getLandlordList(AreaID)
         // console.log(res);
         return res.data

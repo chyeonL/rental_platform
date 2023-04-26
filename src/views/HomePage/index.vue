@@ -6,6 +6,13 @@
         <a href="#">
           <h2>{{HouseInfo.HouseNumber}} {{VillageInfo.Area}} 出租屋</h2>
         </a>
+        <div class="hello">
+          <!--  class="my" -->
+          <span v-if="$store.state.Administrator.isLogin">Hello，{{$store.state.Administrator.userInfo.Name}}</span>
+          <span @click="logout" class="logout" v-if="$store.state.Administrator.isLogin">登出</span>
+          <span v-else>Welcome to our village!</span>
+          <span @click="viewHistory" class="history" v-if="$store.state.Administrator.isLogin&&$store.state.Administrator.role == 'visitor'"><i class='iconfont icon-baogao'></i>预约历史</span>
+        </div>
       </div>
       <div class="right">
         <!-- 下拉框 -->
@@ -25,9 +32,13 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <div class="system" @click="goSystem">
+        <div class="system" @click="goSystem" v-if="$store.state.Administrator.isLogin">
             <i class="iconfont icon-shezhi"></i>
-            登陆后台
+            管理后台
+        </div>
+        <div class="login" @click="visitor" v-if="!$store.state.Administrator.isLogin">
+            <!-- <i class="iconfont icon-shezhi"></i> -->
+            登录/注册
         </div>
       </div>
     </nav>
@@ -91,17 +102,29 @@
 
     <!-- 内容区 -->
     <div class="main">
-
       <!-- 房型列表 -->
       <div class="box houseType" id="houseType" v-if="roomtypeList.length">
         <div class="typeCard" v-for="item in roomtypeList" :key='item.No'>
-          <div class="up">{{item.Type}}</div>
+          <div class="up">
+            {{item.Type}}
+            <el-button type="primary" round @click="book(item.Type)" v-if="$store.state.Administrator.role == 'visitor'||!$store.state.Administrator.isLogin">+ 预约看房</el-button>
+          </div>
           <div class="down">
             <div class="pic">
               <div class="img" :style='{backgroundImage:`url(${item.Picture})`}'></div>
             </div>
             <div class="detail">
               <div class="price"><div>CNY {{item.Price}}</div></div>
+              <div class="limit row">
+                <div class="people">
+                  <div class="title">房间总数</div>
+                  <div class="info">{{item.Amount}}</div>
+                </div>
+                <div class="square">
+                  <div class="title">可出租房间</div>
+                  <div class="info">{{item.AvailableRoomsQuantity}}</div>
+                </div>
+              </div>
               <div class="roomType row">
                 <div class="title">坪数</div>
                 <div class="info">{{item.Square}} 平方米</div>
@@ -119,9 +142,6 @@
               <div class="facility row">
                 <div class="title">设施</div>
                 <div class="info">
-                  <!-- <div class="fac" v-for="(fac,index) in item.facilities" :key='index'>
-                    <span>{{fac}}</span>
-                  </div> -->
                   <div class="fac">
                     {{item.Furnishment}}
                   </div>
@@ -139,6 +159,7 @@
           暂无可出租的房型房间
         </p>
       </div>
+
 
       <!-- 出租资讯 -->
       <!-- 出租屋设施 -->
@@ -244,6 +265,144 @@
       </div>
       
     </div>
+      
+      <!-- 提交预约 -->
+     <el-dialog
+      title="提交预约"
+      :visible.sync="visible"
+      width="35%"
+      center
+      :lock-scroll='true'
+    >
+      <el-form
+        :model="info"
+        status-icon
+        ref="info"
+        :rules="rules"
+        label-width="100px"
+        class="demo-ruleForm"
+      >      
+        <el-form-item label="名字" prop="Name">
+          <el-input v-model="info.Name"
+            autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="看房时间" prop="Time">
+          <el-date-picker
+              type="date"
+              placeholder="选择日期"
+              value-format='yyyy-MM-dd'
+              v-model="info.Time"   
+            ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="联系电话" prop="Contact">
+          <el-input
+            v-model="info.Contact"
+            autocomplete="off"
+            disabled
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="Gender">
+          <el-select v-model="info.Gender" clearable placeholder="请选择" class="small">
+              <el-option label="男" value="男"></el-option>
+              <el-option label="女" value="女"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="详细需求" prop="Requirement">
+          <el-input
+            v-model="info.Requirement"
+            autocomplete="off"
+            placeholder="可以附加说明详细的租房需求"
+            type="textarea"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitMyInfo('info')"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
+
+      <!-- 预约历史 -->
+     <el-dialog
+      title="预约历史"
+      :visible.sync="historyVisible"
+      width="60%"
+      center
+      :lock-scroll='true'
+    >
+      <el-table
+        :data="type==='all'?list:search"
+        border
+        :header-cell-style="{background:'#24292e',color:'#ffd04b',borderColor:'#4c4c4c'}"
+      >
+       <el-table-column
+        label="编号"
+        prop="No"
+        width="50"
+        align="center"
+        >
+        </el-table-column>
+        <el-table-column label="房型" prop="Roomtype" align="center" width="100"></el-table-column>
+        <el-table-column label="看房时间" prop="Time" align="center" width="120"></el-table-column>
+        <el-table-column label="预约状态" prop="BookingStatus" align="center"> </el-table-column>
+        <el-table-column label="姓名" prop="Name" align="center" width="120"> </el-table-column>
+        <el-table-column label="联系电话" prop="Contact" align="center" width="120"> </el-table-column>
+        <el-table-column label="性别" prop="Gender" align="center" width="60"></el-table-column>
+        <el-table-column label="详细需求" prop="Requirement" align="center" width="180"></el-table-column>
+        <el-table-column label="数据操作" width="160" class="operation" fixed="right" align="center">
+          <template slot-scope="scope">
+            <el-button type="info" @click="handleEdit(scope.$index, scope.row)" class="button">修改时间</el-button>
+            <el-button
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+               class="button"
+              >取消预约</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+    <Pagination
+      :total="total"
+      :currentPage="currentPage"
+      :pageSize="pageSize"
+      @changePageNo="changePageNo"
+    />
+    </el-dialog>
+      
+      <!-- 修改时间 -->
+     <el-dialog
+      title="修改时间"
+      :visible.sync="rescheduleVisible"
+      width="40%"
+      center
+      :lock-scroll='true'
+    >
+      <el-form
+        :model="reschedule"
+        status-icon
+        ref="reschedule"
+        :rules="rescheduleTime"
+        label-width="100px"
+        class="demo-ruleForm"
+      >      
+        <el-form-item label="看房时间" prop="Time">
+          <el-date-picker
+              type="date"
+              placeholder="选择日期"
+              value-format='yyyy-MM-dd'
+              v-model="reschedule.Time"   
+            ></el-date-picker>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submit"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
 
     <!-- 页脚 -->
     <footer>
@@ -267,9 +426,23 @@
 </template>
 
 <script>
+import Pagination from "@/components/common/Pagination.vue";
+import { mapState } from "vuex";
 export default {
   name: "HomePage",
+  components: { Pagination },
   data() {
+    var reg_tel =
+      /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+    var validateTel = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入手机号"));
+      } else if (!reg_tel.test(value)) {
+        callback(new Error("请输入11位规范手机号"));
+      } else {
+        callback();
+      }
+    };
     return {
       banner1: "", // ./banner1.jpeg
       banner2: "",
@@ -288,14 +461,61 @@ export default {
       HouseInfo: {}, // 出租资讯
       roomtypeList: [], // 房型列表
       NoRoomtype: "./NoRoomtype.png",
+      visible: false,
+      info: {
+        Name: "",
+        Time: "",
+        Contact: "",
+        Gender: "",
+        Requirement: "",
+        Roomtype: "",
+      },
+      rules: {
+        Name: [{ required: true, trigger: "blur", message: "请输入姓名" }],
+        Time: [{ required: true, trigger: "blur", message: "请选择时间" }],
+        Contact: [{ required: true, validator: validateTel, trigger: "blur" }],
+        Gender: [{ required: true, trigger: "change", message: "请选择" }],
+      },
+      historyVisible: false, // 预约历史
+      form: {
+        BookingStatus: "",
+        ID: "",
+        Name: "",
+        Gender: "",
+        Contact: "",
+        Time: "",
+        Requirement: "",
+        Roomtype: "",
+      },
+      currentPage: 1,
+      rescheduleVisible: false, // 修改时间
+      reschedule: {
+        Time: "",
+      },
+      rescheduleTime: {
+        Time: [{ required: true, trigger: "blur", message: "请选择时间" }],
+      },
+      TempNo: 0,
     };
   },
   computed: {
     push() {
-      if (this.$store.state.Administrator.role)
+      if (
+        this.$store.state.Administrator.role &&
+        this.$store.state.Administrator.role != "visitor"
+      )
         return "/" + this.$store.state.Administrator.role;
       else return "/";
     },
+    ...mapState({
+      total: (state) => state.RoomType.total,
+      pageNo: (state) => state.RoomType.pageNo,
+      all: (state) => state.RoomType.all,
+      list: (state) => state.RoomType.list,
+      pageSize: (state) => state.RoomType.pageSize,
+      search: (state) => state.RoomType.search,
+      userInfo: (state) => state.Administrator.userInfo,
+    }),
   },
   created() {
     // 获取 村庄list
@@ -344,8 +564,10 @@ export default {
     });
   },
   mounted() {
-    console.log(this.push);
+    // console.log(this.push);
     window.addEventListener("scroll", this.handleScroll); // 监听滑动事件
+    this.info.Name = this.userInfo.Name;
+    this.info.Contact = this.userInfo.Tel;
   },
   destroyed() {
     window.removeEventListener("scroll", this.handleScroll); // 销毁监听滑动事件
@@ -400,11 +622,77 @@ export default {
         });
     },
 
+    book(type) {
+      if (!this.$store.state.Administrator.isLogin) {
+        this.$notify({
+          type: "warning",
+          title: "限制提醒",
+          message: "请先前往登录",
+          offset: 100,
+          duration: 3000,
+        });
+        return;
+      }
+      this.visible = true;
+      this.reset();
+      this.info.Roomtype = type;
+      this.$refs.info.clearValidate();
+    },
+
+    reset() {
+      this.info = {
+        Name: this.userInfo.Name,
+        Time: "",
+        Contact: this.userInfo.Tel,
+        Gender: "",
+        Requirement: "",
+        Roomtype: "",
+      };
+    },
+
+    // 提交
+    submitMyInfo() {
+      this.$refs["info"].validate((valid) => {
+        if (valid) {
+          // console.log(this.info);
+          this.$confirm("确认提交预约？", "确认预约", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            center: true,
+          }).then(() => {
+            this.$store.dispatch("NewBooking", this.info).then((res) => {
+              if (res.success) {
+                this.$notify({
+                  title: "成功",
+                  offset: 80,
+                  duration: 3000,
+                  type: "success",
+                  message: "成功预约，稍等一会儿房东很快就会确认状态噢！",
+                });
+              }
+              this.visible = false;
+              this.reset();
+            });
+          });
+        }
+      });
+    },
+
     // 跳转后台
     goSystem() {
-      // console.log(this.push);
+      if (this.$store.state.Administrator.role == "visitor") {
+        // 访客不可以登陆后台
+        this.$notify({
+          type: "warning",
+          title: "限制提醒",
+          message: "抱歉，后台系统目前只为管理员开放使用",
+          offset: 100,
+          duration: 4000,
+        });
+        return;
+      }
       if (this.push === "/") {
-        this.$message.info("需要登陆以继续");
+        // this.$message.info("需要登陆以继续");
         this.$router.push({
           name: "Login",
           query: {
@@ -412,6 +700,37 @@ export default {
           },
         });
       } else this.$router.push(this.push);
+    },
+
+    visitor() {
+      this.$message.info("需要登陆以继续");
+      this.$router.push({
+        name: "Login",
+        query: {
+          redirect: "/",
+        },
+      });
+    },
+
+    logout() {
+      this.$confirm("确定退出登录?", "确定", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        center: true,
+      })
+        .then(() => {
+          this.$store.dispatch("Logout").then(() => {
+            this.$router.replace("/");
+            this.$notify({
+              type: "success",
+              title: "成功",
+              message: "已登出",
+              offset: 100,
+              duration: 4000,
+            });
+          });
+        })
+        .catch(() => {});
     },
 
     // 腾讯地图
@@ -492,11 +811,11 @@ export default {
         .then((res) => {
           // console.log(res);
           if (res.status === 0) {
-            console.log(
-              "当前村庄位置经纬度",
-              res.result.location.lat.toFixed(6),
-              res.result.location.lng.toFixed(6)
-            );
+            // console.log(
+            //   "当前村庄位置经纬度",
+            //   res.result.location.lat.toFixed(6),
+            //   res.result.location.lng.toFixed(6)
+            // );
             this.center = {
               lat: res.result.location.lat.toFixed(6),
               lng: res.result.location.lng.toFixed(6),
@@ -511,6 +830,67 @@ export default {
     //修改地图的中心点
     changeCenter(lat, lng) {
       this.map.setCenter(new TMap.LatLng(lat, lng));
+    },
+
+    viewHistory() {
+      this.historyVisible = true;
+      this.getData();
+    },
+
+    async getData(pageNo = 1) {
+      await this.$store
+        .dispatch("ViewHistory", {
+          pageNo,
+          Name: this.info.Name,
+          Contact: this.info.Contact,
+        })
+        .then(() => (this.type = "all"));
+    },
+
+    changePageNo(pageNo) {
+      this.getData(pageNo);
+    },
+
+    handleEdit(index, row) {
+      this.rescheduleVisible = true;
+      this.TempNo = row.No;
+      this.reschedule.Time = "";
+      this.$refs.reschedule.clearValidate();
+    },
+
+    submit() {
+      this.$refs["reschedule"].validate((valid) => {
+        if (valid) {
+          this.$confirm("确认修改时间?", "确认修改", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            center: true,
+          }).then(async () => {
+            await this.$store
+              .dispatch("rescheduleBooking", {
+                No: this.TempNo,
+                Time: this.reschedule.Time,
+              })
+              .then(() => {
+                this.getData();
+                this.rescheduleVisible = false;
+              });
+          });
+        }
+      });
+    },
+
+    handleDelete(index, row) {
+      this.$confirm("确认取消预约?", "确认取消", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        center: true,
+      }).then(async () => {
+        await this.$store.dispatch("DeleteBooking", row.No).then(() => {
+          this.getData();
+          this.historyVisible = false;
+        });
+      });
     },
   },
 };
@@ -531,10 +911,39 @@ export default {
   padding: 3rem 4rem;
   box-sizing: border-box;
   background-color: #fff;
-  .left a {
-    color: black;
-    h2 {
-      font-weight: normal;
+  .left {
+    display: flex;
+    align-items: flex-end;
+    a {
+      color: black;
+      h2 {
+        font-weight: normal;
+      }
+    }
+    .hello {
+      color: #686e74;
+      margin-left: 50px;
+      font-size: 14px;
+      .logout,
+      .my {
+        margin-left: 20px;
+        font-size: 12px;
+        color: #dba000;
+        border-bottom: 1px solid;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      .history {
+        margin-left: 40px;
+        font-size: 14px;
+        vertical-align: top;
+        &:hover {
+          cursor: pointer;
+          font-weight: 700;
+          color: #000;
+        }
+      }
     }
   }
   .right {
@@ -542,7 +951,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     color: #686e74;
-    // background-color: #078abc;
     i {
       color: #686e74;
     }
@@ -559,6 +967,11 @@ export default {
       &:hover i {
         color: #dba000;
       }
+    }
+    .login {
+      font-size: 0.9rem;
+      color: #dba000;
+      border-bottom: 1px solid;
     }
     .el-dropdown .village i {
       font-size: 1rem;
@@ -699,15 +1112,30 @@ export default {
     margin-bottom: 5rem;
     .up {
       font-size: 1.2rem;
-      height: 2rem;
+      // height: 2rem;
       padding-bottom: 10px;
+      // background-color: #078abc;
+      .el-button {
+        padding: 15px 30px;
+        color: #ffd04b;
+        background-color: #23272a;
+        padding: 12px 15px;
+        margin-left: 70px;
+        border-radius: 15px;
+        font-weight: 700;
+        border: none;
+        i {
+          color: #66ff1f;
+          width: 100px;
+        }
+      }
     }
     .down {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      height: 16rem;
+      height: 19rem;
       border-bottom: 1px solid #ccc;
       .pic {
         width: 50%;
@@ -745,7 +1173,7 @@ export default {
         right: 0;
         background-color: #fff;
         border: 1px solid #ccc;
-        width: 110px;
+        // width: 110px;
         padding: 5px 15px;
         border-radius: 10px;
         box-sizing: border-box;
@@ -761,6 +1189,7 @@ export default {
       height: 70px;
       box-sizing: border-box;
       font-size: 15px;
+      padding: 5px 0;
     }
     .limit {
       display: flex;
@@ -775,20 +1204,6 @@ export default {
     .title {
       color: #686e74;
       margin-bottom: 8px;
-    }
-    .facility {
-      .info {
-        // display: flex;
-        // align-items: center;
-        // justify-content: start;
-        // .fac {
-        //   margin-right: 10px;
-        //   width: 25%;
-        //   i {
-        //     margin-right: 5px;
-        //   }
-        // }
-      }
     }
   }
   .houseFac,
@@ -995,5 +1410,45 @@ footer {
       color: #f7ac15;
     }
   }
+}
+.el-dialog {
+  border-radius: 40px;
+}
+.demo-ruleForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 20px;
+  .el-input,
+  .el-select {
+    width: 200px;
+    margin-left: 20px;
+  }
+  ::v-deep .el-form-item {
+    padding: 10px 0;
+  }
+}
+.dialog-footer {
+  .el-button {
+    color: #ffd04b;
+    background-color: #24292e;
+    padding: 12px 25px;
+    margin-left: 30px;
+    border-radius: 15px;
+    font-weight: 700;
+    i {
+      color: #1fa0ff;
+      width: 100px;
+    }
+  }
+}
+::v-deep .el-dialog--center {
+  text-align: center;
+  border-radius: 15px;
+}
+::v-deep .button {
+  padding: 5px;
+  font-size: 13px;
 }
 </style>

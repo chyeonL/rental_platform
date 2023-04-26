@@ -235,13 +235,13 @@ export default {
           StorageClass: "STANDARD", // 上传模式, 标准模式
           Body: res.file, // 上传文件对象
           onProgress: (progressData) => {
-            console.log("上传的进度", JSON.stringify(progressData));
+            // console.log("上传的进度", JSON.stringify(progressData));
             this.percentage = progressData.percent * 100;
           },
         },
         (err, data) => {
-          console.log(err);
-          console.log(data);
+          // console.log(err);
+          // console.log(data);
           this.showProgress = false;
           // 上传成功之后
           if (data.statusCode === 200) {
@@ -252,14 +252,14 @@ export default {
                 url: this.imgUrl,
                 No: this.userInfo.No,
               })
-              .then((res) => {
+              .then(() => {
                 // console.log(res);
                 this.$store
                   .dispatch("Login", {
                     account: this.userInfo.UserName,
                     password: this.userInfo.UserPassword,
                   })
-                  .then((res) => {
+                  .then(() => {
                     this.uploadVisible = false;
                     this.$router.go(0);
                   });

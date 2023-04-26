@@ -73,10 +73,9 @@ export default {
   data() {
     return {
       keyword: "",
-      type: "all", // search 为搜索分页
+      type: "all", 
       currentPage: 1,
       routes: {
-        // 面包屑导航 对象
         nav: "信息管理",
         parent: "出租屋",
         parentRoute: "all",

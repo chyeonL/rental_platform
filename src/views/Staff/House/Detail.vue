@@ -123,16 +123,14 @@ export default {
   components: { Breadcrumb },
   data() {
     return {
-      IsEdit: true, // true为 查阅模式
+      IsEdit: true, 
       routes: {
-        // 面包屑导航 对象
         nav: "信息管理",
         parent: "出租屋",
         parentRoute: "all",
         children: "具体信息",
       },
       houseForm: {
-        // 表单数据对象
         HouseNumber: "",
         OwnerName: "",
         Landlord_ID: "",
@@ -150,7 +148,6 @@ export default {
         Note: "",
       },
       rules: {
-        // 不是必须的那也没必要写了
         HouseNumber: [
           { required: true, message: "请输入门牌号", trigger: "change" },
           { max: 10, message: "长度不少于 3 个字符", trigger: "change" },
@@ -187,7 +184,6 @@ export default {
     };
   },
   created() {
-    // console.log(this.$route.query.No);
     this.getDetail();
   },
   mounted() {

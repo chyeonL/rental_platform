@@ -12,6 +12,16 @@
           <i class="iconfont icon-liudongrenyuan"></i>
           {{toBeReport}}
         </span>
+        <!-- 筛选 -->
+        <el-select v-model="filterKey" placeholder="筛选: 完整度" @change='filterStatus'>
+          <el-option
+            v-for="(item,index) in status"
+            :key="index"
+            :label="item"
+            :value="item"
+            >
+          </el-option>
+        </el-select>
         <el-input
           v-model="keyword"
           placeholder="输入关键字进行搜索……"
@@ -86,6 +96,8 @@ export default {
         parentRoute: "all",
         children: "所有租户",
       },
+      status: ["所有租户", "待完善", "信息完整"],
+      filterKey: "",
     };
   },
   created() {
@@ -95,12 +107,12 @@ export default {
       "tenant_" + this.$store.state.Administrator.adminID
     );
     this.$notify({
-      title:'报备提醒',
-      offset:150,
-      duration:4000,
-      message:`要求向工作人员报备所有流动人员, 报备条件：信息完整、租约中。`,
-      type:'warning'
-    })
+      title: "报备提醒",
+      offset: 150,
+      duration: 4000,
+      message: `要求向工作人员报备所有流动人员, 报备条件：信息完整、租约中。`,
+      type: "warning",
+    });
   },
   computed: {
     ...mapState({
@@ -110,18 +122,16 @@ export default {
       list: (state) => state.RoomType.list,
       pageSize: (state) => state.RoomType.pageSize,
       search: (state) => state.RoomType.search,
-      toBeReport:(state)=>state.Administrator.toBeReport
+      toBeReport: (state) => state.Administrator.toBeReport,
     }),
   },
   methods: {
-    // 获取数据
     async getData(pageNo = 1) {
       await this.$store
         .dispatch("GetAllTenants", pageNo)
         .then((res) => (this.type = "all"));
     },
 
-    // 改变页码，重发请求
     changePageNo(pageNo) {
       if (this.type == "all") {
         this.getData(pageNo);
@@ -130,22 +140,21 @@ export default {
       }
     },
 
-    // 搜索
     async goSearch(pageNo = 1) {
       let keywords = this.keyword.trim();
-      if (keywords) {
-        await this.$store
-          .dispatch("SearchTenant", { keywords, pageNo })
-          .then((res) => {
-            this.type = "search";
-          });
-      } else {
-        this.getData(1, this.pageSize); // 搜索之后，删掉关键词，再按回车，重新加载全部数据
-        // return;
-      }
+      if (this.filterKey === "信息完整") this.filterKey = "√";
+      await this.$store
+        .dispatch("SearchTenant", {
+          keywords,
+          pageNo,
+          Status: this.filterKey === "所有租户" ? "" : this.filterKey,
+        })
+        .then(() => {
+          if (this.filterKey === "√") this.filterKey = "信息完整";
+          this.type = "search";
+        });
     },
 
-    // 编辑
     handleEdit(index, row) {
       this.$router.push({
         name: "Tenant_Detail",
@@ -155,7 +164,6 @@ export default {
       });
     },
 
-    // 删除
     handleDelete(index, row) {
       this.$confirm("确认删除该租户?", "确认删除", {
         confirmButtonText: "确定",
@@ -188,6 +196,12 @@ export default {
         this.$router.go(0);
       });
     },
+
+    filterStatus(status) {
+      this.filterKey = status;
+      this.keyword = "";
+      this.goSearch();
+    },
   },
 };
 </script>
@@ -202,7 +216,6 @@ header {
   display: flex;
   align-items: center;
   justify-content: start;
-  margin-right: 100px;
 
   ::v-deep .el-input {
     width: 300px;
@@ -210,8 +223,9 @@ header {
     outline: none;
   }
 
-  ::v-deep .el-input:focus {
-    border-color: none;
+  ::v-deep .el-input__inner:focus {
+    border-color: #24292e;
+    outline: 0;
   }
 
   ::v-deep .el-button {
@@ -222,19 +236,33 @@ header {
     background-color: #24292e;
   }
   .report {
-    margin: 0 30px 0 50px;
+    margin: 0 10px 0 30px;
   }
   .toBeReport {
-    margin-right: 60px;
+    margin-right: 40px;
     font-size: 14px;
     vertical-align: top;
     background-color: #fff;
     padding: 5px;
-    border-radius: 10px;    
+    border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 50%);
     i {
       font-size: 21px;
       margin-right: -3px;
+    }
+  }
+  ::v-deep .el-select {
+    width: 140px;
+    margin-right: 20px;
+    .el-input {
+      width: 100%;
+      border: none;
+    }
+    .el-input__inner {
+      border: none;
+      font-weight: 700;
+      color: #ffd04b;
+      background-color: #24292e;
     }
   }
 }

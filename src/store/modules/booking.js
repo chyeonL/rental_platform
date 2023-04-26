@@ -1,4 +1,4 @@
-import { allTenants, detailTenant, modifyTenant, deleteTenant, searchTenant, reportTenant } from '@/api'
+import { newBooking, allBooking, searchBooking, deleteBooking, detailBooking, updateBookingStatus, toBeConfirm, viewHistory, rescheduleBooking } from '@/api'
 import { Notification } from "element-ui";
 export default {
     state: {
@@ -10,6 +10,7 @@ export default {
         list: [],
         search: [],
         detail: {},
+        confirmNumber: 0
     },
     mutations: {
         // 所有
@@ -33,14 +34,30 @@ export default {
         // 详情
         detail(state, payload) {
             state.detail = payload
+        },
+        confirmNumber(state, payload) {
+            state.confirmNumber = payload
         }
     },
     actions: {
-        // 所有
-        async GetAllTenants({ rootState, commit }, pageNo) {
-            // let tableName = 'room_' + rootState.Administrator.adminID
-            // console.log(pageNo, tableName);
-            let res = await allTenants(rootState.Administrator.adminID, pageNo);
+        async NewBooking({ rootState }, { Name, Time, Contact, Gender, Requirement, Roomtype }) {
+            let data = {
+                Name, Time, Contact, Gender, Requirement, Roomtype,
+                Staff_ID: rootState.Website.village.Staff_ID,
+                Area: rootState.Website.village.Area,
+                Landlord_ID: rootState.Website.house.Landlord_ID,
+                Landlord_Name: rootState.Website.house.LandlordName,
+                BookingStatus: '提交预约'
+            }
+            // console.log(data);
+            let res = await newBooking(data);
+            // console.log(res);
+            return res;
+        },
+
+
+        async GetAllBooking({ rootState, commit }, pageNo) {
+            let res = await allBooking(rootState.Administrator.adminID, pageNo);
             // console.log(res);
             commit("all", res);
             if (res) {  // 成功
@@ -56,19 +73,19 @@ export default {
             }
         },
 
-        // 搜索
-        async SearchTenant({ rootState, commit }, { keywords, pageNo, Status }) {
-            let tableName = 'tenant_' + rootState.Administrator.adminID
-            let res = await searchTenant(tableName, keywords, pageNo, Status);
+
+        async SearchBooking({ rootState, commit }, { keywords, pageNo, BookingStatus }) {
+            let res = await searchBooking(rootState.Administrator.adminID, keywords, pageNo, BookingStatus);
+            // console.log(res);
             commit("search", res);
             if (res) {
                 return res.success;
             }
         },
 
-        // 删除
-        async DeleteTenant({ rootState }, No) {
-            let res = await deleteTenant(rootState.Administrator.adminID, No);
+
+        async DeleteBooking({ rootState }, No) {
+            let res = await deleteBooking(No);
             // console.log(res);
             if (res) {
                 // 成功
@@ -92,11 +109,9 @@ export default {
             }
         },
 
-        // 获取详情
-        async DetailTenant({ rootState, commit }, No) {
-            let tableName = 'tenant_' + rootState.Administrator.adminID
-            // console.log(No, tableName);
-            let res = await detailTenant(tableName, No);
+
+        async DetailBooking({ commit }, No) {
+            let res = await detailBooking(No);
             // console.log(res);
             commit('detail', res.data[0])
             if (res) {  // 成功
@@ -104,16 +119,16 @@ export default {
             }
         },
 
-        // 编辑
-        async ModifyTenant({ rootState }, form) {
-            let res = await modifyTenant(rootState.Administrator.adminID, form);
+
+        async UpdateBookingStatus({ rootState }, { No, BookingStatus }) {
+            let res = await updateBookingStatus(No, BookingStatus);
             // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
                     Notification({
                         title: '成功',
-                        message: `编辑成功！`,
+                        message: `成功处理访客预约！`,
                         type: 'success',
                         offset: 100,
                         duration: 3000
@@ -121,7 +136,7 @@ export default {
                 else
                     Notification({
                         title: '错误',
-                        message: `编辑失败`,
+                        message: `修改失败`,
                         type: 'error',
                         offset: 100,
                         duration: 3000
@@ -130,35 +145,35 @@ export default {
             }
         },
 
-        // 报备
-        async ReportTenant({ rootState }) {
-            let res = await reportTenant(rootState.Administrator.adminID, rootState.Administrator.userInfo.Name, { Staff_ID: rootState.Administrator.userInfo.InChargeStaffID, StaffName: rootState.Administrator.userInfo.InChargeStaffName, Area: rootState.Administrator.userInfo.Area, AreaID: rootState.Administrator.userInfo.AreaID })
+
+        async ToBeConfirm({ rootState, commit }) {
+            let res = await toBeConfirm(rootState.Administrator.adminID)
             // console.log(res);
-            if (res.code == '200') {
-                Notification({
-                    title: '成功',
-                    message: `成功向${res.data.StaffName}报备${res.data.number}名租户：编号${res.data.NoStr}`,
-                    type: 'success',
-                    offset: 100,
-                    duration: 3000
-                });
-            } else if (res.code == '203') {
-                Notification({
-                    title: '提醒',
-                    message: res.msg,
-                    type: 'warning',
-                    offset: 100,
-                    duration: 3000
-                });
-            } else {
-                Notification({
-                    title: '错误',
-                    message: '报备失败',
-                    type: 'error',
-                    offset: 100,
-                    duration: 3000
-                });
+            if (res.success) commit('confirmNumber', res.data)
+        },
+
+        async ViewHistory({ commit }, { pageNo, Name, Contact }) {
+            let res = await viewHistory(pageNo, Name, Contact)
+            console.log(res);
+            commit("all", res);
+            if (res) {  // 成功
+                if (!res.success)
+                    Notification({
+                        title: '失败',
+                        message: `信息获取失败！`,
+                        type: 'error',
+                        offset: 100,
+                        duration: 3000
+                    });
+                return res.success;
             }
         },
-    }
-}
+
+        // No, Time 
+        async rescheduleBooking(context, { No, Time }) {
+            let res = await rescheduleBooking(No, Time)
+            console.log(res);
+            if (res) return res.sucess
+        }
+    },
+};

@@ -193,7 +193,7 @@ export default {
   methods: {
     submitInfo(formName) {
       this.$refs[formName].validate((valid) => {
-        console.log(this.Info);
+        // console.log(this.Info);
         if (valid) {
           this.$confirm("确认修改出租屋资讯?", "确认修改", {
             confirmButtonText: "确定",
@@ -231,18 +231,18 @@ export default {
           StorageClass: "STANDARD", // 上传模式, 标准模式
           Body: res.file, // 上传文件对象
           onProgress: (progressData) => {
-            console.log("上传的进度", JSON.stringify(progressData));
+            // console.log("上传的进度", JSON.stringify(progressData));
             this.percentage = progressData.percent * 100;
           },
         },
         (err, data) => {
-          console.log(err);
-          console.log(data);
+          // console.log(err);
+          // console.log(data);
           this.showProgress = false;
           // 上传成功之后
           if (data.statusCode === 200) {
             this.imgUrl = `https:${data.Location}`;
-            console.log(this.imgUrl);
+            // console.log(this.imgUrl);
             this.$store
               .dispatch("UploadCover", {
                 url: this.imgUrl,

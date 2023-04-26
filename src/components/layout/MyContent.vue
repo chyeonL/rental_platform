@@ -25,6 +25,10 @@
           <el-button size="small"  icon="el-icon-bell" @click="feedback"></el-button>
         </el-badge>
 
+        <el-badge :value="$store.state.Booking.confirmNumber" class="booking" v-if="$store.state.Administrator.role=='landlord'">
+          <el-button size="small"  icon="iconfont icon-navicon-srtj" @click="bookingConfirm"></el-button>
+        </el-badge>
+
         <el-badge :value="$store.state.Administrator.rent" class="rent" v-if="$store.state.Administrator.role=='landlord'">
           <el-button size="small"  icon="iconfont icon-wodejifenbao" @click="rentComplete"></el-button>
         </el-badge>
@@ -82,10 +86,10 @@ export default {
         "RentNumber",
         "rent_" + this.$store.state.Administrator.adminID
       );
+      this.$store.dispatch("ToBeConfirm");
     }
   },
   methods: {
-    // 展开折叠
     change() {
       this.$emit("changeIsCollapse");
     },
@@ -99,13 +103,18 @@ export default {
       })
         .then(() => {
           this.$store.dispatch("Logout", this.form).then((res) => {
-            this.$router.replace("/login");
+            this.$router.replace("/");
+            this.$notify({
+              type: "success",
+              title: "成功",
+              message: "已登出",
+              offset: 100,
+              duration: 4000,
+            });
           });
         })
-        .catch(() => {});
     },
 
-    // 跳转前台
     goToWebsite() {
       this.$router.push("/");
     },
@@ -122,7 +131,7 @@ export default {
       });
     },
 
-    //
+    
     rentComplete() {
       this.$router.push("/landlord/rent/all");
       this.$notify({
@@ -134,7 +143,7 @@ export default {
       });
     },
 
-    //
+    
     tenantComplete() {
       this.$router.push("/landlord/tenant/all");
       this.$notify({
@@ -143,6 +152,17 @@ export default {
         title: "完善提醒",
         offset: 70,
         message: `您有 ${this.$store.state.Administrator.tenant} 条租户信息待完善......`,
+      });
+    },
+
+    bookingConfirm() {
+      this.$router.push("/landlord/booking/all");
+      this.$notify({
+        title: "访客预约提醒",
+        offset: 150,
+        duration: 4000,
+        message: `您有${this.$store.state.Booking.confirmNumber}条预约记录待确认...`,
+        type: "warning",
       });
     },
   },
@@ -198,10 +218,7 @@ main {
   justify-content: center;
   align-items: center;
   margin-right: 15px;
-  // background-color: #fff;
-
   .toWebsite {
-    // margin-right: 15px;
     padding: 7px 13px;
     color: #ffd04b;
     background-color: #24292e;
@@ -217,14 +234,12 @@ main {
       vertical-align: top;
       &:hover {
         cursor: pointer;
-        // color: #8a8985;
         text-decoration: underline;
       }
     }
 
     i {
       font-size: 15px;
-      // vertical-align: bottom;
       margin-right: 4px;
     }
   }
@@ -283,7 +298,8 @@ main {
     padding: 0 4px;
     background-color: #ff5555;
   }
-  .rent {
+  .rent,
+  .booking {
     margin-right: -20px;
   }
 }

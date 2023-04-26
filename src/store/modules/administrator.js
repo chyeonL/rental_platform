@@ -1,9 +1,9 @@
-import { login, changePassword, changeInfo, Avatar, getFeedbackNumber, getIncompleteTenant, getIncompleteRent, toBeReport, variousOpinions, rentedOut, roomtypeBarChart } from "@/api";
+import { login, changePassword, changeInfo, Avatar, getFeedbackNumber, getIncompleteTenant, getIncompleteRent, toBeReport, variousOpinions, rentedOut, roomtypeBarChart, visitorRegister } from "@/api";
 export default {
   state: {
-    userInfo: JSON.parse(localStorage.getItem("isLogin")) || {},
+    userInfo: JSON.parse(localStorage.getItem("userInfo")) || {},
     isLogin: JSON.parse(localStorage.getItem("isLogin")),
-    role: localStorage.getItem("role") || '',
+    role: JSON.parse(localStorage.getItem("role")) || '',
     adminID: JSON.parse(localStorage.getItem("adminID")) || '',
     rent: 0,
     tenant: 0,
@@ -17,9 +17,6 @@ export default {
     setUserInfo(state, payload) {
       state.userInfo = payload.data;
       localStorage.setItem("userInfo", JSON.stringify(payload.data));
-
-      // state.token = payload.data.Token;
-      // localStorage.setItem("token", JSON.stringify(payload.data.token));
 
       state.role = payload.data.Role;
       localStorage.setItem("role", JSON.stringify(payload.data.Role));
@@ -36,11 +33,9 @@ export default {
       state.userInfo = {};
       state.role = {};
       state.adminID = {};
-      // state.token = {};
       localStorage.removeItem("userInfo");
       localStorage.removeItem("role");
       localStorage.removeItem("adminID");
-      // localStorage.removeItem("token");
       localStorage.setItem("isLogin", false);
     },
 
@@ -50,7 +45,6 @@ export default {
         state.userInfo = JSON.parse(localStorage.getItem("userInfo"));
         state.role = JSON.parse(localStorage.getItem("role"));
         state.adminID = JSON.parse(localStorage.getItem("adminID"));
-        // state.token = JSON.parse(localStorage.getItem("token"));
       } else {
         localStorage.setItem("isLogin", false);
       }
@@ -144,5 +138,12 @@ export default {
       let res = await roomtypeBarChart(tableName)
       return res
     },
+    // 访客注册
+    async register(context, { account, name, password, tel }) {
+      console.log(account, name, password, tel);
+      let res = await visitorRegister(name, account, password, tel)
+      console.log(res);
+      return res
+    }
   },
 };

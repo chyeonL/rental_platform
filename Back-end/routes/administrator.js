@@ -102,6 +102,28 @@ router.post('/avatar', (req, res) => {
       })
   })
 })
+// 访客登陆
+router.post('/register', (req, res) => {
+  console.log(req.body);
+  let { Name, UserName, UserPassword, Tel } = req.body
+  connection.query(`insert into administrator(Name, UserName, UserPassword, Tel,Role,Area,AreaID,Admin_ID) values('${Name}','${UserName}','${UserPassword}','${Tel}','visitor','','','')`, (e, r) => {
+    console.log(e, r);
+    if (r.affectedRows > 0) {
+      res.send({
+        code: 200,
+        msg: `${Name}成功注册`,
+        success: true,
+        data:r.insertId
+      })
+    } else {
+      res.send({
+        code: 205,
+        msg: `注册失败`,
+        success: false
+      })
+    }
+  })
+})
 
 
 module.exports = router;

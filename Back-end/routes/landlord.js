@@ -142,14 +142,14 @@ router.get('/roomtypeBarChart', (req, res) => {       // 已出租房间的房�
   // console.log(req.query);
   let { tableName } = req.query
   connection.query('select Type,Amount,AvailableRoomsQuantity from `' + tableName + '`', (e, r) => {
-    console.log(e, r);
+    // console.log(e, r);
     var dataValue = []
     var dataName = []
     var data = []
     r.map(item => {
       let obj = { name: '', value: '' }
       obj.name = item.Type
-      obj.value = item.Amount-item.AvailableRoomsQuantity
+      obj.value = item.Amount - item.AvailableRoomsQuantity
       data.push(obj)
       dataValue.push(obj.value)
       dataName.push(item.Type)
@@ -178,7 +178,7 @@ router.get('/variousOpinions', (req, res) => {        //  我的意见 状态饼
           }
         })
       })
-      console.log(data);
+      // console.log(data);
       res.send({
         code: 200,
         success: true,
@@ -522,31 +522,39 @@ router.get('/deleteRoom', (req, res) => {       // 删除
   })
 })
 router.get("/searchRoom", (req, res) => {       // 搜索
-  let searchParams = req.query.keywords;
-  let pageNo = req.query.pageNo;
+  let { RentStatus, tableName, keywords, pageNo } = req.query
   let pageSize = 5;
   let n = (pageNo - 1) * pageSize;
-  let tableName = req.query.tableName
-  // console.log(req.query);
-  let sql1 =
-    "select * from `" + tableName + "` where concat(`RoomNumber`,`RoomType`,`Rent`,`Square`,`No`,`MortgageCash`,`RentStatus`) like '%" +
-    searchParams +
-    "%'";
-  let sql2 =
-    "select * from `" + tableName + "` where concat(`RoomNumber`,`RoomType`,`Rent`,`Square`,`No`,`MortgageCash`,`RentStatus`) like '%" +
-    searchParams +
-    "%' limit " +
-    n +
-    "," +
-    pageSize;
-  // console.log(sql1);
-  // console.log(sql2);
+  let sql1 = ''
+  let sql2 = ''
+  if (RentStatus === '') {
+    sql1 =
+      "select * from `" + tableName + "` where concat(`RoomNumber`,`RoomType`,`Rent`,`No`,MinimunPeriod) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where concat(`RoomNumber`,`RoomType`,`Rent`,`No`,MinimunPeriod) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  } else {
+    sql1 =
+      "select * from `" + tableName + "` where RentStatus='" + RentStatus + "' and concat(`RoomNumber`,`RoomType`,`Rent`,`No`,MinimunPeriod) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where RentStatus='" + RentStatus + "' and concat(`RoomNumber`,`RoomType`,`Rent`,`No`,MinimunPeriod) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  }
   connection.query(sql1, (e0, r0) => {
-    // 能搜到相关数据
-    // console.log(e0, r0);
     if (r0.length > 0) {
       connection.query(sql2, (e1, r1) => {
-        // console.log(e1, r1);
         res.send({
           code: 200,
           msg: "模糊搜索房间",
@@ -559,7 +567,6 @@ router.get("/searchRoom", (req, res) => {       // 搜索
         });
       });
     } else {
-      // 搜不到
       res.send({
         code: 205,
         msg: "暂无相关房间",
@@ -733,28 +740,39 @@ router.post('/modifyMyOpinion', (req, res) => {      // 修改
 })
 router.get("/searchMyOpinion", (req, res) => {       // 搜索
   // console.log(req.query);
-  let { tableName, keywords, pageNo } = req.query
+  let { tableName, keywords, pageNo, Status } = req.query
   let pageSize = 5;
   let n = (pageNo - 1) * pageSize;
-  let sql1 =
-    "select * from `" + tableName + "` where concat(`Title`,`Category`,`Detail`,`LandlordName`,`No`,`SubmitTime`,`Status`,`Response`) like '%" +
-    keywords +
-    "%'";
-  let sql2 =
-    "select * from `" + tableName + "` where concat(`Title`,`Category`,`Detail`,`LandlordName`,`No`,`SubmitTime`,`Status`,`Response`) like '%" +
-    keywords +
-    "%' limit " +
-    n +
-    "," +
-    pageSize;
-  // console.log(sql1);
-  // console.log(sql2);
+  let sql1 = ''
+  let sql2 = ''
+  if (Status === '') {
+    sql1 =
+      "select * from `" + tableName + "` where concat(`Title`,`Category`,`Detail`,`LandlordName`,`No`,`Response`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where concat(`Title`,`Category`,`Detail`,`LandlordName`,`No`,`Response`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  } else {
+    sql1 =
+      "select * from `" + tableName + "` where Status='" + Status + "' and concat(`Title`,`Category`,`Detail`,`LandlordName`,`No`,`Response`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where Status='" + Status + "' and concat(`Title`,`Category`,`Detail`,`LandlordName`,`No`,`Response`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  }
   connection.query(sql1, (e0, r0) => {
-    // 能搜到相关数据
-    // console.log(e0, r0);
     if (r0.length > 0) {
       connection.query(sql2, (e1, r1) => {
-        console.log(e1, r1);
         res.send({
           code: 200,
           msg: "模糊搜索我的意见",
@@ -767,7 +785,6 @@ router.get("/searchMyOpinion", (req, res) => {       // 搜索
         });
       });
     } else {
-      // 搜不到
       res.send({
         code: 205,
         msg: "暂无相关意见",
@@ -956,28 +973,39 @@ router.post('/terminateContract', (req, res) => {      // 终止合同
 })
 router.get("/searchContract", (req, res) => {       // 搜索
   // console.log(req.query);
-  let { tableName, keywords, pageNo } = req.query
+  let { tableName, keywords, pageNo, Stage } = req.query
   let pageSize = 5;
   let n = (pageNo - 1) * pageSize;
-  let sql1 =
-    "select * from `" + tableName + "` where concat(`Room`,`TenantName`,`TenantID`,`Rent`,`No`,`Stage`,`Term`,`CollectionDate`) like '%" +
-    keywords +
-    "%'";
-  let sql2 =
-    "select * from `" + tableName + "` where concat(`Room`,`TenantName`,`TenantID`,`Rent`,`No`,`Stage`,`Term`,`CollectionDate`) like '%" +
-    keywords +
-    "%' limit " +
-    n +
-    "," +
-    pageSize;
-  // console.log(sql1);
-  // console.log(sql2);
+  let sql1 = ''
+  let sql2 = ''
+  if (Stage === '') {
+    sql1 =
+      "select * from `" + tableName + "` where concat(`Room`,`TenantName`,`No`,`Term`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where concat(`Room`,`TenantName`,`No`,`Term`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  } else {
+    sql1 =
+      "select * from `" + tableName + "` where Stage='" + Stage + "' and concat(`Room`,`TenantName`,`No`,`Term`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where Stage='" + Stage + "' and concat(`Room`,`TenantName`,`No`,`Term`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  }
   connection.query(sql1, (e0, r0) => {
-    // 能搜到相关数据
-    // console.log(e0, r0);
     if (r0.length > 0) {
       connection.query(sql2, (e1, r1) => {
-        // console.log(e1, r1);
         res.send({
           code: 200,
           msg: "模糊搜索合同",
@@ -990,7 +1018,6 @@ router.get("/searchContract", (req, res) => {       // 搜索
         });
       });
     } else {
-      // 搜不到
       res.send({
         code: 205,
         msg: "暂无相关合同",
@@ -1042,18 +1069,15 @@ router.get('/getRoomList', (req, res) => {      // 获取未出租的房间列�
 
 // 租客
 router.get('/allTenants', (req, res) => {
-  // console.log(req.query);
   let { pageNo, ID } = req.query
   let tableName = 'tenant_' + ID
   let pageSize = 5; // 页面默认展示 5 条数据，不可更改
   connection.query('select * from `' + tableName + '`', (e, r) => {
-    // console.log(e, r);
     let n = (pageNo - 1) * pageSize;
     if (r.length > 0) {
       connection.query(
         'select * from `' + tableName + '` order by No limit ' + n + ', ' + pageSize,   // 从第n条数据开始，取pageSize条数据
         (e, r1) => {
-          // console.log(e, r1);
           res.send({
             code: 200,
             success: true,
@@ -1083,7 +1107,6 @@ router.get('/deleteTenant', (req, res) => {       // 删除
   let { ID, No } = req.query
   let tableName_tenant = 'tenant_' + ID
   connection.query('delete from `' + tableName_tenant + '` where No = "' + No + '"', (e, r) => {
-    // console.log(e, r);
     if (r.affectedRows > 0) {
       res.send({
         code: 200,
@@ -1100,28 +1123,41 @@ router.get('/deleteTenant', (req, res) => {       // 删除
   })
 })
 router.get("/searchTenant", (req, res) => {           // 搜索
-  // console.log(req.query);
-  let { tableName, keywords, pageNo } = req.query
+  let { tableName, keywords, pageNo, Status } = req.query
   let pageSize = 5;
   let n = (pageNo - 1) * pageSize;
-  let sql1 =
-    "select * from `" + tableName + "` where concat(`ID`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`ReportStatus`,`Status`) like '%" +
-    keywords +
-    "%'";
-  let sql2 =
-    "select * from `" + tableName + "` where concat(`ID`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`ReportStatus`,`Status`) like '%" +
-    keywords +
-    "%' limit " +
-    n +
-    "," +
-    pageSize;
+  let sql1 = ''
+  let sql2 = ''
+  if (Status === '') {
+    sql1 =
+      "select * from `" + tableName + "` where concat(`ID`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`ReportStatus`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where concat(`ID`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`ReportStatus`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  } else {
+    sql1 =
+      "select * from `" + tableName + "` where Status='" + Status + "' and concat(`ID`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`ReportStatus`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where Status='" + Status + "' and concat(`ID`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`ReportStatus`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  }
   // console.log(sql1);
   // console.log(sql2);
   connection.query(sql1, (e0, r0) => {
-    // console.log(e0, r0);
     if (r0.length > 0) {
       connection.query(sql2, (e1, r1) => {
-        // console.log(e1, r1);
         res.send({
           code: 200,
           msg: `模糊搜索${tableName}租户表 ${keywords}`,
@@ -1148,10 +1184,8 @@ router.get("/searchTenant", (req, res) => {           // 搜索
   });
 });
 router.get('/detailTenant', (req, res) => {       // 获取详情
-  // console.log(req.query);
   let { No, tableName } = req.query
   connection.query('select * from `' + tableName + '` where No = "' + No + '"', (e, r) => {
-    // console.log(e, r);
     res.send({
       code: 200,
       success: true,
@@ -1207,13 +1241,13 @@ router.post('/modifyTenant', (req, res) => {
   })
 })
 router.post('/reportTenant', (req, res) => {    // 一键报备
-  console.log(req.body);
+  // console.log(req.body);
   let { Landlord_ID, LandlordName } = req.body
   let { Staff_ID, StaffName, Area, AreaID } = req.body.staff
   let table_tenant = 'tenant_' + Landlord_ID
   // 先获取 所有符合报备条件的 记录   未报备、信息完整
   connection.query('select * from `' + table_tenant + '` where ReportStatus="未报备" and Status="√" and ContractStage="租约中"', (e0, r0) => {
-    console.log(e0, r0);
+    // console.log(e0, r0);
     let NoArr = []  // tenant的报备记录 数组No
     let NoStr = ''  // No拼接后的string
     if (r0.length > 0) {
@@ -1223,7 +1257,7 @@ router.post('/reportTenant', (req, res) => {    // 一键报备
         let insert = 'insert into migrant(Name,ID,Gender,StartDate,Term,ContractStage,Area,AreaID,Tel,Marriage,Origin,Note, Landlord_ID,LandlordName,Staff_ID,StaffName) values("' + Name + '","' + ID + '","' + Gender + '","' + StartDate + '","' + Term + '","' + ContractStage + '","' + Area + '","' + AreaID + '","' + Tel + '","' + Marriage + '","' + Origin + '","' + Note + '","' + Landlord_ID + '","' + LandlordName + '","' + Staff_ID + '","' + StaffName + '")'
         connection.query(insert, (e1, r1) => {
           if (r1.affectedRows > 0) {
-            console.log(e1, r1.insertId);
+            // console.log(e1, r1.insertId);
           } else {
             res.send({
               code: 205,
@@ -1240,7 +1274,7 @@ router.post('/reportTenant', (req, res) => {    // 一键报备
       // console.log(NoStr);
       // 成功 -- 修改这些记录的报备状态
       connection.query('update `' + table_tenant + '` set ReportStatus = "√" where No in (' + NoStr + ')', (e2, r2) => {
-        console.log(e2, r2);
+        // console.log(e2, r2);
         if (r2.affectedRows > 0) {
           res.send({
             code: 200,
@@ -1270,10 +1304,10 @@ router.post('/reportTenant', (req, res) => {    // 一键报备
   })
 })
 router.get('/toBeReport', (req, res) => {       // 可以报备的租户数量 -- 信息完整、未上报
-  console.log(req.query);
+  // console.log(req.query);
   let { tableName } = req.query
   connection.query('select No from `' + tableName + '` where ReportStatus="未报备" and Status="√" and ContractStage="租约中"', (e, r) => {
-    console.log(e, r);
+    // console.log(e, r);
     if (r.length > 0) {
       res.send({
         code: 200,
@@ -1293,7 +1327,7 @@ router.get('/toBeReport', (req, res) => {       // 可以报备的租户数量 -
 })
 
 
-// 月租
+// 月租 
 router.get('/allRents', (req, res) => {             // 所有
   // console.log(req.query);
   let { pageNo, ID } = req.query
@@ -1333,20 +1367,47 @@ router.get('/allRents', (req, res) => {             // 所有
 })
 router.get("/searchRent", (req, res) => {           // 搜索
   // console.log(req.query);
-  let { tableName, keywords, pageNo } = req.query
+  let { tableName, keywords, pageNo, Status } = req.query
   let pageSize = 5;
   let n = (pageNo - 1) * pageSize;
-  let sql1 =
-    "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
-    keywords +
-    "%'";
-  let sql2 =
-    "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
-    keywords +
-    "%' limit " +
-    n +
-    "," +
-    pageSize;
+  let sql1 = ''
+  let sql2 = ''
+  if (Status === '') {
+    sql1 =
+      "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  } else {
+    sql1 =
+      "select * from `" + tableName + "` where Status='" + Status + "' and concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
+      keywords +
+      "%'";
+    sql2 =
+      "select * from `" + tableName + "` where Status='" + Status + "' and concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
+      keywords +
+      "%' limit " +
+      n +
+      "," +
+      pageSize;
+  }
+  // let sql1 =
+  //   "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
+  //   keywords +
+  //   "%'";
+  // let sql2 =
+  //   "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
+  //   keywords +
+  //   "%' limit " +
+  //   n +
+  //   "," +
+  //   pageSize;
   // console.log(sql1);
   // console.log(sql2);
   connection.query(sql1, (e0, r0) => {

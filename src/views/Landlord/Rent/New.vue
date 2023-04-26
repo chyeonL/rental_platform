@@ -243,7 +243,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.form.Stage == "未收") this.form.ActualAmount = "";
-          console.log(this.form);
+          // console.log(this.form);
           this.$confirm("确认新增月租记录?", "确认新增", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",

@@ -4,6 +4,16 @@
     <div class="header">      
       <Breadcrumb  :routes='routes'/>
       <header>
+        <!-- 筛选 -->
+        <el-select v-model="filterKey" placeholder="筛选:反馈状态" @change='filterStatus'>
+          <el-option
+            v-for="(item,index) in status"
+            :key="index"
+            :label="item"
+            :value="item"
+            >
+          </el-option>
+        </el-select>
         <el-input
           v-model="keyword"
           placeholder="输入关键字进行搜索……"
@@ -37,7 +47,7 @@
         <el-table-column label="具体" prop="Detail" align="center" width="180"> </el-table-column>
         <el-table-column label="数据操作" width="200" class="operation" fixed="right" align="center">
           <template slot-scope="scope">
-            <el-button type="info" @click="handleEdit(scope.$index, scope.row)">具体/编辑</el-button>
+            <el-button type="info" @click="handleEdit(scope.$index, scope.row)">回复意见</el-button>
             <el-button
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
@@ -67,7 +77,7 @@ export default {
   data() {
     return {
       keyword: "",
-      type: "all", // search 为搜索分页
+      type: "all", 
       currentPage: 1,
       routes: {
         nav: "群众意见",
@@ -75,7 +85,9 @@ export default {
         parentRoute: "all",
         children: "所有意见",
       },
-      feedbacks:2
+      feedbacks:2,
+      status: ["所有意见", "等待反馈", "处理中", "否决意见", "接纳意见"],
+      filterKey: "",
     };
   },
   created() {
@@ -92,16 +104,13 @@ export default {
     }),
   },
   methods: {
-    // 获取数据
     async getData(pageNo = 1) {
       await this.$store
         .dispatch("GetAllOpinion", pageNo)
-        .then((res) => (this.type = "all"));
+        .then(() => (this.type = "all"));
     },
 
-    // 改变页码，重发请求
     changePageNo(pageNo) {
-      // this.currentPage = pageNo;
       if (this.type == "all") {
         this.getData(pageNo);
       } else {
@@ -109,24 +118,19 @@ export default {
       }
     },
 
-    // 搜索
     async goSearch(pageNo = 1) {
-      // 根据关键字发请求 搜索
       let keywords = this.keyword.trim();
-      if (keywords) {
-        await this.$store
-          .dispatch("SearchOpinion", { keywords, pageNo })
-          .then((res) => {
-            this.type = "search";
-            // console.log(this.type);
-          });
-      } else {
-        this.getData(1, this.pageSize); // 搜索之后，删掉关键词，再按回车，重新加载全部数据
-        // return;
-      }
+      await this.$store
+        .dispatch("SearchOpinion", {
+          keywords,
+          pageNo,
+          Status: this.filterKey === "所有意见" ? "" : this.filterKey,
+        })
+        .then(() => {
+          this.type = "search";
+        });
     },
 
-    // 编辑   
     handleEdit(index, row) {
       this.$router.push({
         name: "SOpinion_Detail",
@@ -136,7 +140,6 @@ export default {
       });
     },
 
-    // 删除
     handleDelete(index, row) {
       this.$confirm("确认删除当前群众意见?", "确认删除", {
         confirmButtonText: "确定",
@@ -160,6 +163,12 @@ export default {
       if (row.Status  === "接纳意见")
         return "warning4-row";
     },
+
+    filterStatus(status) {
+      this.filterKey = status;
+      this.keyword = "";
+      this.goSearch();
+    },
   },
 };
 </script>
@@ -169,14 +178,11 @@ export default {
   display: flex;
   align-items: center;
   margin-top: 10px;
-  // background-color: blueviolet;
 }
 header {
   display: flex;
   align-items: center;
   justify-content: start;
-  margin:0  100px;
-  // margin-left: 0;
 
   ::v-deep .el-input {
     width: 300px;
@@ -184,8 +190,9 @@ header {
     outline: none;
   }
 
-  ::v-deep .el-input:focus{
-    border-color: none;
+  ::v-deep .el-input__inner:focus {
+    border-color: #24292e;
+    outline: 0;
   }
 
   ::v-deep .el-button {
@@ -194,7 +201,21 @@ header {
     font-size: 14px;
     color: #ffd04b;
     background-color: #24292e;
-    // border-radius: 15px;
+  }
+  ::v-deep .el-select {
+    width: 140px;
+    margin-left: 50px;
+    margin-right: 50px;
+    .el-input {
+      width: 100%;
+      border: none;
+    }
+    .el-input__inner {
+      border: none;
+      font-weight: 700;
+      color: #ffd04b;
+      background-color: #24292e;
+    }
   }
 }
 

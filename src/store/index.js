@@ -13,6 +13,7 @@ import Room from './modules/landlord_room'
 import Contract from './modules/landlord_contract' 
 import Tenant from './modules/landlord_tenant' 
 import Rent from './modules/landlord_rent' 
+import Booking from './modules/booking' 
 
 export default new Vuex.Store({
     modules:{
@@ -26,6 +27,7 @@ export default new Vuex.Store({
         Room,
         Contract,
         Tenant,
-        Rent
+        Rent,
+        Booking
     },
 })

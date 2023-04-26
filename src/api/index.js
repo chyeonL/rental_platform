@@ -7,13 +7,16 @@ export const login = (data) => request.post('/login', data)
 export const changePassword = (No, newPwd, oldpwd) => request.post('/changePassword', { No, newPwd, oldpwd })
 export const changeInfo = (Name, UserName, Tel, Gender, No, Note) => request.post('/changeInfo', { Name, UserName, Tel, Gender, No, Note })
 export const Avatar = (url, No) => request.post('/avatar', { url, No })
+// 访客注册
+export const visitorRegister = (Name, UserName, UserPassword, Tel) => request({ url: '/register', data: { Name, UserName, UserPassword, Tel }, method: 'post' })
+
 
 // staff用
 // 出租屋
 export const getAllHouse = (pageNo, ID) => request({ url: '/allHouse', params: { pageNo, ID } })
 export const goSearchHouse = (params) => request({ url: '/searchHouse', params })
 export const goDeletehHouse = (data) => request({ url: '/deleteHouse', data, method: 'post' })
-export const getHouseDetail = (No) => request({ url: '/HouseDetail', method: 'get', params: { No } })// .get('/HouseDetail',param)
+export const getHouseDetail = (No) => request({ url: '/HouseDetail', method: 'get', params: { No } })
 export const goModifyHouse = (data) => request({ url: '/updateHouse', data, method: 'post' })
 export const goAddHouse = (data) => request({ url: '/addHouse', data, method: 'post' })
 export const getLandlordIdList = (AreaID) => request({ url: '/getLandlordID', params: { AreaID: AreaID }, method: 'get' })
@@ -22,8 +25,6 @@ export const getAllMigrants = (pageNo, ID) => request({ url: '/allMigrants', par
 export const getMigranteDetail = (No) => request({ url: '/migrantDetail', method: 'get', params: { No } })
 export const getLandlordNameList = (AreaID) => request({ url: '/getLandlordName', params: { AreaID: AreaID }, method: 'get' })
 export const goModifyMigrant = (data) => request({ url: '/updateMigrant', data, method: 'post' })
-// export const goAddMigrant = (data) => request({ url: '/addMigrant', data, method: 'post' })
-export const goDeletehMigrant = (data) => request({ url: '/deleteMigrant', data, method: 'post' })
 export const goSearchMigrant = (params) => request({ url: '/searchMigrant', params })
 // 巡视记录 
 export const getAllInspectations = (params) => request({ url: '/allInspectation', params, method: 'get' })      // all
@@ -35,7 +36,7 @@ export const goSearchInspectation = (params) => request({ url: '/searchInspectat
 export const getLandlordList = (AreaID) => request({ url: '/getLandlordList', params: { AreaID: AreaID } })
 // 群众意见         
 export const getAllOpinions = (tableName, pageNo) => request({ url: '/allOpinions', params: { tableName, pageNo } })
-export const goSearchOpinions = (tableName, keywords, pageNo) => request({ url: '/searchOpinions', params: { tableName, keywords, pageNo } })
+export const goSearchOpinions = (tableName, keywords, pageNo, Status) => request({ url: '/searchOpinions', params: { tableName, keywords, pageNo, Status } })
 export const getOpinionDetail = (tableName, No) => request({ url: '/opinionDetail', method: 'get', params: { tableName, No } })
 export const goModifyOpinion = (tableName, form) => request({ url: '/updateOpinion', data: { tableName, form }, method: 'post' })
 export const goDeletehOpinion = (tableName, No) => request({ url: '/deleteOpinion', data: { tableName, No }, method: 'post' })
@@ -58,7 +59,7 @@ export const newRoom = (form, tableName_room, tableName_roomtype) => request({ u
 export const typeList = (tableName) => request({ url: '/typeList', params: { tableName } })
 export const contractList = (tableName) => request({ url: '/contractList', params: { tableName } })
 export const deleteRoom = (tableName_room, tableName_roomtype, No, RoomType, RoomNumber) => request({ url: '/deleteRoom', params: { tableName_room, tableName_roomtype, No, RoomType, RoomNumber }, method: 'get' })
-export const searchRoom = (keywords, pageNo, tableName) => request({ url: '/searchRoom', params: { keywords, pageNo, tableName }, method: 'get' })
+export const searchRoom = (keywords, pageNo, tableName, RentStatus) => request({ url: '/searchRoom', params: { keywords, pageNo, tableName, RentStatus }, method: 'get' })
 export const detailRoom = (No, tableName) => request({ url: '/detailRoom', params: { tableName, No }, method: 'get' })
 export const modifyRoom = (form, tableName_room, tableName_roomtype) => request({ url: '/modifyRoom', method: 'post', data: { form, tableName_room, tableName_roomtype } })
 // 意见
@@ -66,7 +67,7 @@ export const getMyOpinion = (pageNo, tableName, Landlord_ID) => request({ url: '
 export const newMyOpinion = (tableName, form) => request({ url: '/newMyOpinion', data: { tableName, form }, method: 'post' })
 export const deleteMyOpinion = (tableName, No) => request({ url: '/deleteMyOpinion', params: { tableName, No } })
 export const modifyMyOpinion = (tableName, form) => request({ url: '/modifyMyOpinion', data: { tableName, form }, method: 'post' })
-export const searchMyOpinion = (tableName, keywords, pageNo) => request({ url: '/searchMyOpinion', params: { tableName, keywords, pageNo } })
+export const searchMyOpinion = (tableName, keywords, pageNo, Status) => request({ url: '/searchMyOpinion', params: { tableName, keywords, pageNo, Status } })
 export const detailMyOpinion = (tableName, No) => request({ url: '/detailMyOpinion', params: { No, tableName } })
 export const variousOpinions = (tableName, Landlord_ID) => request({ url: '/variousOpinions', params: { tableName, Landlord_ID } })
 // 合同
@@ -74,13 +75,13 @@ export const allContracts = (ID, pageNo) => request({ url: '/allContracts', para
 export const newContract = (ID, form) => request({ url: '/newContract', method: 'post', data: { ID, form } })
 export const terminateContract = (ID, No, Room, RoomType) => request({ url: '/terminateContract', method: 'post', data: { ID, No, Room, RoomType } })
 export const deleteContract = (ID, No) => request({ url: '/deleteContract', params: { ID, No } })
-export const searchContract = (tableName, keywords, pageNo) => request({ url: '/searchContract', params: { tableName, keywords, pageNo } })
+export const searchContract = (tableName, keywords, pageNo, Stage) => request({ url: '/searchContract', params: { tableName, keywords, pageNo, Stage } })
 export const detailContract = (tableName, No) => request({ url: '/detailContract', params: { No, tableName } })
 export const getRoomList = (tableName) => request({ url: '/getRoomList', params: { tableName } })
 // 租客
 export const allTenants = (ID, pageNo) => request({ url: '/allTenants', params: { ID, pageNo } })
 export const deleteTenant = (ID, No) => request({ url: '/deleteTenant', params: { ID, No } })
-export const searchTenant = (tableName, keywords, pageNo) => request({ url: '/searchTenant', params: { tableName, keywords, pageNo } })
+export const searchTenant = (tableName, keywords, pageNo, Status) => request({ url: '/searchTenant', params: { tableName, keywords, pageNo, Status } })
 export const detailTenant = (tableName, No) => request({ url: '/detailTenant', params: { No, tableName } })
 export const modifyTenant = (ID, form) => request({ url: '/modifyTenant', method: 'post', data: { ID, form } })
 export const newTenant = (tableName, form) => request({ url: '/newTenant', method: 'post', data: { tableName, form } })
@@ -88,7 +89,7 @@ export const reportTenant = (Landlord_ID, LandlordName, staff) => request({ url:
 export const toBeReport = (tableName) => request({ url: '/toBeReport', params: { tableName } })
 // 月租     
 export const allRents = (ID, pageNo) => request({ url: '/allRents', params: { ID, pageNo } })
-export const searchRent = (tableName, keywords, pageNo) => request({ url: '/searchRent', params: { tableName, keywords, pageNo } })
+export const searchRent = (tableName, keywords, pageNo, Status) => request({ url: '/searchRent', params: { tableName, keywords, pageNo, Status } })
 export const detailRent = (tableName, No) => request({ url: '/detailRent', params: { No, tableName } })
 export const modifyRent = (ID, form) => request({ url: '/modifyRent', method: 'post', data: { ID, form } })
 export const deleteRent = (ID, No) => request({ url: '/deleteRent', params: { ID, No } })
@@ -116,3 +117,14 @@ export const getHouseInfoByID = (ID) => request({ url: '/getHouseInfoByID', para
 export const modifyHouseInfo = (form) => request({ url: '/ModifyHouseInfo', method: 'post', data: { form } })
 export const uploadCover = (url, ID, coverSeq) => request({ url: '/Cover', method: 'post', data: { url, ID, coverSeq } })
 export const roomtypeList = (tableName) => request({ url: '/roomtypeList', params: { tableName } })
+
+// 访客     
+export const newBooking = (data) => request({ url: '/newBooking', data, method: 'post' })
+export const allBooking = (Landlord_ID, pageNo) => request({ url: '/allBooking', params: { Landlord_ID, pageNo } })
+export const searchBooking = (Landlord_ID, keywords, pageNo, BookingStatus) => request({ url: '/searchBooking', params: { Landlord_ID, keywords, pageNo, BookingStatus } })
+export const deleteBooking = (No) => request({ url: '/deleteBooking', params: { No } })
+export const detailBooking = (No) => request({ url: '/detailBooking', params: { No } })
+export const updateBookingStatus = (No, BookingStatus) => request({ url: '/updateBookingStatus', method: 'post', data: { No, BookingStatus } })
+export const rescheduleBooking = (No, Time) => request({ url: '/rescheduleBooking', method: 'post', data: { No, Time } })
+export const viewHistory = (pageNo, Name, Contact) => request({ url: '/viewHistory', params: { pageNo, Name, Contact } })
+export const toBeConfirm = (Landlord_ID) => request({ url: '/toBeConfirm', params: { Landlord_ID } })

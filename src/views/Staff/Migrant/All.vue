@@ -41,14 +41,9 @@
         <el-table-column label="联系方式" prop="Tel" align="center" width="100"> </el-table-column>
         <el-table-column label="来往时间" prop="StartDate" align="center" width="100"></el-table-column>
         <el-table-column label="租期" prop="Term" align="center"> </el-table-column>
-        <el-table-column label="数据操作" width="180" class="operation" fixed="right" align="center">
+        <el-table-column label="数据操作" width="120" class="operation" fixed="right" align="center">
           <template slot-scope="scope">
-            <el-button type="info" @click="handleEdit(scope.$index, scope.row)">具体/编辑</el-button>
-            <el-button
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            <el-button type="info" @click="handleEdit(scope.$index, scope.row)">具体信息</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -73,10 +68,9 @@ export default {
   data() {
     return {
       keyword: "",
-      type: "all", // search 为搜索分页
+      type: "all", 
       currentPage: 1,
       routes: {
-        // 面包屑导航 对象
         nav: "信息管理",
         parent: "流动人员",
         parentRoute: "all",
@@ -88,7 +82,6 @@ export default {
     this.getData();
   },
   computed: {
-    // ...mapState(["total","pageSize","pageNo","searchList","allHouse","HouseList"])
     ...mapState({
       total: (state) => state.Migrant.total,
       pageNo: (state) => state.Migrant.pageNo,
@@ -99,16 +92,13 @@ export default {
     }),
   },
   methods: {
-    // 获取数据
     async getData(pageNo = 1) {
       await this.$store
         .dispatch("GetAllMigrants", pageNo)
-        .then((res) => (this.type = "all"));
+        .then(() => (this.type = "all"));
     },
 
-    // 改变页码，重发请求
     changePageNo(pageNo) {
-      // this.currentPage = pageNo;
       if (this.type == "all") {
         this.getData(pageNo);
       } else {
@@ -118,55 +108,25 @@ export default {
 
     // 搜索
     async goSearch(pageNo = 1) {
-      // 根据关键字发请求 搜索
       let keywords = this.keyword.trim();
       if (keywords) {
         await this.$store
           .dispatch("SearchMigrant", { keywords, pageNo })
-          .then((res) => {
+          .then(() => {
             this.type = "search";
-            // console.log(this.type);
           });
       } else {
         this.getData(1, this.pageSize); // 搜索之后，删掉关键词，再按回车，重新加载全部数据
-        // return;
       }
     },
 
-    // 编辑
     handleEdit(index, row) {
-      // console.log(row.No);
       this.$router.push({
         name: "Migrant_Detail",
         query: {
           No: row.No,
         },
       });
-    },
-
-    // 删除
-    handleDelete(index, row) {
-      this.$confirm("确认删除该流动人员记录?", "确认删除", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        center: true,
-      })
-        .then(async () => {
-          if (row.ContractStage == "租约中") {
-            this.$notify({
-              title: "提示",
-              message: `该流动人员还处于租约中，暂时无法删除。`,
-              type: "warning",
-              offset: 100,
-              duration: 3000,
-            });
-          } else {
-            await this.$store
-              .dispatch("DeleteMigrant", row.No)
-              .then((res) => this.getData());
-          }
-        })
-        .catch(() => {});
     },
     
     // 租约中

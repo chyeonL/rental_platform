@@ -55,28 +55,13 @@ export default {
         },
 
         // 搜索
-        async SearchContract({ rootState, commit }, { keywords, pageNo }) {
+        async SearchContract({ rootState, commit }, { keywords, pageNo, Stage }) {
             let tableName = 'contract_' + rootState.Administrator.adminID
-            let res = await searchContract(tableName, keywords, pageNo);
-            // console.log(res);
+            console.log(keywords, pageNo, Stage );
+            let res = await searchContract(tableName, keywords, pageNo, Stage);
+            console.log(res);
             commit("search", res);
-            if (res) {  // 成功
-                if (!res.success)
-                    Notification({
-                        title: "错误提醒",
-                        offset: 60,
-                        duration: 2000,
-                        type: "error",
-                        message: "搜索失败！没有找到相关记录。",
-                    });
-                else
-                    Notification({
-                        title: "成功",
-                        offset: 60,
-                        duration: 2000,
-                        type: "success",
-                        message: "搜索成功！",
-                    });
+            if (res) {  
                 return res.success;
             }
         },
@@ -118,7 +103,7 @@ export default {
         },
 
         // 编辑 -- 终止合同
-        async TerminateContract({ rootState, commit }, { No, Room, RoomType }) {
+        async TerminateContract({ rootState }, { No, Room, RoomType }) {
             let res = await terminateContract(rootState.Administrator.adminID, No, Room, RoomType);
             if (res) {
                 // 成功
@@ -143,7 +128,7 @@ export default {
         },
 
         // 添加
-        async AddContract({ rootState, commit }, form) {
+        async AddContract({ rootState }, form) {
             let res = await newContract(rootState.Administrator.adminID, form);
             // console.log(res);
             if (res) {

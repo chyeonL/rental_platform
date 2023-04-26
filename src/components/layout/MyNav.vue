@@ -20,12 +20,6 @@
             <span class="userName">{{$store.state.Administrator.userInfo.Name}}</span>
           </template>        
         </el-menu-item>
-        
-        <!-- 首页 -->
-        <!-- <el-menu-item index="/staff/home">
-          <i class="iconfont icon-shouye"></i>
-          <span slot="title">首页</span>
-        </el-menu-item> -->
 
         <!-- 二级菜单  出租屋 -->
         <el-submenu index="/staff/house">
@@ -182,7 +176,6 @@
               </template>
                 <el-menu-item index="/landlord/contract/all">- 所有</el-menu-item>
                 <el-menu-item index="/landlord/contract/new">- 新增</el-menu-item>    
-              <!-- <el-menu-item index="/staff/information/detail">- 具体/编辑</el-menu-item> -->
             </el-submenu>
           </el-submenu>
 
@@ -241,14 +234,6 @@
                     <span slot="title">租户</span>
                   </template>
                 </el-menu-item>
-            <!-- <el-submenu index="/landlord/tenant/all">
-              <template slot="title">
-                <i class="iconfont icon-13"></i>
-                <span slot="title">租户</span>
-              </template>
-                <el-menu-item index="/landlord/tenant/all">- 所有</el-menu-item>
-                <el-menu-item index="/landlord/tenant/new">- 新增</el-menu-item>
-            </el-submenu> -->
           </el-submenu>    
 
           <!-- 二级菜单  意见反馈 -->
@@ -266,7 +251,13 @@
                 <el-menu-item index="/landlord/opinion/all">- 所有</el-menu-item>
                 <el-menu-item index="/landlord/opinion/new">- 新增</el-menu-item>
             </el-submenu>
-          </el-submenu>     
+          </el-submenu>    
+
+          <!-- 预约看房 -->
+          <el-menu-item index="/landlord/booking/all">
+            <i class="iconfont icon-icon_xinyong_xianxing_jijin-165"></i>
+            <span slot="title">预约看房</span>
+          </el-menu-item> 
 
           <!-- 网站管理 -->
           <el-menu-item index="/landlord/website">

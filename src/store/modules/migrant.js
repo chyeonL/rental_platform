@@ -90,31 +90,31 @@ const actions = {
   },
 
   // 删除
-  async DeleteMigrant(context, No) {
-    // params包括 keywords和pageNo
-    let res = await goDeletehMigrant({ No });
-    // console.log(res);
-    if (res) {
-      // 成功
-      if (res.success)
-        Notification({
-          title: "成功",
-          offset: 60,
-          duration: 2000,
-          type: "success",
-          message: "成功删除！",
-        });
-      else
-        Notification({
-          title: "失败提醒",
-          offset: 60,
-          duration: 2000,
-          type: "error",
-          message: "删除失败",
-        });
-      return res.success;
-    }
-  },
+  // async DeleteMigrant(context, No) {
+  //   // params包括 keywords和pageNo
+  //   let res = await goDeletehMigrant({ No });
+  //   // console.log(res);
+  //   if (res) {
+  //     // 成功
+  //     if (res.success)
+  //       Notification({
+  //         title: "成功",
+  //         offset: 60,
+  //         duration: 2000,
+  //         type: "success",
+  //         message: "成功删除！",
+  //       });
+  //     else
+  //       Notification({
+  //         title: "失败提醒",
+  //         offset: 60,
+  //         duration: 2000,
+  //         type: "error",
+  //         message: "删除失败",
+  //       });
+  //     return res.success;
+  //   }
+  // },
 
   // 获取详情
   async migrantDetail({ commit }, No) {
