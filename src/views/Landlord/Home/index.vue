@@ -28,18 +28,18 @@
       <h3>快速操作</h3>
       <div class="toolbox">
       <!-- 一键出租 -->
-        <div class="tool" @click="$router.push('/landlord/contract/new')">
+        <div class="tool" @click="$router.push('/landlord/contract/all')">
           <div class="up icon">
             <i class="iconfont icon-hetong-1"></i>
           </div>
-          <div class="down name">出租</div>
+          <div class="down name">出租管理</div>
         </div>
       <!-- 一键退租 -->
-        <div class="tool" @click="$router.push('/landlord/contract/all')">
+        <div class="tool" @click="$router.push('/landlord/booking/all')">
           <div class="up icon">
             <i class="iconfont icon-ico_qiantaijiedai_banlituifang"></i>
           </div>
-          <div class="down name">退房</div>
+          <div class="down name">预约看房</div>
         </div>
       <!-- 一键报备 -->
         <div class="tool" @click="$router.push('/landlord/tenant/all')">
