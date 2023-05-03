@@ -874,6 +874,13 @@ export default {
               .then(() => {
                 this.getData();
                 this.rescheduleVisible = false;
+                this.$notify({
+                  title: "成功",
+                  offset: 100,
+                  duration: 3000,
+                  type: "success",
+                  message: "成功修改预约时间！",
+                });
               });
           });
         }
@@ -889,6 +896,13 @@ export default {
         await this.$store.dispatch("DeleteBooking", row.No).then(() => {
           this.getData();
           this.historyVisible = false;
+          this.$notify({
+            title: "成功",
+            offset: 100,
+            duration: 3000,
+            type: "success",
+            message: "成功取消预约！",
+          });
         });
       });
     },

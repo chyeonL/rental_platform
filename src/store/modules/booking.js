@@ -49,9 +49,7 @@ export default {
                 Landlord_Name: rootState.Website.house.LandlordName,
                 BookingStatus: '提交预约'
             }
-            // console.log(data);
             let res = await newBooking(data);
-            // console.log(res);
             return res;
         },
 
@@ -76,7 +74,6 @@ export default {
 
         async SearchBooking({ rootState, commit }, { keywords, pageNo, BookingStatus }) {
             let res = await searchBooking(rootState.Administrator.adminID, keywords, pageNo, BookingStatus);
-            // console.log(res);
             commit("search", res);
             if (res) {
                 return res.success;
@@ -86,25 +83,7 @@ export default {
 
         async DeleteBooking({ rootState }, No) {
             let res = await deleteBooking(No);
-            // console.log(res);
             if (res) {
-                // 成功
-                if (res.success)
-                    Notification({
-                        title: '成功',
-                        message: `成功删除！`,
-                        type: 'success',
-                        offset: 100,
-                        duration: 3000
-                    });
-                else
-                    Notification({
-                        title: '失败',
-                        message: `删除失败`,
-                        type: 'error',
-                        offset: 100,
-                        duration: 3000
-                    });
                 return res.success;
             }
         },
@@ -112,7 +91,6 @@ export default {
 
         async DetailBooking({ commit }, No) {
             let res = await detailBooking(No);
-            // console.log(res);
             commit('detail', res.data[0])
             if (res) {  // 成功
                 return res.data[0];
@@ -122,7 +100,6 @@ export default {
 
         async UpdateBookingStatus({ rootState }, { No, BookingStatus }) {
             let res = await updateBookingStatus(No, BookingStatus);
-            // console.log(res);
             if (res) {
                 // 成功
                 if (res.success)
@@ -148,7 +125,6 @@ export default {
 
         async ToBeConfirm({ rootState, commit }) {
             let res = await toBeConfirm(rootState.Administrator.adminID)
-            // console.log(res);
             if (res.success) commit('confirmNumber', res.data)
         },
 

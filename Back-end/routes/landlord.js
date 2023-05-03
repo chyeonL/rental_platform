@@ -165,12 +165,12 @@ router.get('/roomtypeBarChart', (req, res) => {       // 已出租房间的房�
   })
 })
 router.get('/variousOpinions', (req, res) => {        //  我的意见 状态饼图
-  // console.log(req.query);
+  // console.log(req.query); 
   let { tableName, Landlord_ID } = req.query
   connection.query('select Status from `' + tableName + '` where Landlord_ID="' + Landlord_ID + '"', (e, r) => {
     // console.log(e, r);
     let data = [{ name: '等待反馈', value: 0 }, { name: '处理中', value: 0 }, { name: '接纳意见', value: 0 }, { name: '否决意见', value: 0 }]
-    if (r.length > 0) {
+    if (r.length > 0) { 
       r.map(item => {
         data.map(v => {
           if (item.Status == v.name) {
