@@ -10,7 +10,7 @@
       >
         <el-form-item prop='HouseNumber'>
            <label for="HouseNumber" class="required">门牌号</label>
-          <el-input v-model="houseForm.HouseNumber" placeholder="格式：[ xx巷 ] xx号"></el-input>
+          <el-input v-model="houseForm.HouseNumber" placeholder="格式：xx巷xx号"></el-input>
         </el-form-item>
 
         <el-form-item  prop='OwnerName'>
@@ -119,6 +119,34 @@ export default {
   name: "House_new",
   components: { Breadcrumb },
   data() {
+    var reg_HouseNumber = /[\u4e00-\u9fa5\d]+巷[\u4e00-\u9fa5\d]+号/;
+    var reg_ownerName = /[\u4e00-\u9fa5]/;
+    var validateHouseNumber = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入门牌号"));
+      } else if (!reg_HouseNumber.test(value)) {
+        callback(
+          new Error(
+            "请输入门牌号，格式：xx巷xx号(xx代表汉语或阿拉伯数字)"
+          )
+        );
+      } else {
+        callback();
+      }
+    };
+    var validateName = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入屋主姓名"));
+      } else if (!reg_ownerName.test(value)) {
+        callback(
+          new Error(
+            "请输入中文名"
+          )
+        );
+      } else {
+        callback();
+      }
+    };
     return {
       routes: {
         nav: "信息管理",
@@ -145,11 +173,11 @@ export default {
       },
       rules: {
         HouseNumber: [
-          { required: true, message: "请输入门牌号", trigger: "change" },
+          { required: true, trigger: "change" ,validator: validateHouseNumber},
           { max: 10, message: "长度不少于 3 个字符", trigger: "change" },
         ],
         OwnerName: [
-          { required: true, message: "请输入屋主姓名", trigger: "change" },
+          { required: true,validator: validateName, trigger: "change" },
         ],
         OwnerID: [
           { required: true, message: "请输入身份证号", trigger: "change" },

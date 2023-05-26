@@ -15,7 +15,6 @@
 
        <el-form-item prop='HouseNumber'>
            <label>门牌号</label>
-          <!-- <el-input v-model="form.HouseNumber" placeholder="请输入门牌号"></el-input> -->
            <el-select v-model="form.HouseNumber" clearable placeholder="请选择">
               <el-option v-for="(item, index) in landlords" :key="index" :label="item.HouseNumber" :value="item.HouseNumber"></el-option>
             </el-select>
@@ -135,7 +134,6 @@ export default {
   data() {
     return {
       routes: {
-        // 面包屑导航 对象
         nav: "安全检查",
         parent: "巡视记录",
         parentRoute: "all",
@@ -165,7 +163,7 @@ export default {
         Owner: [
           {
             required: true,
-            message: "请输入身份证上的姓名",
+            message: "请输入中文名",
             trigger: "change",
           },
         ],
@@ -223,7 +221,7 @@ export default {
   methods: {
     // 提交表单
     submitForm(formName) {
-      console.log(this.form);
+      // console.log(this.form);
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // console.log(this.form);

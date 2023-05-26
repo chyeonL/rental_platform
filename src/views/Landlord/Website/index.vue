@@ -93,6 +93,7 @@
         :model="Info"
         status-icon
         ref="Info"
+        :rules='rule'
         label-width="100px"
         class="demo-ruleForm"
       >      
@@ -169,6 +170,25 @@ export default {
       showProgress: false,
       percentage: 0,
       coverSeq: "", // 暂存要上传到的数据库表中的cover字段名
+      rule: {
+        HouseNumber: [
+          {
+            required: true,
+            message: "请输入门牌号",
+            trigger: "change",
+          },
+        ],
+        Contact: [
+          { required: true, message: "请输入联系方式", trigger: "change" },
+        ],
+        More: [
+          { required: true, message: "请输入更多资讯", trigger: "change" },
+        ],
+        LandlordName: [
+          { required: true, message: "请输入姓名", trigger: "change" },
+        ],
+        Brief: [{ required: true, message: "请输入简介", trigger: "change" }],
+      },
     };
   },
   computed: {
@@ -308,8 +328,8 @@ header {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin-top: 50px;
-  padding: 0 30px;
+  margin-top: 25px;
+  padding-left: 20px;
   .left {
     width: 50%;
     text-align: center;

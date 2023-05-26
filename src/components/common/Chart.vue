@@ -94,9 +94,6 @@ export default {
 
 <style lang="scss" scoped>
 .chart {
-  //   width: 500px;
-  //   height: 350px;
-  //   background-color: #fff;
   border-radius: 20px;
   canvas {
     border-radius: 20px;

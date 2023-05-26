@@ -113,7 +113,10 @@ export default {
     async getData(pageNo = 1) {
       await this.$store
         .dispatch("GetAllRent", pageNo)
-        .then(() => (this.type = "all"));
+        .then((res) => {
+          this.type = "all"
+          console.log(res);
+        });
     },
 
     changePageNo(pageNo) {

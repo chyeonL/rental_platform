@@ -131,7 +131,7 @@ export default {
     },
 
     handleDelete(index, row) {
-      console.log(row);
+      // console.log(row);
       this.$confirm("确认删除该房型?", "确认删除", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

@@ -96,9 +96,6 @@ export default {
         Square: "",
         MinimunPeriod: "",
         RentStatus: "未出租",   // 新增时，默认未出租
-        // ContractNo: "",
-        // TenantName: "",
-        // TenantIDCard: "",
         Note: "",
       },
       rules: {
@@ -116,7 +113,6 @@ export default {
         MinimunPeriod: [
           { required: true, message: "请输入时长", trigger: "change" },
         ],
-        // ContractNo: [{ required: true, message: "请选择", trigger: "change" }],
       },
       typeList: [], // 房型列表选择
       contractList: [], // 合同列表选择
@@ -134,21 +130,12 @@ export default {
       offset:60,
       duration:3000
     })
-    // this.$store.dispatch("ContractList").then((res) => {
-    //   this.contractList = res;
-    // });
   },
   watch: {
     form: {
       // 监听 form的合同编号，自动赋值 租客姓名、身份证号
       deep: true,
       handler(newValue) {
-        // this.contractList.map((item) => {
-        //   if (item.ContractNo == newValue.ContractNo) {
-        //     this.form.TenantIDCard = item.TenantID;
-        //     this.form.TenantName = item.TenantName;
-        //   }
-        // });
         this.typeList.map((item) => {
           if (item.Type == newValue.RoomType) {
             this.form.MortgageMethod = item.MortgageMethod;

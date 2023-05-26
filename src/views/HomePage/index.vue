@@ -3,9 +3,9 @@
     <!-- 顶部 -->
     <nav class="rentNav">
       <div class="left">
-        <a href="#">
+        <!-- <a href="#"> -->
           <h2>{{HouseInfo.HouseNumber}} {{VillageInfo.Area}} 出租屋</h2>
-        </a>
+        <!-- </a> -->
         <div class="hello">
           <!--  class="my" -->
           <span v-if="$store.state.Administrator.isLogin">Hello，{{$store.state.Administrator.userInfo.Name}}</span>
@@ -37,7 +37,6 @@
             管理后台
         </div>
         <div class="login" @click="visitor" v-if="!$store.state.Administrator.isLogin">
-            <!-- <i class="iconfont icon-shezhi"></i> -->
             登录/注册
         </div>
       </div>
@@ -363,6 +362,7 @@
           </template>
         </el-table-column>
       </el-table>
+
     <Pagination
       :total="total"
       :currentPage="currentPage"
@@ -564,7 +564,6 @@ export default {
     });
   },
   mounted() {
-    // console.log(this.push);
     window.addEventListener("scroll", this.handleScroll); // 监听滑动事件
     this.info.Name = this.userInfo.Name;
     this.info.Contact = this.userInfo.Tel;
@@ -579,13 +578,11 @@ export default {
         window.pageYOffset ||
         document.documentElement.scrollTop ||
         document.body.scrollTop;
-      // console.log(scrollTop) // 滑动的长度 offsetParent
       var offsetTop =
         document.querySelector(".rentNav").offsetHeight +
         document.querySelector(".rentCover").offsetHeight +
         document.querySelector(".rentCover").offsetHeight / 2;
 
-      // console.log(document.querySelector(".rentSubNav").offsetTop);
 
       // 吸顶效果
       if (scrollTop > offsetTop) {
@@ -600,7 +597,6 @@ export default {
       const DOM = document.querySelectorAll(".box")[index];
       let offsetTop = DOM.offsetTop - 120;
       if (index == 1) offsetTop -= 90; // 滚动的位置没错，但是因为导航栏吸顶会遮住，所以需要减去
-      // console.log('滚动到哪里', DOM)
       window.scrollTo({
         top: offsetTop,
         behavior: "smooth",
@@ -613,6 +609,7 @@ export default {
         this.$router.go(0);
       });
     },
+    
     // 切换出租屋
     changeHouse(Landlord_ID, AreaID) {
       this.$store

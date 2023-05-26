@@ -184,7 +184,6 @@ header {
   display: flex;
   align-items: center;
   justify-content: start;
-  // background-color: rgb(34, 77, 114);
   .el-button {
     color: #ffd04b;
     background-color: #24292e;

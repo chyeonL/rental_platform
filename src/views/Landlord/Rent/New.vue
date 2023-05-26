@@ -157,10 +157,10 @@ export default {
       },
       rules: {
         WaterMeterDegree: [
-          { required: true, message: "请输入水表度数", trigger: "blur" },
+          { required: true, message: "请输入水表度数", trigger: "change" },
         ],
         ElectricityMeterDegree: [
-          { required: true, message: "请输入电表度数", trigger: "blur" },
+          { required: true, message: "请输入电表度数", trigger: "change" },
         ],
         Stage: [{ required: true, message: "请选择", trigger: "change" }],
         ContractNo: [
@@ -279,8 +279,8 @@ export default {
         NetworkFee: "",
         UnitElectrictyFee: "",
         UnitWaterFee: "",
-        ElectricityMeterDegree: "",
-        WaterMeterDegree: "",
+        ElectricityMeterDegree:'',
+        WaterMeterDegree: '',
         WaterFee: "",
         ElectricityFee: "",
         Note: "",

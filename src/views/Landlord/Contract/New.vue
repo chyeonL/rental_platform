@@ -120,6 +120,31 @@ export default {
   name: "Contract_new",
   components: { Breadcrumb },
   data() {
+    var reg_name = /[\u4e00-\u9fa5]/;
+    var reg_tel =
+      /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/; // 匹配中国大陆地区手机号码
+    var validateName = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入租户姓名"));
+      } else if (!reg_name.test(value)) {
+        callback(
+          new Error(
+            "请输入中文名"
+          )
+        );
+      } else {
+        callback();
+      }
+    };
+    var validateTel = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入联系电话"));
+      } else if (!reg_tel.test(value)) {
+        callback(new Error("请输入11位中国大陆地区的手机号码"));
+      } else {
+        callback();
+      }
+    };
     return {
       routes: {
         nav: "签署合同",
@@ -152,7 +177,7 @@ export default {
           {
             required: true,
             message: "请输入18位身份证号",
-            trigger: "blur",
+            trigger: "change",
             max: 18,
             min: 18,
           },
@@ -160,8 +185,8 @@ export default {
         TenantName: [
           {
             required: true,
-            message: "请输入身份证上的姓名",
-            trigger: "blur",
+            validator: validateName,
+            trigger: "change",
           },
         ],
         NetworkFee: [
@@ -176,8 +201,8 @@ export default {
         Tel: [
           {
             required: true,
-            message: "请输入联系电话",
-            trigger: "blur",
+            validator: validateTel,
+            trigger: "change",
             max: 11,
             min: 11,
           },

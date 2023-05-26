@@ -24,35 +24,16 @@
             </el-select>
         </el-form-item>
 
-        <!-- <el-form-item  prop='Status'>
-           <label>处理阶段</label>
-           <el-select v-model="form.Status" clearable placeholder="请选择">
-              <el-option label="等待反馈" value="等待反馈"></el-option>
-              <el-option label="处理中" value="处理中"></el-option>
-              <el-option label="接纳意见" value="接纳意见"></el-option>
-              <el-option label="否决意见" value="否决意见"></el-option>
-            </el-select>
-        </el-form-item> -->
-
         <el-form-item prop='Area'>
            <label for="Area">区域</label>
           <el-input v-model="form.Area" disabled class="small"></el-input>
         </el-form-item>
 
-        <!-- <el-form-item prop='AreaID'>
-           <label for="AreaID">区域ID</label>
-          <el-input v-model="form.AreaID" disabled class="small"></el-input>
-        </el-form-item> -->
 
         <el-form-item prop='StaffName'>
            <label for="StaffName">对接工作人员</label>
           <el-input v-model="form.StaffName" disabled class="small"></el-input>
         </el-form-item>   
-
-        <!-- <el-form-item prop='Staff_ID'>
-           <label for="Staff_ID">对接工作人员ID</label>
-          <el-input v-model="form.Staff_ID" disabled class="small"></el-input>
-        </el-form-item>    -->
         
         <el-form-item prop='LandlordName'>
            <label for="LandlordName">反馈人</label>
@@ -68,11 +49,6 @@
               v-model="form.SubmitTime"              
             ></el-date-picker>
         </el-form-item>
-
-        <!-- <el-form-item prop='Landlord_ID'>
-           <label for="Landlord_ID">反馈人ID</label>
-          <el-input v-model="form.Landlord_ID" class="small"></el-input>
-        </el-form-item>  -->
         
         <el-form-item prop='Detail'>
            <label for="Detail">详情</label>

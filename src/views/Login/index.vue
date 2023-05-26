@@ -4,6 +4,7 @@
       <&nbsp;&nbsp;前台网站
     </el-button>
     <h1 class="title">乡村数字化出租屋管理平台</h1>
+    <!-- 登录、注册 不共用，通过点击判断使用那个表单 -->
     <div class="login">
       <el-form
         :model="IsRegister?registerForm:ruleForm"
@@ -12,8 +13,10 @@
         label-width="60px"
         class="demo-ruleForm"
       >
-        <h2 style="font-weight: normal; font-size: 18px">登录</h2>
+        <h2 style="font-weight: normal; font-size: 18px">{{title}}</h2>
+        <!-- 点击 修改文字 -->
         <span class="noAccount" @click="toggle">{{str}}</span>
+        <!-- 注册 -->
         <el-form-item label="昵称" prop="name" v-show="IsRegister">
           <el-input
             type="text"
@@ -80,15 +83,15 @@ export default {
   name: "Login",
   data() {
     var reg_tel =
-      /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
-    var reg_accpwd = /^[a-zA-Z0-9_][\s\S]{6,15}$/;
+      /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/; // 匹配中国大陆地区手机号码
+    var reg_accpwd = /^(?=.*[A-Z])(?=.*\d).{6,15}$/;
     var validateaccount = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请输入账号/管理员ID/手机号"));
+        callback(new Error("请输入账号"));
       } else if (!reg_accpwd.test(value)) {
         callback(
           new Error(
-            "请输入6-15位账号，最好包含大小写英文字母、阿拉伯数字、特殊符号"
+            "请输入6-15位账号，必须包含大写字母和阿拉伯数字"
           )
         );
       } else {
@@ -101,7 +104,7 @@ export default {
       } else if (!reg_accpwd.test(value)) {
         callback(
           new Error(
-            "请输入6-15位密码，最好包含大小写英文字母、阿拉伯数字、特殊符号"
+            "请输入6-15位密码，必须包含大写字母和阿拉伯数字"
           )
         );
       } else {
@@ -112,7 +115,7 @@ export default {
       if (value === "") {
         callback(new Error("请输入手机号"));
       } else if (!reg_tel.test(value)) {
-        callback(new Error("请输入11位规范手机号"));
+        callback(new Error("请输入11位中国大陆地区的手机号码"));
       } else {
         callback();
       }
@@ -145,12 +148,13 @@ export default {
         tel: "",
       },
       rules2: {
-        account: [{ validator: validateaccount, trigger: "blur" }],
-        password: [{ validator: validatePassword, trigger: "blur" }],
-        name: [{ validator: validateName, trigger: "blur" }],
-        tel: [{ validator: validateTel, trigger: "blur" }],
+        account: [{ validator: validateaccount, trigger: "change" }],
+        password: [{ validator: validatePassword, trigger: "change" }],
+        name: [{ validator: validateName, trigger: "change" }],
+        tel: [{ validator: validateTel, trigger: "change" }],
       },
       str: "没有账号，先去注册(访客)",
+      title:'登录'
     };
   },
   mounted() {
@@ -268,7 +272,6 @@ export default {
     // 前台网站
     goWebsite() {
       this.$router.replace("/");
-      // this.$router.go(0);
     },
 
     toggle() {
@@ -276,7 +279,9 @@ export default {
       this.str = this.IsRegister
         ? "已注册，前往登录"
         : "没有账号，先去注册(访客)";
-      // console.log(this.$refs.form);
+      this.title = this.IsRegister
+        ? "注册"
+        : "登录";
       this.$refs.form.clearValidate();
     },
   },

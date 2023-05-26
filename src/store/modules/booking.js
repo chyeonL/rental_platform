@@ -130,7 +130,7 @@ export default {
 
         async ViewHistory({ commit }, { pageNo, Name, Contact }) {
             let res = await viewHistory(pageNo, Name, Contact)
-            console.log(res);
+            // console.log(res);
             commit("all", res);
             if (res) {  // 成功
                 if (!res.success)
@@ -148,7 +148,7 @@ export default {
         // No, Time 
         async rescheduleBooking(context, { No, Time }) {
             let res = await rescheduleBooking(No, Time)
-            console.log(res);
+            // console.log(res);
             if (res) return res.sucess
         }
     },

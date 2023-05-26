@@ -133,12 +133,6 @@ export default {
   },
   mounted() {
     this.$refs.form.clearValidate();
-    // this.form.Area = this.Area;
-    // this.form.AreaID = this.AreaID;
-    // this.form.StaffName = this.StaffName;
-    // this.form.Staff_ID = this.StaffID;
-    // this.form.LandlordName = this.LandlordName;
-    // this.form.Landlord_ID = this.Landlord_ID;
   },
   computed: {
     ...mapState({

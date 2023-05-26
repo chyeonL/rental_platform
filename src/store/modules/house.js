@@ -47,9 +47,7 @@ const mutations = {
 const actions = {
   // 所有出租屋
   async GetAllHouse({ rootState, commit }, pageNo) {
-    // console.log(rootState.Administrator.adminID);
     let res = await getAllHouse(pageNo, rootState.Administrator.adminID);
-    // console.log(res);
     commit("AllHouse", res);
     if (res) {  // 成功
       if (!res.success)
@@ -66,10 +64,9 @@ const actions = {
 
   // 搜索
   async SearchHouse({ rootState, commit }, { keywords, pageNo }) {
-    let res = await goSearchHouse({ keywords, pageNo, ID: rootState.Administrator.adminID });  // params包括 keywords和pageNo
-    // console.log(res);
+    let res = await goSearchHouse({ keywords, pageNo, ID: rootState.Administrator.adminID });
     commit("SearchList", res);
-    if (res) {  // 成功
+    if (res) { 
       if (!res.success)
         Notification({
           title: "失败提醒",
@@ -92,9 +89,7 @@ const actions = {
 
   // 删除
   async DeleteHouse(context, No) {
-    // params包括 keywords和pageNo
     let res = await goDeletehHouse({ No });
-    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
@@ -131,7 +126,6 @@ const actions = {
   async ModifyHouse({ commit }, data) {
     console.log(data);
     let res = await goModifyHouse(data);
-    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
@@ -157,7 +151,6 @@ const actions = {
   // 添加
   async AddHouse({ commit }, data) {
     let res = await goAddHouse(data);
-    // console.log(res);
     if (res) {
       // 成功
       if (res.success)
@@ -166,7 +159,7 @@ const actions = {
           offset: 60,
           duration: 2000,
           type: "success",
-          message: "编辑成功！",
+          message: "新增出租屋成功！",
         });
       else
         Notification({
@@ -174,7 +167,7 @@ const actions = {
           offset: 60,
           duration: 2000,
           type: "error",
-          message: "编辑失败",
+          message: "新增失败",
         });
       return res.success;
     }
@@ -184,7 +177,6 @@ const actions = {
   async LandlordIdList(context, data) {
     let res = await getLandlordIdList(data)
     if (res) {
-      // console.log(res);
       return res.data
     }
   }

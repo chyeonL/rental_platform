@@ -129,7 +129,6 @@ export default {
     async RentedOutRooms({ rootState, commit }) {
       let tableName = 'room_' + rootState.Administrator.adminID
       let res = await rentedOut(tableName)
-      // console.log(res);
       if (res.success) commit('RentedOut', res)
     },
     // 

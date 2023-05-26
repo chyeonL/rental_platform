@@ -65,33 +65,8 @@
             </template>
             <el-menu-item index="/staff/inspectation/all">- 所有</el-menu-item>
             <el-menu-item index="/staff/inspectation/new">- 新增</el-menu-item>
-            <!-- <el-menu-item index="/staff/inspectation/detail">- 具体/编辑</el-menu-item> -->
           </el-submenu>
         </el-submenu>
-
-        <!-- 二级菜单  收集报告 -->
-        <!-- <el-submenu index="/staff/report">
-          <template slot="title">
-            <i class="iconfont icon-zixun"></i>
-            <span slot="title">收集报告</span>
-          </template>
-          <el-submenu index="/staff/report/problem">
-            <template slot="title">
-              <i class="iconfont icon-wenti"></i>
-              <span slot="title">问题报告</span>
-            </template>
-              <el-menu-item index="/staff/report/problem/all">- 所有</el-menu-item>
-              <el-menu-item index="/staff/report/problem/new">- 新增</el-menu-item>
-          </el-submenu>
-          <el-submenu index="/staff/report/opinion">
-            <template slot="title">
-              <i class="iconfont icon-13"></i>
-              <span slot="title">群众意见</span>
-            </template>
-              <el-menu-item index="/staff/report/opinion/all">- 所有</el-menu-item>
-              <el-menu-item index="/staff/report/opinion/new">- 新增</el-menu-item>
-          </el-submenu>
-        </el-submenu>       -->
 
         <!-- 群众意见 -->
         <el-submenu index="/staff/opinion">

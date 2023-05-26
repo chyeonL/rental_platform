@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var connection = require("../database/connection");
 
+
 // 出租屋 
 router.get("/allHouse", (req, res) => {           // 所有
   let pageSize = 5; // 页面默认展示 5 条数据，不可更改
@@ -148,8 +149,9 @@ router.post("/updateHouse", (req, res) => {      // 编辑
 });
 router.post("/addHouse", (req, res) => {         // 添加
   let { StaffName, StaffID } = req.body.staff
-  let { HouseNumber, OwnerName, Landlord_ID, OwnerID, OverallSafetySituation, LastInspectedTime, Area, CompletionTime, Height, Floors, AvailableRooms, Note, AreaID } = req.body.houseForm;
-  let sql = `insert into house(HouseNumber,OwnerName,Landlord_ID,OwnerID,OverallSafetySituation,LastInspectedTime,StaffName,Staff_ID,Area,AreaID,CompletionTime,Height,Floors,AvailableRooms,Note)  values('${HouseNumber}','${OwnerName}','${Landlord_ID}','${OwnerID}','${OverallSafetySituation}','${LastInspectedTime}','${StaffName}','${StaffID}','${Area}','${AreaID}','${CompletionTime}','${Height}','${Floors}','${AvailableRooms}','${Note}')`;
+  let { HouseNumber, OwnerName, Landlord_ID, OwnerID, OverallSafetySituation, LastInspectedTime, Area, CompletionTime, Height,Square, Floors, AvailableRooms, Note, AreaID } = req.body.houseForm;
+  let sql = `insert into house(HouseNumber,OwnerName,Landlord_ID,OwnerID,OverallSafetySituation,LastInspectedTime,StaffName,Staff_ID,Area,AreaID,Square,CompletionTime,Height,Floors,AvailableRooms,Note)  values('${HouseNumber}','${OwnerName}','${Landlord_ID}','${OwnerID}','${OverallSafetySituation}','${LastInspectedTime}','${StaffName}','${StaffID}','${Area}','${AreaID}','${Square}','${CompletionTime}','${Height}','${Floors}','${AvailableRooms}','${Note}')`;
+  // console.log(sql);
   connection.query(sql, (e, r) => {
     if (r.affectedRows > 0) {
       res.send({
@@ -187,6 +189,7 @@ router.get('/getLandlordID', (req, res) => {     // 获取administrator中的管
     })
   })
 })
+
 // 流动人员
 router.get("/allMigrants", (req, res) => {       // 所有
   let pageSize = 5; // 页面默认展示 5 条数据，不可更改
@@ -272,43 +275,6 @@ router.get("/searchMigrant", (req, res) => {     // 搜索
     }
   });
 });
-router.post("/addMigrant", (req, res) => {       // 添加
-  // console.log(req.body.staff);
-  console.log(req.body);
-  let { StaffName, StaffID } = req.body.staff
-  // console.log(req.body.form);
-  let { StartDate, ID, Marriage, LandlordName, Name, Origin, Tel, Note, Gender, Area, AreaID } = req.body.form;
-  let lookup = `select Admin_ID from Administrator where Name = '${LandlordName}'`
-  connection.query(lookup, (e0, r0) => {
-    console.log(e0, r0);
-    if (r0.length > 0) {
-      let Landlord_ID = r0[0].Admin_ID
-      // console.log(Landlord_ID);
-      // console.log(r0[0].Admin_ID);
-      let sql = `insert into migrant(Name,ID,Landlord_ID,LandlordName,Marriage,StartDate,StaffName,Staff_ID,Area,AreaID,Tel,Origin,Gender,Note)  values('${Name}','${ID}','${Landlord_ID}','${LandlordName}','${Marriage}','${StartDate}','${StaffName}','${StaffID}','${Area}','${AreaID}','${Tel}','${Origin}','${Gender}','${Note}')`;
-      console.log(sql);
-      connection.query(sql, (e1, r1) => {
-        console.log(e1, r1);
-        if (r1.affectedRows > 0) {
-          res.send({
-            code: 200,
-            success: true,
-            msg: "成功新增记录",
-            data: {
-              No: r1.insertId,
-            },
-          });
-        } else {
-          res.send({
-            code: 205,
-            success: false,
-            msg: "失败新增",
-          });
-        }
-      })
-    }
-  });
-});
 router.get("/migrantDetail", (req, res) => {     // 详情
   let No = req.query.No;
   connection.query(
@@ -323,32 +289,74 @@ router.get("/migrantDetail", (req, res) => {     // 详情
     }
   );
 });
-router.post("/updateMigrant", (req, res) => {    // 编辑
-  let { No, StartDate, ID, Marriage, LandlordName, Name, Origin, Tel, Note, Gender } = req.body.form;
-  // let { StaffName, StaffID } = req.body.staff  // 不变的
-  let lookup = `select Admin_ID from Administrator where Name = '${LandlordName}'`
-  connection.query(lookup, (e, r0) => {
-    if (r0.length > 0) {
-      let landlordID = r0[0].Admin_ID
-      let update = `update migrant set StartDate='${StartDate}',ID='${ID}', Marriage='${Marriage}',LandlordName='${LandlordName}',Name='${Name}', Origin='${Origin}',Tel='${Tel}',Landlord_ID='${landlordID}',Note='${Note}',Gender='${Gender}'   where No = ${No}  `;
-      connection.query(update, (e, r1) => {
-        if (r1.affectedRows > 0) {
-          res.send({
-            code: 200,
-            success: true,
-            msg: "编辑流动人员信息成功",
-          });
-        } else {
-          res.send({
-            code: 205,
-            success: false,
-            msg: "编辑失败",
-          });
-        }
-      });
-    }
-  });
-});
+/* 
+// router.post("/addMigrant", (req, res) => {       // 添加
+//   // console.log(req.body.staff);
+//   console.log(req.body);
+//   let { StaffName, StaffID } = req.body.staff
+//   // console.log(req.body.form);
+//   let { StartDate, ID, Marriage, LandlordName, Name, Origin, Tel, Note, Gender, Area, AreaID } = req.body.form;
+//   let lookup = `select Admin_ID from Administrator where Name = '${LandlordName}'`
+//   connection.query(lookup, (e0, r0) => {
+//     console.log(e0, r0);
+//     if (r0.length > 0) {
+//       let Landlord_ID = r0[0].Admin_ID
+//       // console.log(Landlord_ID);
+//       // console.log(r0[0].Admin_ID);
+//       let sql = `insert into migrant(Name,ID,Landlord_ID,LandlordName,Marriage,StartDate,StaffName,Staff_ID,Area,AreaID,Tel,Origin,Gender,Note)  values('${Name}','${ID}','${Landlord_ID}','${LandlordName}','${Marriage}','${StartDate}','${StaffName}','${StaffID}','${Area}','${AreaID}','${Tel}','${Origin}','${Gender}','${Note}')`;
+//       console.log(sql);
+//       connection.query(sql, (e1, r1) => {
+//         console.log(e1, r1);
+//         if (r1.affectedRows > 0) {
+//           res.send({
+//             code: 200,
+//             success: true,
+//             msg: "成功新增记录",
+//             data: {
+//               No: r1.insertId,
+//             },
+//           });
+//         } else {
+//           res.send({
+//             code: 205,
+//             success: false,
+//             msg: "失败新增",
+//           });
+//         }
+//       })
+//     }
+//   });
+// });
+
+// router.post("/updateMigrant", (req, res) => {    // 编辑
+//   let { No, StartDate, ID, Marriage, LandlordName, Name, Origin, Tel, Note, Gender } = req.body.form;
+//   // let { StaffName, StaffID } = req.body.staff  // 不变的
+//   let lookup = `select Admin_ID from Administrator where Name = '${LandlordName}'`
+//   connection.query(lookup, (e, r0) => {
+//     if (r0.length > 0) {
+//       let landlordID = r0[0].Admin_ID
+//       let update = `update migrant set StartDate='${StartDate}',ID='${ID}', Marriage='${Marriage}',LandlordName='${LandlordName}',Name='${Name}', Origin='${Origin}',Tel='${Tel}',Landlord_ID='${landlordID}',Note='${Note}',Gender='${Gender}'   where No = ${No}  `;
+//       connection.query(update, (e, r1) => {
+//         if (r1.affectedRows > 0) {
+//           res.send({
+//             code: 200,
+//             success: true,
+//             msg: "编辑流动人员信息成功",
+//           });
+//         } else {
+//           res.send({
+//             code: 205,
+//             success: false,
+//             msg: "编辑失败",
+//           });
+//         }
+//       });
+//     }
+//   });
+// });
+
+*/
+
 // 巡视记录
 router.get("/allInspectation", (req, res) => {    // 所有
   let pageSize = 5; // 页面默认展示 5 条数据，不可更改
@@ -419,17 +427,6 @@ router.get("/searchInspectation", (req, res) => {  // 搜索
       "," +
       pageSize;
   }
-  // let sql1 =
-  //   "select * from `" + tableName + "` where concat(`Title`,`Time`,`Owner`,`HouseNumber`,`No`,`Overall`,`FailReason`) like '%" +
-  //   searchParams +
-  //   "%'";
-  // let sql2 =
-  //   "select * from `" + tableName + "` where concat(`Title`,`Time`,`Owner`,`HouseNumber`,`No`,`Overall`,`FailReason`) like '%" +
-  //   searchParams +
-  //   "%' limit " +
-  //   n +
-  //   "," +
-  //   pageSize;
   connection.query(sql1, (e0, r0) => {
     // 能搜到相关数据
     console.log(e0, r0);
@@ -546,6 +543,7 @@ router.get('/getLandlordList', (req, res) => {    // 获取房东列表
     })
   })
 })
+
 // 群众意见     opinion   
 router.get("/allOpinions", (req, res) => {         // 所有 
   let pageSize = 5; // 页面默认展示 5 条数据，不可更改

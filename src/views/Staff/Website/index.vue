@@ -17,7 +17,7 @@
         <el-descriptions-item label="村庄简介"  :span='4'>{{VillageInfo.Brief}}</el-descriptions-item>
       </el-descriptions>
       <!-- 编辑 -->
-      <el-button icon="el-icon-edit" @click="Visible=true">修改网站资讯</el-button> 
+      <el-button icon="el-icon-edit" @click="showDialogue">修改网站资讯</el-button> 
     </div>
 
     <!-- 修改 -->
@@ -30,14 +30,14 @@
     >
       <el-form
         :model="Info"
-        status-icon
         ref="Info"
+        :rules='rule'
         label-width="100px"
         class="demo-ruleForm"
       >      
         <el-form-item label="村庄" prop="Area">
           <el-input v-model="Info.Area"
-            autocomplete="off" class=""></el-input>
+            autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="地理位置" prop="Location">
           <el-input
@@ -105,6 +105,25 @@ export default {
         Office: "",
         Brief: "",
       },
+      rule: {
+        Location: [
+          {
+            required: true,
+            message: "请输入村庄的地理位置",
+            trigger: "change",
+          },
+        ],
+        Contact: [
+          { required: true, message: "请输入联系电话", trigger: "change" },
+        ],
+        Area: [
+          { required: true, message: "请输入村庄名字", trigger: "change" },
+        ],
+        Office: [
+          { required: true, message: "请输入办公室位置", trigger: "change" },
+        ],
+        Brief: [{ required: true, message: "请输入简介", trigger: "change" }],
+      },
     };
   },
   computed: {
@@ -130,8 +149,8 @@ export default {
   },
   methods: {
     submitInfo(formName) {
-      this.$refs[formName].validate((valid) => {
-        // console.log(this.Info);
+      console.log(this.Info);
+      this.$refs["Info"].validate((valid) => {
         if (valid) {
           this.$confirm("确认修改村庄资讯?", "确认修改", {
             confirmButtonText: "确定",
@@ -139,14 +158,26 @@ export default {
             center: true,
           })
             .then(() => {
-              this.$store.dispatch("ModifyVillageInfo", this.Info).then(()=>{
-                this.Visible = true
-                this.$router.go(0)
-              })
+              this.$store.dispatch("ModifyVillageInfo", this.Info).then(() => {
+                this.Visible = true;
+                this.$router.go(0);
+              });
             })
             .catch(() => {});
         }
       });
+    },
+
+    showDialogue() {
+      this.Visible = true;
+      this.Info.Location = this.village.Location;
+      this.Info.Contact = this.village.Contact;
+      this.Info.Area = this.village.Area;
+      this.Info.Office = this.village.Office;
+      this.Info.Brief = this.village.Brief;
+      this.Info.No = this.village.No;
+      this.Info.Area = this.village.Area;
+      this.Info.AreaID = this.village.AreaID;
     },
   },
 };
@@ -164,19 +195,16 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 50px;
-  padding: 0 30px;
-  // background-color: wheat;
+  margin-top: 30px;
+  padding-left: 20px;
   .el-descriptions {
     width: 60%;
     font-size: 15px;
-    // border-radius: 40px;
     ::v-deep .my-label {
       width: 100px;
       color: #ffd04b;
       background-color: #24292e;
       text-align: center;
-      // border: 1px solid #fff;
     }
   }
   ::v-deep .el-descriptions {

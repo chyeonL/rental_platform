@@ -27,7 +27,6 @@
         <el-descriptions-item label="名字"  content-class-name="my-content" :span='3'>{{userInfo.Name}}</el-descriptions-item>
         <el-descriptions-item label="角色" :span='1' >{{userInfo.Role === 'staff'?'工作人员':'房东'}}</el-descriptions-item>
         <el-descriptions-item label="管理员ID" :span='4'>{{userInfo.Admin_ID}}</el-descriptions-item>
-        <!-- <el-descriptions-item label="账户状态" :span='2' >{{userInfo.AccountStatus}}</el-descriptions-item> -->
         <el-descriptions-item label="账号" :span='4'>{{userInfo.UserName}}</el-descriptions-item>
         <el-descriptions-item label="密码" :span='4' >***</el-descriptions-item>
         <el-descriptions-item label="区域" :span='3'>{{userInfo.Area}}</el-descriptions-item>
@@ -343,15 +342,6 @@ export default {
                     account: this.userInfo.UserName,
                     password: this.userInfo.UserPassword,
                   });
-                  // this.$message({
-                  //   type: "success",
-                  //   message: res.msg + ",需要重新登录",
-                  // });
-                  // this.MyPwdVisible = false;
-                  // this.$store.dispatch("Logout");
-                  // setTimeout(() => {
-                  //   this.$router.go(0);
-                  // }, 2000);
                 } else {
                   this.$message({
                     type: "error",

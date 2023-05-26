@@ -41,7 +41,7 @@ export default {
             let tableName = 'roomtype_' + rootState.Administrator.adminID
             // console.log(pageNo, tableName);
             let res = await allRoomType(pageNo, tableName);
-            console.log(res);
+            // console.log(res);
             commit("all", res);
             if (res) {  // 成功
                 if (!res.success)

@@ -240,12 +240,6 @@ export default {
           if (data.statusCode === 200) {
             this.form.Picture = `https:${data.Location}`;
             console.log(this.form.Picture);
-            // this.$store
-            //   .dispatch("TypePicture", {
-            //     url: this.form.Picture,
-            //     No: this.form.No,
-            //   })
-            //   .then((res) => {
               this.$refs['form'].clearValidate('Picture')
                 this.uploadVisible = false;
             //   });

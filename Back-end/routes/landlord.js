@@ -507,11 +507,6 @@ router.get('/deleteRoom', (req, res) => {       // 删除
           }
         })
       })
-      // res.send({
-      //   code: 200,
-      //   success: true,
-      //   msg: "删除房间成功",
-      // });
     } else {
       res.send({
         code: 205,
@@ -1067,6 +1062,7 @@ router.get('/getRoomList', (req, res) => {      // 获取未出租的房间列�
   })
 })
 
+
 // 租客
 router.get('/allTenants', (req, res) => {
   let { pageNo, ID } = req.query
@@ -1397,19 +1393,6 @@ router.get("/searchRent", (req, res) => {           // 搜索
       "," +
       pageSize;
   }
-  // let sql1 =
-  //   "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
-  //   keywords +
-  //   "%'";
-  // let sql2 =
-  //   "select * from `" + tableName + "` where concat(`Month`,`ContractNo`,`ContractStage`,`RoomNumber`,`Name`,`Stage`,`Status`) like '%" +
-  //   keywords +
-  //   "%' limit " +
-  //   n +
-  //   "," +
-  //   pageSize;
-  // console.log(sql1);
-  // console.log(sql2);
   connection.query(sql1, (e0, r0) => {
     // console.log(e0, r0);
     if (r0.length > 0) {

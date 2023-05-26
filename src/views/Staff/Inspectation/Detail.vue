@@ -138,7 +138,6 @@ export default {
     return {
       IsEdit: true, // true为 查阅模式
       routes: {
-        // 面包屑导航 对象
         nav: "安全检查",
         parent: "巡视记录",
         parentRoute: "all",

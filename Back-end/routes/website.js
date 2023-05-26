@@ -466,6 +466,4 @@ router.post('/rescheduleBooking', (req, res) => {
 })
 
 
-
-
 module.exports = router;
