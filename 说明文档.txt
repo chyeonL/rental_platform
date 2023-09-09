@@ -1,0 +1,20 @@
+基于Vue的乡村数字化出租屋管理平台
+
+Vue2作为前端框架，express作为后端框架，MySQL作为数据库
+
+1、VS Code打开rental_platform文件夹
+
+2、下载依赖：npm i 
+	前端：	rental_platform终端  
+	后端：	Back-end终端	
+
+3、rental_platform终端： 
+	启动前端： npm run serve
+	启动后端： npm run backend
+
+4、Back-end是后端文件夹，直接放在了vue2搭建的前端框架里面
+
+5、src是前端页面文件夹
+
+6、Back-end 》database》connection.js 文件是连接MySQL数据库的文件
+	版本  8.0.30 for Win64 on x86_64 
